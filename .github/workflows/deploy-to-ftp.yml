@@ -19,30 +19,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "pnpm"
+          cache: "npm"
 
-      - name: Ensure pnpm is available (Corepack + fallback)
+      - name: Install dependencies (npm)
         run: |
-          # Use Corepack (bundled with modern Node.js) to prepare pnpm
-          if command -v corepack >/dev/null 2>&1; then
-            corepack enable || true
-            corepack prepare pnpm@8 --activate || true
-            echo "Corepack prepared pnpm"
+          # Use npm to install dependencies. `npm ci` requires a lockfile; fallback to npm install
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --prefer-offline
           else
-            echo "Corepack not available — installing pnpm globally as fallback"
-            npm install -g pnpm@8 || true
+            npm install --no-audit --prefer-offline
           fi
 
-      - name: Setup pnpm (action)
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
       - name: Build Next.js
-        run: pnpm build
+        run: npm run build
 
       - name: Export static files
         run: |
@@ -50,7 +39,7 @@ jobs:
           # On App Router / advanced Next features export may fail — that's okay,
           # we fall back to packing static assets from `.next/static` and `public/`.
           set -e
-          if pnpm exec next export -o out; then
+          if npx --no-install next export -o out; then
             echo "Exported to out/"
           else
             echo "next export failed — falling back to collecting static output"
