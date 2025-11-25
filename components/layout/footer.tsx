@@ -1,8 +1,8 @@
-import Link from "next/link"
-import { Separator } from "@/components/ui/separator"
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 export function Footer() {
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
 
   const footerSections = [
     {
@@ -29,33 +29,37 @@ export function Footer() {
         { label: "Cookie Policy", href: "/cookies" },
       ],
     },
-  ]
+  ];
 
   return (
-    <footer className="bg-card border-t border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+    <footer className='bg-card border-t border-border'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
+        <div className='grid grid-cols-1 md:grid-cols-4 gap-8 mb-8'>
           {/* Brand */}
-          <div className="space-y-4">
-            <Link href="/" className="flex items-center space-x-2 font-serif font-bold text-primary">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg" />
+          <div className='space-y-4'>
+            <Link
+              href='/'
+              className='flex items-center space-x-2 font-serif font-bold text-primary'
+            >
+              <div className='w-8 h-8 bg-linear-to-br from-primary to-secondary rounded-lg' />
               <span>PavitInfoTech</span>
             </Link>
-            <p className="text-sm text-muted-foreground">
-              Enterprise-grade AI-powered IoT platform for intelligent device management
+            <p className='text-sm text-muted-foreground'>
+              Enterprise-grade AI-powered IoT platform for intelligent device
+              management
             </p>
           </div>
 
           {/* Footer Links */}
           {footerSections.map((section) => (
             <div key={section.title}>
-              <h3 className="font-semibold text-sm mb-4">{section.title}</h3>
-              <ul className="space-y-2">
+              <h3 className='font-semibold text-sm mb-4'>{section.title}</h3>
+              <ul className='space-y-2'>
                 {section.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className='text-sm text-muted-foreground hover:text-foreground transition-colors'
                     >
                       {link.label}
                     </Link>
@@ -68,21 +72,32 @@ export function Footer() {
 
         <Separator />
 
-        <div className="mt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">© {currentYear} PavitInfoTech. All rights reserved.</p>
-          <div className="flex items-center space-x-6">
-            <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">
+        <div className='mt-8 flex flex-col md:flex-row justify-between items-center gap-4'>
+          <p className='text-sm text-muted-foreground'>
+            © {currentYear} PavitInfoTech. All rights reserved.
+          </p>
+          <div className='flex items-center space-x-6'>
+            <Link
+              href='#'
+              className='text-sm text-muted-foreground hover:text-foreground'
+            >
               Twitter
             </Link>
-            <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">
+            <Link
+              href='#'
+              className='text-sm text-muted-foreground hover:text-foreground'
+            >
               LinkedIn
             </Link>
-            <Link href="#" className="text-sm text-muted-foreground hover:text-foreground">
+            <Link
+              href='#'
+              className='text-sm text-muted-foreground hover:text-foreground'
+            >
               GitHub
             </Link>
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }
