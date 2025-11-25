@@ -21,7 +21,19 @@ jobs:
           node-version: "20"
           cache: "pnpm"
 
-      - name: Setup pnpm
+      - name: Ensure pnpm is available (Corepack + fallback)
+        run: |
+          # Use Corepack (bundled with modern Node.js) to prepare pnpm
+          if command -v corepack >/dev/null 2>&1; then
+            corepack enable || true
+            corepack prepare pnpm@8 --activate || true
+            echo "Corepack prepared pnpm"
+          else
+            echo "Corepack not available — installing pnpm globally as fallback"
+            npm install -g pnpm@8 || true
+          fi
+
+      - name: Setup pnpm (action)
         uses: pnpm/action-setup@v2
         with:
           version: 8
