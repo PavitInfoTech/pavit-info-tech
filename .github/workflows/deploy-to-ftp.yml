@@ -63,5 +63,7 @@ jobs:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: out
+          # FTP-Deploy-Action requires the local directory to be a folder path
+          # and to end with a trailing slash.
+          local-dir: out/
           server-dir: /
