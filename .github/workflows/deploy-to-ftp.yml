@@ -1,0 +1,66 @@
+name: Build and deploy static site to FTP
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy (FTP)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Next.js
+        run: pnpm build
+
+      - name: Export static files
+        run: |
+          # Try to run `next export` to produce an `out/` directory.
+          # On App Router / advanced Next features export may fail — that's okay,
+          # we fall back to packing static assets from `.next/static` and `public/`.
+          set -e
+          if pnpm exec next export -o out; then
+            echo "Exported to out/"
+          else
+            echo "next export failed — falling back to collecting static output"
+            rm -rf out || true
+            mkdir -p out
+            # copy public as-is
+            cp -r public/* out/ || true
+            # copy built static files (JS/CSS) if present
+            if [ -d .next/static ]; then
+              mkdir -p out/_next
+              cp -r .next/static out/_next/
+            fi
+          fi
+
+      - name: Show out/ contents (debug)
+        run: ls -la out || echo "out directory not present"
+
+      - name: Deploy to FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: out
+          server-dir: /

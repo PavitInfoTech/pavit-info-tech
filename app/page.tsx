@@ -1,118 +1,750 @@
-import Link from "next/link"
-import { MainLayout } from "@/components/layout/main-layout"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+"use client";
 
-const features = [
-  {
-    title: "Real-time Monitoring",
-    description: "Monitor IoT devices and sensors with live dashboards and instant updates",
-    icon: "📊",
-  },
-  {
-    title: "AI Anomaly Detection",
-    description: "Automatically identify unusual patterns and potential failures",
-    icon: "🤖",
-  },
-  {
-    title: "Predictive Maintenance",
-    description: "Forecast equipment failures before they happen",
-    icon: "🔮",
-  },
-  {
-    title: "Device Health Scoring",
-    description: "Comprehensive health metrics for each device",
-    icon: "💓",
-  },
-  {
-    title: "Digital Twin Visualization",
-    description: "Virtual representations of physical IoT ecosystems",
-    icon: "🌐",
-  },
-  {
-    title: "Smart Alerting System",
-    description: "Intelligent notifications for faults and anomalies",
-    icon: "🚨",
-  },
-]
+import Link from "next/link";
+import { useState } from "react";
+import { MainLayout } from "@/components/layout/main-layout";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Wifi,
+  Brain,
+  Zap,
+  Shield,
+  Factory,
+  Lightbulb,
+  Truck,
+  HeartPulse,
+  Activity,
+  Gauge,
+  Box,
+} from "lucide-react";
 
 const stats = [
   { number: "10K+", label: "Devices Monitored" },
   { number: "99.9%", label: "Uptime" },
   { number: "500ms", label: "Avg Response Time" },
   { number: "24/7", label: "Support" },
-]
+];
+
+const bentoFeatures = [
+  {
+    id: "ingest",
+    title: "Ingest",
+    subtitle: "Universal Compatibility",
+    description:
+      "Connect any device with MQTT, HTTP, CoAP protocols. Zero friction data ingestion.",
+    icon: Wifi,
+    size: "large",
+  },
+  {
+    id: "analyze",
+    title: "Analyze",
+    subtitle: "Real-time Anomaly Detection",
+    description:
+      "AI-powered pattern recognition that catches issues before they escalate.",
+    icon: Brain,
+    size: "medium",
+  },
+  {
+    id: "act",
+    title: "Act",
+    subtitle: "Automated Workflows",
+    description:
+      "Trigger alerts, notifications, and automated responses instantly.",
+    icon: Zap,
+    size: "medium",
+  },
+  {
+    id: "secure",
+    title: "Secure",
+    subtitle: "End-to-End Encryption",
+    description: "AES-256 encryption protecting every byte of your IoT data.",
+    icon: Shield,
+    size: "large",
+  },
+];
+
+const industryTabs = [
+  {
+    id: "manufacturing",
+    label: "Manufacturing",
+    icon: Factory,
+    title: "Predictive Maintenance & Vibration Analysis",
+    description:
+      "Reduce unplanned downtime by 73% with real-time vibration monitoring and predictive failure detection across your entire production line.",
+    stats: ["73% less downtime", "2.3M saved annually", "15min MTTR"],
+    bgClass: "from-orange-500/20 via-amber-500/10",
+  },
+  {
+    id: "energy",
+    label: "Smart Energy",
+    icon: Lightbulb,
+    title: "Intelligent Grid Balancing",
+    description:
+      "Optimize energy distribution with real-time demand forecasting and automated load balancing across distributed energy resources.",
+    stats: ["31% efficiency gain", "Real-time balancing", "Carbon neutral"],
+    bgClass: "from-green-500/20 via-emerald-500/10",
+  },
+  {
+    id: "logistics",
+    label: "Logistics",
+    icon: Truck,
+    title: "Fleet & Cold Chain Monitoring",
+    description:
+      "Track assets in real-time with temperature compliance, route optimization, and predictive ETA calculations.",
+    stats: ["99.8% compliance", "24/7 tracking", "40% fuel savings"],
+    bgClass: "from-blue-500/20 via-cyan-500/10",
+  },
+  {
+    id: "healthcare",
+    label: "Healthcare",
+    icon: HeartPulse,
+    title: "Medical Device Intelligence",
+    description:
+      "Monitor critical medical equipment with HIPAA-compliant analytics, ensuring patient safety and regulatory compliance.",
+    stats: ["HIPAA compliant", "0 false alarms", "99.99% uptime"],
+    bgClass: "from-rose-500/20 via-pink-500/10",
+  },
+];
+
+const partners = [
+  { name: "Siemens", logo: "SIEMENS" },
+  { name: "Bosch", logo: "BOSCH" },
+  { name: "Honeywell", logo: "HONEYWELL" },
+  { name: "AWS", logo: "AWS" },
+  { name: "Azure", logo: "AZURE" },
+  { name: "Google Cloud", logo: "GCP" },
+];
 
 export default function Home() {
+  const [sliderPosition, setSliderPosition] = useState(50);
+  const [activeIndustry, setActiveIndustry] = useState("manufacturing");
+
+  const activeTab =
+    industryTabs.find((tab) => tab.id === activeIndustry) || industryTabs[0];
+
   return (
     <MainLayout>
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 text-center">
-        <div className="space-y-6">
-          <div className="inline-block px-4 py-2 bg-accent/10 border border-accent rounded-full text-sm font-semibold text-accent">
-            Intelligent IoT Platform
-          </div>
-          <h1 className="text-5xl md:text-7xl font-bold font-serif text-balance leading-tight">
-            AI-Powered IoT Intelligence
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
-            Monitor, predict, and optimize your IoT devices with enterprise-grade AI analytics. Detect anomalies before
-            they become costly problems.
-          </p>
-          <div className="flex gap-4 justify-center pt-4 flex-wrap">
-            <Button size="lg" asChild>
-              <Link href="/auth/signup">Start Free Trial</Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/contact">Schedule Demo</Link>
-            </Button>
-          </div>
-        </div>
+      <section className='relative overflow-hidden bg-linear-to-br from-slate-900/80 via-[#071028]/70 to-slate-800/90 text-white'>
+        {/* Decorative shapes behind the hero */}
+        <div className='absolute -left-32 top-1/2 transform -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-linear-to-br from-primary/50 via-secondary/30 to-transparent opacity-30 blur-3xl pointer-events-none' />
+        <div className='absolute -right-28 top-1/3 w-[520px] h-[520px] rounded-full bg-linear-to-tr from-secondary/40 via-primary/20 to-transparent opacity-25 blur-3xl pointer-events-none' />
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
-          {stats.map((stat) => (
-            <div key={stat.label} className="space-y-1">
-              <p className="text-3xl md:text-4xl font-bold text-primary">{stat.number}</p>
-              <p className="text-sm text-muted-foreground">{stat.label}</p>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 relative z-10 text-center'>
+          <div className='space-y-6'>
+            <div className='inline-block px-4 py-2 bg-accent/10 border border-accent rounded-full text-sm font-semibold text-accent'>
+              Intelligent IoT Platform
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Features Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold font-serif mb-4">Powerful Features</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to manage your IoT infrastructure intelligently
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature) => (
-            <Card key={feature.title} className="p-6 hover:shadow-lg transition-shadow">
-              <div className="text-4xl mb-3">{feature.icon}</div>
-              <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground text-sm">{feature.description}</p>
-            </Card>
-          ))}
-        </div>
-      </section>
+            <h1 className='font-serif font-extrabold tracking-tight leading-[0.86] text-[48px] md:text-[110px] lg:text-[140px] text-white mx-auto max-w-[1100px]'>
+              <span className='block md:inline'>AI-Powered</span>
+              <span className='block md:inline'>IoT Intelligence</span>
+            </h1>
 
-      {/* CTA Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 mb-16">
-        <Card className="p-8 md:p-12 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
-          <div className="text-center space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold font-serif">Ready to Transform Your IoT Operations?</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Join hundreds of enterprises trusting PavitInfoTech for intelligent device management
+            <p className='text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto text-pretty'>
+              Monitor, predict, and optimize your IoT devices with
+              enterprise-grade AI analytics. Detect anomalies before they become
+              costly problems.
             </p>
-            <Button size="lg" asChild>
-              <Link href="/auth/signup">Get Started Free</Link>
+
+            <div className='flex gap-4 justify-center pt-4 flex-wrap'>
+              <Button size='lg' asChild>
+                <Link href='/auth/signup'>Start Free Trial</Link>
+              </Button>
+              <Button size='lg' variant='outline' asChild>
+                <Link href='/contact'>Schedule Demo</Link>
+              </Button>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className='grid grid-cols-2 md:grid-cols-4 gap-6 mt-16'>
+            {stats.map((stat) => (
+              <div key={stat.label} className='space-y-1'>
+                <p className='text-3xl md:text-4xl font-bold text-primary'>
+                  {stat.number}
+                </p>
+                <p className='text-sm text-muted-foreground'>{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section 2: The Data Chaos Problem */}
+      <section className='py-24 bg-background'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='text-center mb-16'>
+            <span className='text-primary font-semibold text-sm uppercase tracking-wider'>
+              The Problem
+            </span>
+            <h2 className='text-4xl md:text-5xl font-bold font-serif mt-3 mb-4'>
+              90% of IoT Data Goes Unused
+            </h2>
+            <p className='text-xl text-muted-foreground max-w-2xl mx-auto'>
+              Stop reacting to failures. Start predicting them.
+            </p>
+          </div>
+
+          {/* Before/After Slider */}
+          <div className='relative max-w-5xl mx-auto'>
+            <div className='relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden border border-border shadow-2xl'>
+              {/* The Old Way (Left side) */}
+              <div
+                className='absolute inset-0 bg-linear-to-br from-red-950/90 via-slate-900 to-slate-950'
+                style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+              >
+                <div className='absolute inset-0 p-8 md:p-12'>
+                  <div className='flex items-center gap-2 mb-6'>
+                    <div className='w-3 h-3 rounded-full bg-red-500 animate-pulse' />
+                    <span className='text-red-400 font-semibold uppercase text-sm tracking-wider'>
+                      The Old Way
+                    </span>
+                  </div>
+                  <div className='space-y-6'>
+                    <div className='bg-slate-800/50 rounded-lg p-4 border border-red-500/20'>
+                      <div className='flex items-center gap-3 mb-3'>
+                        <div className='w-8 h-8 bg-red-500/20 rounded flex items-center justify-center'>
+                          📊
+                        </div>
+                        <span className='font-medium text-slate-300'>
+                          Static Spreadsheets
+                        </span>
+                      </div>
+                      <div className='grid grid-cols-4 gap-2 text-xs text-slate-500'>
+                        {[42, 78, 31, 95, 67, 23, 84, 56, 19, 73, 48, 62].map(
+                          (val, i) => (
+                            <div
+                              key={i}
+                              className='bg-slate-700/50 rounded p-2 text-center'
+                            >
+                              {val}
+                            </div>
+                          )
+                        )}
+                      </div>
+                      <p className='text-red-400 text-sm mt-3'>
+                        ⚠ Data from 3 days ago
+                      </p>
+                    </div>
+                    <div className='bg-slate-800/50 rounded-lg p-4 border border-red-500/20'>
+                      <p className='text-slate-400 text-sm'>
+                        🔴 Reactive Maintenance
+                      </p>
+                      <p className='text-red-400 text-lg font-semibold mt-2'>
+                        Machine failed 6 hours ago
+                      </p>
+                      <p className='text-slate-500 text-sm'>
+                        Cost: $47,000 in downtime
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* The Pavit Way (Right side) */}
+              <div
+                className='absolute inset-0 bg-linear-to-br from-emerald-950/90 via-slate-900 to-slate-950'
+                style={{ clipPath: `inset(0 0 0 ${sliderPosition}%)` }}
+              >
+                <div className='absolute inset-0 p-8 md:p-12'>
+                  <div className='flex items-center gap-2 mb-6'>
+                    <div className='w-3 h-3 rounded-full bg-emerald-500 animate-pulse' />
+                    <span className='text-emerald-400 font-semibold uppercase text-sm tracking-wider'>
+                      The Pavit Way
+                    </span>
+                  </div>
+                  <div className='space-y-6'>
+                    <div className='bg-slate-800/50 rounded-lg p-4 border border-emerald-500/20'>
+                      <div className='flex items-center gap-3 mb-3'>
+                        <div className='w-8 h-8 bg-emerald-500/20 rounded flex items-center justify-center'>
+                          <Activity className='w-4 h-4 text-emerald-400' />
+                        </div>
+                        <span className='font-medium text-slate-300'>
+                          Live Data Streams
+                        </span>
+                        <span className='ml-auto text-emerald-400 text-xs'>
+                          ● LIVE
+                        </span>
+                      </div>
+                      <div className='h-16 flex items-end gap-1'>
+                        {[40, 65, 45, 80, 55, 70, 85, 60, 75, 90, 68, 82].map(
+                          (h, i) => (
+                            <div
+                              key={i}
+                              className='flex-1 bg-emerald-500/40 rounded-t'
+                              style={{ height: `${h}%` }}
+                            />
+                          )
+                        )}
+                      </div>
+                      <p className='text-emerald-400 text-sm mt-3'>
+                        ✓ Real-time, always current
+                      </p>
+                    </div>
+                    <div className='bg-slate-800/50 rounded-lg p-4 border border-emerald-500/20'>
+                      <p className='text-slate-400 text-sm'>
+                        🟢 Predictive Intelligence
+                      </p>
+                      <p className='text-emerald-400 text-lg font-semibold mt-2'>
+                        Anomaly detected: 72hrs warning
+                      </p>
+                      <p className='text-slate-500 text-sm'>
+                        Maintenance scheduled automatically
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Slider Control */}
+              <div
+                className='absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize z-10'
+                style={{ left: `${sliderPosition}%` }}
+              >
+                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center'>
+                  <span className='text-slate-900 font-bold text-sm'>⟷</span>
+                </div>
+              </div>
+
+              {/* Slider Input */}
+              <input
+                type='range'
+                min='10'
+                max='90'
+                value={sliderPosition}
+                onChange={(e) => setSliderPosition(Number(e.target.value))}
+                className='absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20'
+              />
+            </div>
+
+            <p className='text-center text-muted-foreground mt-4 text-sm'>
+              ← Drag to compare →
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 3: The Intelligence Engine (Bento Grid) */}
+      <section className='py-24 bg-slate-950'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='text-center mb-16'>
+            <span className='text-primary font-semibold text-sm uppercase tracking-wider'>
+              The Engine
+            </span>
+            <h2 className='text-4xl md:text-5xl font-bold font-serif mt-3 mb-4 text-white'>
+              Intelligence at Every Layer
+            </h2>
+            <p className='text-xl text-slate-400 max-w-2xl mx-auto'>
+              From data ingestion to automated action—built for enterprise
+              scale.
+            </p>
+          </div>
+
+          {/* Bento Grid */}
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[200px]'>
+            {bentoFeatures.map((feature) => {
+              const IconComponent = feature.icon;
+              const isLarge = feature.size === "large";
+              return (
+                <Card
+                  key={feature.id}
+                  className={`relative overflow-hidden bg-slate-900/50 border-slate-800 hover:border-primary/50 transition-all duration-300 group ${
+                    isLarge ? "lg:col-span-2 lg:row-span-2" : "lg:row-span-1"
+                  }`}
+                >
+                  <div className='absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity' />
+                  <div className='relative p-6 h-full flex flex-col'>
+                    <div
+                      className={`${
+                        isLarge ? "w-14 h-14" : "w-10 h-10"
+                      } rounded-xl bg-primary/10 flex items-center justify-center mb-4`}
+                    >
+                      <IconComponent
+                        className={`${
+                          isLarge ? "w-7 h-7" : "w-5 h-5"
+                        } text-primary`}
+                      />
+                    </div>
+                    <div className='flex-1'>
+                      <h3
+                        className={`${
+                          isLarge ? "text-2xl" : "text-lg"
+                        } font-bold text-white mb-1`}
+                      >
+                        {feature.title}
+                      </h3>
+                      <p className='text-primary text-sm font-medium mb-2'>
+                        {feature.subtitle}
+                      </p>
+                      <p
+                        className={`text-slate-400 ${
+                          isLarge ? "text-base" : "text-sm"
+                        }`}
+                      >
+                        {feature.description}
+                      </p>
+                    </div>
+                    {isLarge && (
+                      <div className='mt-4 flex gap-2'>
+                        <span className='px-3 py-1 bg-slate-800 rounded-full text-xs text-slate-300'>
+                          {feature.id === "ingest" ? "MQTT" : "AES-256"}
+                        </span>
+                        <span className='px-3 py-1 bg-slate-800 rounded-full text-xs text-slate-300'>
+                          {feature.id === "ingest" ? "HTTP" : "TLS 1.3"}
+                        </span>
+                        <span className='px-3 py-1 bg-slate-800 rounded-full text-xs text-slate-300'>
+                          {feature.id === "ingest" ? "CoAP" : "Zero Trust"}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Section 4: Industry Applications (Tabbed) */}
+      <section className='py-24 bg-background relative overflow-hidden'>
+        <div
+          className={`absolute inset-0 bg-linear-to-br ${activeTab.bgClass} to-transparent transition-all duration-500`}
+        />
+
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
+          <div className='text-center mb-12'>
+            <span className='text-primary font-semibold text-sm uppercase tracking-wider'>
+              Industries
+            </span>
+            <h2 className='text-4xl md:text-5xl font-bold font-serif mt-3 mb-4'>
+              Built for Your Industry
+            </h2>
+          </div>
+
+          {/* Tabs */}
+          <div className='flex flex-wrap justify-center gap-2 mb-12'>
+            {industryTabs.map((tab) => {
+              const TabIcon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveIndustry(tab.id)}
+                  className={`flex items-center gap-2 px-5 py-3 rounded-full font-medium transition-all ${
+                    activeIndustry === tab.id
+                      ? "bg-primary text-primary-foreground shadow-lg"
+                      : "bg-muted hover:bg-muted/80 text-muted-foreground"
+                  }`}
+                >
+                  <TabIcon className='w-4 h-4' />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Tab Content */}
+          <div className='grid lg:grid-cols-2 gap-12 items-center'>
+            <div className='space-y-6'>
+              <h3 className='text-3xl md:text-4xl font-bold font-serif'>
+                {activeTab.title}
+              </h3>
+              <p className='text-lg text-muted-foreground'>
+                {activeTab.description}
+              </p>
+              <div className='flex flex-wrap gap-3'>
+                {activeTab.stats.map((stat) => (
+                  <span
+                    key={stat}
+                    className='px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium'
+                  >
+                    {stat}
+                  </span>
+                ))}
+              </div>
+              <Button size='lg' asChild className='mt-4'>
+                <Link href='/features'>
+                  Explore {activeTab.label} Solutions →
+                </Link>
+              </Button>
+            </div>
+
+            {/* Industry Visual */}
+            <div className='relative h-[350px] rounded-2xl bg-slate-900/50 border border-border overflow-hidden'>
+              <div className='absolute inset-0 flex items-center justify-center'>
+                <activeTab.icon className='w-32 h-32 text-primary/20' />
+              </div>
+              <div className='absolute inset-0 p-6'>
+                <div className='grid grid-cols-2 gap-4 h-full'>
+                  <div className='bg-slate-800/50 rounded-xl p-4 flex flex-col'>
+                    <span className='text-xs text-slate-500 uppercase'>
+                      Live Sensors
+                    </span>
+                    <span className='text-2xl font-bold text-white mt-1'>
+                      2,847
+                    </span>
+                    <div className='flex-1 flex items-end'>
+                      <div className='w-full h-16 flex items-end gap-1'>
+                        {[60, 80, 45, 90, 70, 85].map((h, i) => (
+                          <div
+                            key={i}
+                            className='flex-1 bg-primary/40 rounded-t'
+                            style={{ height: `${h}%` }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className='bg-slate-800/50 rounded-xl p-4 flex flex-col'>
+                    <span className='text-xs text-slate-500 uppercase'>
+                      Health Score
+                    </span>
+                    <span className='text-2xl font-bold text-emerald-400 mt-1'>
+                      98.7%
+                    </span>
+                    <div className='flex-1 flex items-center justify-center'>
+                      <Gauge className='w-16 h-16 text-emerald-400/50' />
+                    </div>
+                  </div>
+                  <div className='col-span-2 bg-slate-800/50 rounded-xl p-4'>
+                    <span className='text-xs text-slate-500 uppercase'>
+                      Recent Alerts
+                    </span>
+                    <div className='mt-2 space-y-2'>
+                      <div className='flex items-center gap-2 text-sm'>
+                        <div className='w-2 h-2 rounded-full bg-emerald-400' />
+                        <span className='text-slate-300'>
+                          All systems operational
+                        </span>
+                        <span className='text-slate-500 ml-auto'>2m ago</span>
+                      </div>
+                      <div className='flex items-center gap-2 text-sm'>
+                        <div className='w-2 h-2 rounded-full bg-amber-400' />
+                        <span className='text-slate-300'>
+                          Scheduled maintenance: Unit 7
+                        </span>
+                        <span className='text-slate-500 ml-auto'>1h ago</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 5: Live Dashboard Preview */}
+      <section className='py-24 bg-slate-950 overflow-hidden'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='text-center mb-16'>
+            <span className='text-primary font-semibold text-sm uppercase tracking-wider'>
+              The Experience
+            </span>
+            <h2 className='text-4xl md:text-5xl font-bold font-serif mt-3 mb-4 text-white'>
+              See It In Action
+            </h2>
+            <p className='text-xl text-slate-400 max-w-2xl mx-auto'>
+              A dashboard built for clarity, speed, and actionable insights.
+            </p>
+          </div>
+
+          {/* 3D Floating Dashboard */}
+          <div className='relative'>
+            {/* Main Dashboard (slanted) */}
+            <div
+              className='relative mx-auto max-w-5xl'
+              style={{ perspective: "1500px" }}
+            >
+              <div
+                className='relative rounded-2xl overflow-hidden shadow-2xl border border-slate-700'
+                style={{ transform: "rotateX(10deg) rotateY(-5deg)" }}
+              >
+                <div className='bg-slate-900 p-1'>
+                  {/* Browser Chrome */}
+                  <div className='flex items-center gap-2 px-3 py-2 bg-slate-800 rounded-t-lg'>
+                    <div className='flex gap-1.5'>
+                      <div className='w-3 h-3 rounded-full bg-red-500' />
+                      <div className='w-3 h-3 rounded-full bg-amber-500' />
+                      <div className='w-3 h-3 rounded-full bg-emerald-500' />
+                    </div>
+                    <div className='flex-1 mx-4'>
+                      <div className='bg-slate-700 rounded px-3 py-1 text-xs text-slate-400 max-w-md mx-auto'>
+                        dashboard.pavitinfotech.com
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Dashboard Content */}
+                  <div className='bg-slate-950 p-6'>
+                    <div className='grid grid-cols-12 gap-4'>
+                      {/* Sidebar */}
+                      <div className='col-span-2 space-y-3'>
+                        <div className='h-8 bg-primary/20 rounded' />
+                        <div className='h-6 bg-slate-800 rounded' />
+                        <div className='h-6 bg-slate-800 rounded' />
+                        <div className='h-6 bg-slate-800 rounded' />
+                        <div className='h-6 bg-primary/10 rounded' />
+                      </div>
+
+                      {/* Main Content */}
+                      <div className='col-span-10 space-y-4'>
+                        {/* Stats Row */}
+                        <div className='grid grid-cols-4 gap-3'>
+                          <div className='bg-slate-800/50 rounded-lg p-3 border border-slate-700'>
+                            <p className='text-xs text-slate-500'>
+                              Live Tickers
+                            </p>
+                            <p className='text-lg font-bold text-emerald-400'>
+                              12,847
+                            </p>
+                            <div className='h-8 mt-2 flex items-end gap-0.5'>
+                              {[30, 50, 40, 60, 45, 70, 55].map((h, i) => (
+                                <div
+                                  key={i}
+                                  className='flex-1 bg-emerald-500/30 rounded-t'
+                                  style={{ height: `${h}%` }}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <div className='bg-slate-800/50 rounded-lg p-3 border border-slate-700'>
+                            <p className='text-xs text-slate-500'>
+                              Health Scores
+                            </p>
+                            <p className='text-lg font-bold text-primary'>
+                              98.2%
+                            </p>
+                            <div className='mt-2 h-2 bg-slate-700 rounded-full overflow-hidden'>
+                              <div className='h-full w-[98%] bg-primary rounded-full' />
+                            </div>
+                          </div>
+                          <div className='bg-slate-800/50 rounded-lg p-3 border border-slate-700'>
+                            <p className='text-xs text-slate-500'>Anomalies</p>
+                            <p className='text-lg font-bold text-amber-400'>
+                              3
+                            </p>
+                            <p className='text-xs text-slate-500 mt-2'>
+                              ↓ 67% from last week
+                            </p>
+                          </div>
+                          <div className='bg-slate-800/50 rounded-lg p-3 border border-slate-700'>
+                            <p className='text-xs text-slate-500'>
+                              Active Devices
+                            </p>
+                            <p className='text-lg font-bold text-white'>
+                              8,291
+                            </p>
+                            <p className='text-xs text-emerald-400 mt-2'>
+                              ● All operational
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Charts Row */}
+                        <div className='grid grid-cols-3 gap-3'>
+                          <div className='col-span-2 bg-slate-800/50 rounded-lg p-4 border border-slate-700'>
+                            <p className='text-xs text-slate-500 mb-3'>
+                              Real-time Data Flow
+                            </p>
+                            <div className='h-32 flex items-end gap-1'>
+                              {[
+                                45, 60, 55, 70, 65, 80, 75, 85, 70, 90, 85, 88,
+                                82, 95, 90,
+                              ].map((h, i) => (
+                                <div
+                                  key={i}
+                                  className='flex-1 bg-linear-to-t from-primary/50 to-primary rounded-t'
+                                  style={{ height: `${h}%` }}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <div className='bg-slate-800/50 rounded-lg p-4 border border-slate-700'>
+                            <p className='text-xs text-slate-500 mb-3'>
+                              Digital Twin
+                            </p>
+                            <div className='h-32 flex items-center justify-center'>
+                              <Box className='w-16 h-16 text-primary/50' />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Floating Feature Callouts */}
+            <div className='absolute top-10 -left-4 md:left-10 bg-slate-800 rounded-lg p-3 shadow-xl border border-primary/30 animate-pulse'>
+              <div className='flex items-center gap-2'>
+                <Activity className='w-4 h-4 text-primary' />
+                <span className='text-sm text-white font-medium'>
+                  Live Tickers
+                </span>
+              </div>
+            </div>
+            <div className='absolute top-1/3 -right-4 md:right-10 bg-slate-800 rounded-lg p-3 shadow-xl border border-emerald-500/30'>
+              <div className='flex items-center gap-2'>
+                <Gauge className='w-4 h-4 text-emerald-400' />
+                <span className='text-sm text-white font-medium'>
+                  Health Scores
+                </span>
+              </div>
+            </div>
+            <div className='absolute bottom-10 left-1/4 bg-slate-800 rounded-lg p-3 shadow-xl border border-blue-500/30'>
+              <div className='flex items-center gap-2'>
+                <Box className='w-4 h-4 text-blue-400' />
+                <span className='text-sm text-white font-medium'>
+                  Digital Twin
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 6: Trust Strip */}
+      <section className='py-16 bg-muted/30 border-y border-border'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <p className='text-center text-sm font-medium text-muted-foreground uppercase tracking-wider mb-8'>
+            Interoperable with the world&#39;s leading hardware
+          </p>
+          <div className='flex flex-wrap justify-center items-center gap-8 md:gap-16'>
+            {partners.map((partner) => (
+              <div
+                key={partner.name}
+                className='text-2xl md:text-3xl font-bold text-muted-foreground/50 hover:text-muted-foreground transition-colors'
+              >
+                {partner.logo}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className='py-24 bg-linear-to-br from-slate-900 via-slate-950 to-slate-900'>
+        <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center'>
+          <h2 className='text-4xl md:text-5xl font-bold font-serif text-white mb-6'>
+            Ready to Transform Your IoT Operations?
+          </h2>
+          <p className='text-xl text-slate-400 mb-8 max-w-2xl mx-auto'>
+            Join hundreds of enterprises trusting PavitInfoTech for intelligent
+            device management.
+          </p>
+          <div className='flex flex-wrap gap-4 justify-center'>
+            <Button size='lg' asChild>
+              <Link href='/auth/signup'>Start Free Trial</Link>
+            </Button>
+            <Button size='lg' variant='outline' asChild>
+              <Link href='/contact'>Talk to Sales</Link>
             </Button>
           </div>
-        </Card>
+        </div>
       </section>
     </MainLayout>
-  )
+  );
 }
