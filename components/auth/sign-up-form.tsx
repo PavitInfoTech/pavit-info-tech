@@ -96,7 +96,7 @@ export function SignUpForm() {
 
       {error && (
         <div className='p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex gap-3'>
-          <AlertCircle className='w-5 h-5 text-red-500 flex-shrink-0 mt-0.5' />
+          <AlertCircle className='w-5 h-5 text-red-500 shrink-0 mt-0.5' />
           <p className='text-sm text-red-600'>{error}</p>
         </div>
       )}

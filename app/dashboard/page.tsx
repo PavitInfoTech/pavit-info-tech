@@ -130,7 +130,7 @@ export default function DashboardPage() {
                 key={i}
                 className='flex gap-4 pb-4 border-b border-border last:border-0 last:pb-0'
               >
-                <div className='w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0' />
+                <div className='w-2 h-2 rounded-full bg-primary mt-2 shrink-0' />
                 <div className='flex-1 min-w-0'>
                   <p className='text-sm'>{activity.message}</p>
                   <p className='text-xs text-muted-foreground mt-1'>
