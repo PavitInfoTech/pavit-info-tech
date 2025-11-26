@@ -45,14 +45,6 @@ export function Navbar() {
 
           {/* Right Actions (CTAs) */}
           <div className='hidden md:flex items-center space-x-4'>
-            <Button
-              variant='outline'
-              size='sm'
-              className='whitespace-nowrap'
-              asChild
-            >
-              <Link href='/contact'>Post A Job For Free</Link>
-            </Button>
             <Button size='sm' className='whitespace-nowrap' asChild>
               <Link href='/auth/signup'>Get Started</Link>
             </Button>
