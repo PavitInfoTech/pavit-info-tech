@@ -101,8 +101,7 @@ export default function ContactPage() {
                 </Button>
 
                 <p className='text-sm text-muted-foreground'>
-                  We&#39;ll get back to you within 2 hours during business
-                  hours.
+                  We’ll get back to you within 2 hours during business hours.
                 </p>
               </form>
             </Card>

@@ -54,7 +54,7 @@ export default function DashboardPage() {
             Welcome back, John!
           </h1>
           <p className='text-muted-foreground'>
-            Here&#39;s what&#39;s happening with your IoT infrastructure
+            Here's what's happening with your IoT infrastructure
           </p>
         </div>
 

@@ -426,7 +426,7 @@ export default function FeaturesPage() {
               Edge-First Architecture
             </h2>
             <p className='text-xl text-muted-foreground max-w-3xl mx-auto'>
-              Process data where it&#39;s generated. Our edge computing layer
+              Process data where it's generated. Our edge computing layer
               filters, aggregates, and buffers data before it ever hits the
               network.
             </p>
@@ -580,8 +580,8 @@ export default function FeaturesPage() {
                   </div>
                 </div>
                 <p className='text-xs text-slate-400 mt-2'>
-                  Adjust the model&#39;s predicted severity/lead-time to see how
-                  the predicted failure point shifts and the estimated savings.
+                  Adjust the model's predicted severity/lead-time to see how the
+                  predicted failure point shifts and the estimated savings.
                 </p>
               </div>
             </div>
@@ -1285,8 +1285,8 @@ export default function FeaturesPage() {
             Ready to See It in Action?
           </h2>
           <p className='text-xl text-muted-foreground mb-8 max-w-2xl mx-auto'>
-            Schedule a technical deep-dive with our engineering team. We&#39;ll
-            walk through your architecture requirements.
+            Schedule a technical deep-dive with our engineering team. We'll walk
+            through your architecture requirements.
           </p>
           <div className='flex flex-wrap gap-4 justify-center'>
             <Button size='lg'>Request Technical Demo</Button>

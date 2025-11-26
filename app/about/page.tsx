@@ -342,8 +342,8 @@ export default function AboutPage() {
               AI for Good
             </h2>
             <p className='text-xl text-slate-400 max-w-3xl mx-auto'>
-              We believe intelligent IoT isn&#39;t just about efficiency —
-              it&#39;s about building a sustainable future for our planet.
+              We believe intelligent IoT isn’t just about efficiency — it’s
+              about building a sustainable future for our planet.
             </p>
           </div>
 

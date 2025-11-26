@@ -16,11 +16,10 @@ export default function PrivacyPage() {
           <section>
             <h2 className='text-2xl font-semibold mb-4'>1. Introduction</h2>
             <p>
-              PavitInfoTech (&quot;Company&quot;, &quot;we&quot;,
-              &quot;our&quot;, or &quot;us&quot;) operates the PavitInfoTech.com
-              website and IoT platform (the &quot;Service&quot;). This page
-              informs you of our policies regarding the collection, use, and
-              disclosure of personal data when you use our Service and the
+              PavitInfoTech ("Company", "we", "our", or "us") operates the
+              PavitInfoTech.com website and IoT platform (the "Service"). This
+              page informs you of our policies regarding the collection, use,
+              and disclosure of personal data when you use our Service and the
               choices you have associated with that data.
             </p>
           </section>
@@ -42,7 +41,7 @@ export default function PrivacyPage() {
                 <strong>Personal Data:</strong> While using our Service, we may
                 ask you to provide us with certain personally identifiable
                 information that can be used to contact or identify you
-                (&quot;Personal Data&quot;), including but not limited to:
+                ("Personal Data"), including but not limited to:
                 <ul className='list-circle pl-6 mt-2 space-y-1'>
                   <li>Email address</li>
                   <li>First name and last name</li>
@@ -53,11 +52,11 @@ export default function PrivacyPage() {
               </li>
               <li>
                 <strong>Usage Data:</strong> We may also collect information on
-                how the Service is accessed and used (&quot;Usage Data&quot;).
-                This may include information such as your computer&#39;s
-                Internet Protocol address (e.g. IP address), browser type,
-                browser version, the pages you visit, the time and date of your
-                visit, and other diagnostic data.
+                how the Service is accessed and used ("Usage Data"). This may
+                include information such as your computer's Internet Protocol
+                address (e.g. IP address), browser type, browser version, the
+                pages you visit, the time and date of your visit, and other
+                diagnostic data.
               </li>
               <li>
                 <strong>Device Data:</strong> Data collected from IoT devices
@@ -107,8 +106,8 @@ export default function PrivacyPage() {
             <p>
               We may update our Privacy Policy from time to time. We will notify
               you of any changes by posting the new Privacy Policy on this page
-              and updating the &quot;Last updated&quot; date at the top of this
-              Privacy Policy.
+              and updating the "Last updated" date at the top of this Privacy
+              Policy.
             </p>
           </section>
 
