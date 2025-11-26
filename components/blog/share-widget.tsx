@@ -95,7 +95,7 @@ export default function ShareWidget({
       <button
         onClick={onX}
         title='Share on X'
-        className='flex-1 h-10 rounded-lg bg-background hover:bg-primary/10 border border-border hover:border-primary/30 flex items-center justify-center transition-colors'
+        className='flex-1 h-10 rounded-lg bg-background hover:bg-primary/10 border border-border hover:border-primary/30 flex items-center justify-center transition-colors cursor-pointer'
         aria-label='Share on X'
       >
         <SiX className='w-4 h-4' />
@@ -104,7 +104,7 @@ export default function ShareWidget({
       <button
         onClick={onLinkedIn}
         title='Share on LinkedIn'
-        className='flex-1 h-10 rounded-lg bg-background hover:bg-primary/10 border border-border hover:border-primary/30 flex items-center justify-center transition-colors'
+        className='flex-1 h-10 rounded-lg bg-background hover:bg-primary/10 border border-border hover:border-primary/30 flex items-center justify-center transition-colors cursor-pointer'
         aria-label='Share on LinkedIn'
       >
         <FiLinkedin className='w-4 h-4' />
@@ -113,7 +113,7 @@ export default function ShareWidget({
       <button
         onClick={onCopy}
         title='Copy link'
-        className='flex-1 h-10 rounded-lg bg-background hover:bg-primary/10 border border-border hover:border-primary/30 flex items-center justify-center transition-colors'
+        className='flex-1 h-10 rounded-lg bg-background hover:bg-primary/10 border border-border hover:border-primary/30 flex items-center justify-center transition-colors cursor-pointer'
         aria-label='Copy link to clipboard'
       >
         {copied ? (
@@ -126,7 +126,7 @@ export default function ShareWidget({
       <button
         onClick={onToggleBookmark}
         title={bookmarked ? "Remove bookmark" : "Save for later"}
-        className={`flex-1 h-10 rounded-lg ${
+        className={`flex-1 h-10 rounded-lg cursor-pointer ${
           bookmarked
             ? "bg-primary/10 border-primary text-primary"
             : "bg-background border-border"

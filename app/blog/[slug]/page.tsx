@@ -73,7 +73,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           />
         </div>
 
-        <div className='relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 mt-16 w-full'>
+        <div className='relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 mt-16 w-full'>
           {/* Breadcrumb */}
           <nav className='flex items-center gap-2 text-sm text-muted-foreground mb-8'>
             <Link href='/blog' className='hover:text-primary transition-colors'>
@@ -132,8 +132,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       </section>
 
       {/* Article Content */}
-      <article className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16'>
-        <div className='grid grid-cols-1 lg:grid-cols-[1fr_200px] gap-12'>
+      <article className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16'>
+        <div className='grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12'>
           {/* Main Content */}
           <div className='prose prose-lg prose-invert max-w-none'>
             {contentSections.map((section, index) => {
@@ -355,7 +355,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       {/* Newsletter CTA */}
       <section className='py-20 px-4'>
-        <div className='max-w-4xl mx-auto'>
+        <div className='max-w-6xl mx-auto'>
           <Card className='relative overflow-hidden p-8 md:p-12 border-primary/20'>
             {/* Background gradient */}
             <div className='absolute inset-0 bg-linear-to-br from-primary/10 via-transparent to-cyan-500/10' />
@@ -381,13 +381,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               </p>
               <div className='flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto'>
                 <Link href='/blog' className='flex-1'>
-                  <Button variant='outline' className='w-full gap-2'>
+                  <Button
+                    variant='outline'
+                    className='w-full gap-2 cursor-pointer'
+                  >
                     <ArrowLeft className='w-4 h-4' />
                     Back to Blog
                   </Button>
                 </Link>
                 <Link href='/pricing' className='flex-1'>
-                  <Button className='w-full gap-2'>
+                  <Button className='w-full gap-2 cursor-pointer'>
                     See the pricing plans
                     <ArrowRight className='w-4 h-4' />
                   </Button>
