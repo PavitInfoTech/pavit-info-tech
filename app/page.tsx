@@ -352,8 +352,8 @@ export default function Home() {
               {/* Slider Input */}
               <input
                 type='range'
-                min='10'
-                max='90'
+                min='1'
+                max='99'
                 value={sliderPosition}
                 onChange={(e) => setSliderPosition(Number(e.target.value))}
                 className='absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20'
