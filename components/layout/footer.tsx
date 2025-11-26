@@ -78,10 +78,12 @@ export function Footer() {
           </p>
           <div className='flex items-center space-x-6'>
             <Link
-              href='#'
+              href='https://x.com'
+              target='_blank'
+              rel='noopener noreferrer'
               className='text-sm text-muted-foreground hover:text-foreground'
             >
-              Twitter
+              X
             </Link>
             <Link
               href='#'
