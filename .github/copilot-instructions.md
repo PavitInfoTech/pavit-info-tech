@@ -56,7 +56,7 @@ export default function ExamplePage() {
 
 ## Lint Rules to Follow
 
-- **Escape JSX text entities**: Use `&#39;` for `'` and `&quot;` for `"` inside JSX text (react/no-unescaped-entities).
+- **JSX quoting**: Prefer using literal quote characters like `'` and `"` in JSX text, or use JavaScript expressions when you need to programmatically include quotes (for example: {"\"quoted\""} or {`it's`} ). Avoid relying on HTML entities in JSX guidance (choose clear, readable text first).
 - **Unused vars**: Remove or prefix with `_` (e.g., `_unused`).
 - **Catch blocks**: Use bare `catch { }` if you don't need the error object.
 

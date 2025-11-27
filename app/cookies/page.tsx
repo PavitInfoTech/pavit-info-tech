@@ -20,8 +20,8 @@ export default function CookiesPage() {
             <p>
               Cookies are small files of letters and numbers that we store on
               your browser or the hard drive of your computer if you agree.
-              Cookies contain information that is transferred to your
-              computer&#39;s hard drive.
+              Cookies contain information that is transferred to your computer's
+              hard drive.
             </p>
           </section>
 
@@ -32,12 +32,11 @@ export default function CookiesPage() {
             <p>
               We use cookies for a number of different purposes. Some cookies
               are necessary for technical reasons for our website and services
-              to operate, and we refer to these as &quot;essential&quot; or
-              &quot;strictly necessary&quot; cookies. Other cookies also enable
-              us to track and target the interests of our users to enhance the
-              experience on our online properties. Third parties also serve
-              cookies through our website for advertising, analytics, and other
-              purposes.
+              to operate, and we refer to these as "essential" or "strictly
+              necessary" cookies. Other cookies also enable us to track and
+              target the interests of our users to enhance the experience on our
+              online properties. Third parties also serve cookies through our
+              website for advertising, analytics, and other purposes.
             </p>
 
             <h3 className='text-xl font-semibold mt-6 mb-3'>
@@ -127,10 +126,10 @@ export default function CookiesPage() {
           <section>
             <h2 className='text-2xl font-semibold mb-4'>5. Your Consent</h2>
             <p>
-              By using PavitInfoTech&#39;s website and platform, you consent to
-              our use of cookies as described in this policy. You can withdraw
-              your consent at any time by changing your cookie preferences in
-              your browser settings.
+              By using PavitInfoTech's website and platform, you consent to our
+              use of cookies as described in this policy. You can withdraw your
+              consent at any time by changing your cookie preferences in your
+              browser settings.
             </p>
           </section>
 

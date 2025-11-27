@@ -6,21 +6,20 @@ import { Chatbot } from "@/components/chatbot/chatbot";
 import { CookieConsent } from "@/components/consent/cookie-consent";
 import "./globals.css";
 
-import {
-  Manrope,
-  Space_Grotesk,
-  Manrope as V0_Font_Manrope,
-  Space_Grotesk as V0_Font_Space_Grotesk,
-} from "next/font/google";
+import { Manrope, Space_Grotesk } from "next/font/google";
+import { GeistMono } from "geist/font/mono";
 
 // Initialize fonts
-const _manrope = V0_Font_Manrope({
+const manrope = Manrope({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700", "800"],
+  variable: "--font-manrope",
 });
-const _spaceGrotesk = V0_Font_Space_Grotesk({
+
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
 });
 
 export const metadata: Metadata = {
@@ -54,7 +53,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className={`font-sans antialiased bg-background text-foreground`}>
+      <body
+        className={`${manrope.variable} ${spaceGrotesk.variable} ${GeistMono.variable} font-sans antialiased bg-background text-foreground`}
+      >
         {children}
         <Chatbot />
         <CookieConsent />

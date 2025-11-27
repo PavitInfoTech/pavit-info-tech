@@ -97,11 +97,11 @@ export default function ForgotPasswordPage() {
                   Check Your Email
                 </h2>
                 <p className='text-muted-foreground'>
-                  We&#39;ve sent a password reset link to {email}. Click the
-                  link in the email to reset your password.
+                  We’ve sent a password reset link to {email}. Click the link in
+                  the email to reset your password.
                 </p>
                 <p className='text-sm text-muted-foreground'>
-                  Didn&#39;t receive the email? Check your spam folder or{" "}
+                  Didn’t receive the email? Check your spam folder or{" "}
                   <button
                     onClick={() => setSubmitted(false)}
                     className='text-primary hover:underline'

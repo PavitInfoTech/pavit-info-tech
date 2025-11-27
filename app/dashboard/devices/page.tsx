@@ -1,94 +1,165 @@
-import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
-import { DeviceCard } from "@/components/dashboard/device-card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Plus, Search } from "lucide-react"
+"use client";
 
-const allDevices = [
-  {
-    id: "1",
-    name: "Sensor Unit Alpha",
-    type: "Temperature Sensor",
-    status: "active" as const,
-    lastSeen: "2 minutes ago",
-    metrics: { temperature: 24.5, humidity: 65 },
-  },
-  {
-    id: "2",
-    name: "Sensor Unit Beta",
-    type: "Humidity Sensor",
-    status: "active" as const,
-    lastSeen: "5 minutes ago",
-    metrics: { humidity: 72, signal: 95 },
-  },
-  {
-    id: "3",
-    name: "Sensor Unit Gamma",
-    type: "Pressure Sensor",
-    status: "warning" as const,
-    lastSeen: "15 minutes ago",
-    metrics: { temperature: 22.1, signal: 60 },
-  },
-  {
-    id: "4",
-    name: "Sensor Unit Delta",
-    type: "Motion Sensor",
-    status: "active" as const,
-    lastSeen: "1 minute ago",
-    metrics: { signal: 98 },
-  },
-  {
-    id: "5",
-    name: "Sensor Unit Epsilon",
-    type: "Light Sensor",
-    status: "inactive" as const,
-    lastSeen: "2 hours ago",
-    metrics: { signal: 0 },
-  },
-  {
-    id: "6",
-    name: "Sensor Unit Zeta",
-    type: "Door Sensor",
-    status: "active" as const,
-    lastSeen: "3 minutes ago",
-    metrics: { signal: 92 },
-  },
-]
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
+import { Button } from "@/components/ui/button";
+import { Plus, List, Grid } from "lucide-react";
+import DeviceSearch from "@/components/dashboard/device-search";
+import DeviceList from "@/components/dashboard/device-list";
+import DeviceGrid from "@/components/dashboard/device-grid";
 
-export const metadata = {
-  title: "Devices | PavitInfoTech Dashboard",
-  description: "Manage your IoT devices",
-}
+const allDevices = Array.from({ length: 36 }).map((_, i) => {
+  const id = (i + 1).toString();
+  const typePool = [
+    "Temperature Sensor",
+    "Humidity Sensor",
+    "Pressure Sensor",
+    "Motion Sensor",
+    "Light Sensor",
+    "Door Sensor",
+  ];
+  const statusPool: Array<"online" | "offline" | "warn"> = [
+    "online",
+    "online",
+    "warn",
+    "offline",
+  ];
+  return {
+    id,
+    name: `Device-${id.padStart(3, "0")}`,
+    type: typePool[i % typePool.length],
+    status: statusPool[i % statusPool.length] as "online" | "offline" | "warn",
+    lastSeen: `${(i % 60) + 1} min ago`,
+    ip: `10.0.1.${(i % 254) + 1}`,
+    signal: Math.floor(Math.random() * 5),
+    battery: Math.floor(Math.random() * 101),
+  };
+});
 
 export default function DevicesPage() {
+  const [query, setQuery] = useState("");
+  const [filters, setFilters] = useState<string[]>([]);
+  const [view, setView] = useState<"grid" | "list">("grid");
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return allDevices.filter((d) => {
+      if (q && !`${d.id} ${d.name} ${d.ip} ${d.type}`.toLowerCase().includes(q))
+        return false;
+      // naive chip matching like 'Status: Online' or 'Type: Sensor'
+      for (const f of filters) {
+        const lower = f.toLowerCase();
+        if (
+          lower.startsWith("status:") &&
+          !d.status.includes(lower.split(":")[1].trim().split(" ")[0])
+        )
+          return false;
+        if (
+          lower.startsWith("type:") &&
+          !d.type
+            .toLowerCase()
+            .includes(lower.split(":")[1].trim().split(" ")[0])
+        )
+          return false;
+        if (lower.startsWith("location:")) {
+          // placeholder: match by odd/even
+          if (
+            (d.id as unknown as number) % 2 === 0 &&
+            !lower.includes("zone a")
+          )
+            return false;
+        }
+      }
+      return true;
+    });
+  }, [query, filters]);
+
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold font-serif mb-2">Devices</h1>
-            <p className="text-muted-foreground">Manage and monitor all your connected devices</p>
+      <div className='p-6 lg:p-8'>
+        <div className='space-y-8 pb-8'>
+          {/* Header */}
+          <div className='flex flex-col gap-6 md:flex-row md:items-center md:justify-between pt-2'>
+            <div>
+              <h1 className='text-3xl md:text-4xl font-bold font-serif mb-3 tracking-tight'>
+                Device Inventory
+              </h1>
+              <p className='text-muted-foreground text-base'>
+                Filter, search and manage thousands of assets — high density
+                mode
+              </p>
+            </div>
+
+            <div className='flex items-center gap-4'>
+              <div className='flex items-center rounded-full bg-white/5 border border-white/10 p-1.5'>
+                <button
+                  onClick={() => setView("list")}
+                  className={`p-2.5 rounded-full transition-colors ${
+                    view === "list"
+                      ? "bg-white/10 text-white"
+                      : "bg-transparent text-white/60 hover:text-white/80"
+                  }`}
+                  title='List view'
+                >
+                  <List className='w-4 h-4' />
+                </button>
+                <button
+                  onClick={() => setView("grid")}
+                  className={`p-2.5 rounded-full transition-colors ${
+                    view === "grid"
+                      ? "bg-white/10 text-white"
+                      : "bg-transparent text-white/60 hover:text-white/80"
+                  }`}
+                  title='Grid view'
+                >
+                  <Grid className='w-4 h-4' />
+                </button>
+              </div>
+
+              <Link href='/dashboard/devices/add'>
+                <Button className='gap-2 px-5 py-2.5'>
+                  <Plus className='w-4 h-4' />
+                  Add Device
+                </Button>
+              </Link>
+            </div>
           </div>
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            Add Device
-          </Button>
-        </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <Input placeholder="Search devices..." className="pl-10" />
-        </div>
+          {/* Search + filters */}
+          <DeviceSearch
+            initialFilters={filters}
+            onChange={(q, f) => {
+              setQuery(q);
+              setFilters(f);
+            }}
+          />
 
-        {/* Devices Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {allDevices.map((device) => (
-            <DeviceCard key={device.id} {...device} />
-          ))}
+          {/* Device list/grid area */}
+          <div className='space-y-4'>
+            <div className='flex items-center justify-between px-1 text-sm text-white/60 font-medium'>
+              <div className='flex items-center gap-2'>
+                <span className='text-white font-semibold'>
+                  {filtered.length.toLocaleString()}
+                </span>
+                <span>devices found</span>
+              </div>
+              <div className='hidden md:flex items-center gap-2 text-white/40'>
+                <span>View:</span>
+                <span className='text-white/60 uppercase tracking-wider text-xs'>
+                  {view}
+                </span>
+              </div>
+            </div>
+
+            {view === "grid" ? (
+              <DeviceGrid devices={filtered} />
+            ) : (
+              <DeviceList devices={filtered} />
+            )}
+          </div>
         </div>
       </div>
     </DashboardLayout>
-  )
+  );
 }

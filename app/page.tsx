@@ -17,6 +17,10 @@ import {
   Activity,
   Gauge,
   Box,
+  Quote,
+  Star,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 const stats = [
@@ -111,14 +115,51 @@ const partners = [
   { name: "Siemens", logo: "SIEMENS" },
   { name: "Bosch", logo: "BOSCH" },
   { name: "Honeywell", logo: "HONEYWELL" },
-  { name: "AWS", logo: "AWS" },
-  { name: "Azure", logo: "AZURE" },
-  { name: "Google Cloud", logo: "GCP" },
+];
+
+const testimonials = [
+  {
+    quote:
+      "PavitInfoTech reduced our unplanned downtime by 73%. The predictive maintenance alerts have saved us millions in emergency repairs.",
+    author: "Marcus Chen",
+    role: "VP of Operations",
+    company: "Global Manufacturing Corp",
+    industry: "Manufacturing",
+    rating: 5,
+  },
+  {
+    quote:
+      "The real-time analytics dashboard transformed how we monitor our energy grid. We're now achieving 99.9% uptime across 12,000 nodes.",
+    author: "Dr. Sarah Mitchell",
+    role: "Chief Technology Officer",
+    company: "EnergyFlow Systems",
+    industry: "Smart Energy",
+    rating: 5,
+  },
+  {
+    quote:
+      "Cold chain compliance used to be our biggest headache. Now we have full visibility and haven't had a single compliance violation in 18 months.",
+    author: "James Rodriguez",
+    role: "Director of Logistics",
+    company: "FreshTrack Logistics",
+    industry: "Logistics",
+    rating: 5,
+  },
+  {
+    quote:
+      "HIPAA compliance and medical device monitoring in one platform? Game changer. Our IT team finally sleeps at night.",
+    author: "Dr. Emily Watson",
+    role: "Chief Medical Information Officer",
+    company: "Regional Health Network",
+    industry: "Healthcare",
+    rating: 5,
+  },
 ];
 
 export default function Home() {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [activeIndustry, setActiveIndustry] = useState("manufacturing");
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   const activeTab =
     industryTabs.find((tab) => tab.id === activeIndustry) || industryTabs[0];
@@ -311,8 +352,8 @@ export default function Home() {
               {/* Slider Input */}
               <input
                 type='range'
-                min='10'
-                max='90'
+                min='1'
+                max='99'
                 value={sliderPosition}
                 onChange={(e) => setSliderPosition(Number(e.target.value))}
                 className='absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20'
@@ -710,7 +751,7 @@ export default function Home() {
       <section className='py-16 bg-muted/30 border-y border-border'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <p className='text-center text-sm font-medium text-muted-foreground uppercase tracking-wider mb-8'>
-            Interoperable with the world&#39;s leading hardware
+            Interoperable with the world's leading hardware
           </p>
           <div className='flex flex-wrap justify-center items-center gap-8 md:gap-16'>
             {partners.map((partner) => (
@@ -719,6 +760,144 @@ export default function Home() {
                 className='text-2xl md:text-3xl font-bold text-muted-foreground/50 hover:text-muted-foreground transition-colors'
               >
                 {partner.logo}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section 7: Testimonials */}
+      <section className='py-24 bg-linear-to-b from-background via-slate-950/50 to-background overflow-hidden'>
+        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+          <div className='text-center mb-16'>
+            <span className='text-primary font-semibold text-sm uppercase tracking-wider'>
+              Customer Stories
+            </span>
+            <h2 className='text-4xl md:text-5xl font-bold font-serif mt-3 mb-4'>
+              Trusted by Industry Leaders
+            </h2>
+            <p className='text-xl text-muted-foreground max-w-2xl mx-auto'>
+              See how enterprises across industries are transforming their IoT
+              operations.
+            </p>
+          </div>
+
+          {/* Testimonial Carousel */}
+          <div className='relative'>
+            {/* Navigation Buttons */}
+            <button
+              onClick={() =>
+                setActiveTestimonial((prev) =>
+                  prev === 0 ? testimonials.length - 1 : prev - 1
+                )
+              }
+              className='absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center hover:bg-slate-700 hover:border-primary/50 transition-colors hidden md:flex'
+              aria-label='Previous testimonial'
+            >
+              <ChevronLeft className='w-6 h-6 text-white' />
+            </button>
+            <button
+              onClick={() =>
+                setActiveTestimonial((prev) =>
+                  prev === testimonials.length - 1 ? 0 : prev + 1
+                )
+              }
+              className='absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center hover:bg-slate-700 hover:border-primary/50 transition-colors hidden md:flex'
+              aria-label='Next testimonial'
+            >
+              <ChevronRight className='w-6 h-6 text-white' />
+            </button>
+
+            {/* Carousel Container */}
+            <div className='overflow-hidden mx-0 md:mx-16'>
+              <div
+                className='flex transition-transform duration-500 ease-out'
+                style={{
+                  transform: `translateX(-${activeTestimonial * 100}%)`,
+                }}
+              >
+                {testimonials.map((testimonial, index) => (
+                  <div key={index} className='w-full flex-shrink-0 px-4'>
+                    <Card className='p-8 md:p-12 bg-slate-900/50 border-slate-800 relative'>
+                      {/* Quote Icon */}
+                      <Quote className='absolute top-6 right-6 w-12 h-12 text-primary/10' />
+
+                      {/* Stars */}
+                      <div className='flex gap-1 mb-6'>
+                        {[...Array(testimonial.rating)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className='w-5 h-5 text-amber-400 fill-amber-400'
+                          />
+                        ))}
+                      </div>
+
+                      {/* Quote */}
+                      <blockquote className='text-xl md:text-2xl text-white font-medium leading-relaxed mb-8'>
+                        &ldquo;{testimonial.quote}&rdquo;
+                      </blockquote>
+
+                      {/* Author */}
+                      <div className='flex items-center gap-4'>
+                        {/* Avatar placeholder */}
+                        <div className='w-14 h-14 rounded-full bg-linear-to-br from-primary/30 to-slate-700 flex items-center justify-center'>
+                          <span className='text-lg font-bold text-primary'>
+                            {testimonial.author
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </span>
+                        </div>
+                        <div>
+                          <p className='font-semibold text-white'>
+                            {testimonial.author}
+                          </p>
+                          <p className='text-sm text-muted-foreground'>
+                            {testimonial.role}, {testimonial.company}
+                          </p>
+                        </div>
+                        <div className='ml-auto hidden sm:block'>
+                          <span className='px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full'>
+                            {testimonial.industry}
+                          </span>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Dots Indicator */}
+            <div className='flex justify-center gap-2 mt-8'>
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveTestimonial(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === activeTestimonial
+                      ? "bg-primary w-8"
+                      : "bg-slate-700 hover:bg-slate-600"
+                  }`}
+                  aria-label={`Go to testimonial ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Trust Metrics */}
+          <div className='grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 pt-16 border-t border-slate-800'>
+            {[
+              { value: "500+", label: "Enterprise Clients" },
+              { value: "4.9/5", label: "Average Rating" },
+              { value: "98%", label: "Customer Retention" },
+              { value: "< 2hr", label: "Avg. Support Response" },
+            ].map((metric) => (
+              <div key={metric.label} className='text-center'>
+                <p className='text-3xl md:text-4xl font-bold text-primary mb-2'>
+                  {metric.value}
+                </p>
+                <p className='text-sm text-muted-foreground'>{metric.label}</p>
               </div>
             ))}
           </div>
