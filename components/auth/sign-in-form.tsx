@@ -4,10 +4,12 @@ import type React from "react";
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { isEmailValid } from "@/lib/auth-utils";
+import { apiLogin, ApiError } from "@/lib/auth-client";
 import { AlertCircle, Eye, EyeOff, Loader } from "lucide-react";
 
 export function SignInForm() {
@@ -16,6 +18,7 @@ export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,12 +36,21 @@ export function SignInForm() {
 
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Sign in attempt:", { email, password });
-      // In production, call your auth API here
-    } catch {
-      setError("Sign in failed. Please try again.");
+      await apiLogin(email, password);
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        if (err.payload.code === 422 && err.payload.errors) {
+          const messages = Object.values(err.payload.errors).flat();
+          setError(messages[0] ?? err.payload.message);
+        } else if (err.payload.code === 401) {
+          setError("Invalid email or password");
+        } else {
+          setError(err.payload.message || "Sign in failed. Please try again.");
+        }
+      } else {
+        setError("Sign in failed. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { isEmailValid } from "@/lib/auth-utils";
+import { apiForgotPassword, ApiError } from "@/lib/auth-client";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 
 export default function ForgotPasswordPage() {
@@ -33,10 +34,14 @@ export default function ForgotPasswordPage() {
 
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await apiForgotPassword(email);
       setSubmitted(true);
-    } catch {
-      setError("Failed to process request. Please try again.");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.payload.message || "Failed to process request. Please try again.");
+      } else {
+        setError("Failed to process request. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }

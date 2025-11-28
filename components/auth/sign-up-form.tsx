@@ -4,6 +4,7 @@ import type React from "react";
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -13,6 +14,7 @@ import {
   isEmailValid,
   isPasswordValid,
 } from "@/lib/auth-utils";
+import { apiRegister, ApiError } from "@/lib/auth-client";
 import { AlertCircle, Eye, EyeOff, Loader, Check } from "lucide-react";
 
 export function SignUpForm() {
@@ -28,6 +30,7 @@ export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const router = useRouter();
 
   const passwordStrength = calculatePasswordStrength(formData.password);
   const passwordsMatch =
@@ -42,12 +45,7 @@ export function SignUpForm() {
     e.preventDefault();
     setError("");
 
-    if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||
-      !formData.password
-    ) {
+    if (!formData.firstName || !formData.email || !formData.password) {
       setError("Please fill in all fields");
       return;
     }
@@ -74,12 +72,20 @@ export function SignUpForm() {
 
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Sign up attempt:", formData);
-      // In production, call your auth API here
-    } catch {
-      setError("Sign up failed. Please try again.");
+      const name = formData.firstName.trim();
+      await apiRegister(name, formData.email, formData.password, formData.confirmPassword);
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        if (err.payload.code === 422 && err.payload.errors) {
+          const messages = Object.values(err.payload.errors).flat();
+          setError(messages[0] ?? err.payload.message);
+        } else {
+          setError(err.payload.message || "Sign up failed. Please try again.");
+        }
+      } else {
+        setError("Sign up failed. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -102,27 +108,15 @@ export function SignUpForm() {
       )}
 
       <form onSubmit={handleSubmit} className='space-y-4'>
-        <div className='grid grid-cols-2 gap-4'>
-          <div className='space-y-2'>
-            <label className='text-sm font-medium'>First Name</label>
-            <Input
-              name='firstName'
-              placeholder='John'
-              value={formData.firstName}
-              onChange={handleChange}
-              disabled={isLoading}
-            />
-          </div>
-          <div className='space-y-2'>
-            <label className='text-sm font-medium'>Last Name</label>
-            <Input
-              name='lastName'
-              placeholder='Doe'
-              value={formData.lastName}
-              onChange={handleChange}
-              disabled={isLoading}
-            />
-          </div>
+        <div className='space-y-2'>
+          <label className='text-sm font-medium'>Username</label>
+          <Input
+            name='firstName'
+            placeholder='Your name'
+            value={formData.firstName}
+            onChange={handleChange}
+            disabled={isLoading}
+          />
         </div>
 
         <div className='space-y-2'>
