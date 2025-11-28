@@ -16,6 +16,7 @@ import {
 } from "@/lib/auth-utils";
 import { apiRegister, ApiError } from "@/lib/auth-client";
 import { AlertCircle, Eye, EyeOff, Loader, Check } from "lucide-react";
+import { sha256Hex } from "@/lib/crypto-utils";
 
 export function SignUpForm() {
   const [formData, setFormData] = useState({
@@ -78,13 +79,13 @@ export function SignUpForm() {
 
     setIsLoading(true);
     try {
+      const passwordHash = await sha256Hex(formData.password);
       await apiRegister(
         formData.username.trim(),
         formData.firstName.trim(),
         formData.lastName.trim() || null,
         formData.email,
-        formData.password,
-        formData.confirmPassword
+        passwordHash
       );
       router.push("/dashboard");
     } catch (err) {

@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { isEmailValid } from "@/lib/auth-utils";
 import { apiLogin, ApiError } from "@/lib/auth-client";
 import { AlertCircle, Eye, EyeOff, Loader } from "lucide-react";
+import { sha256Hex } from "@/lib/crypto-utils";
 
 export function SignInForm() {
   const [email, setEmail] = useState("");
@@ -36,7 +37,8 @@ export function SignInForm() {
 
     setIsLoading(true);
     try {
-      await apiLogin(email, password);
+      const passwordHash = await sha256Hex(password);
+      await apiLogin(email, passwordHash);
       router.push("/dashboard");
     } catch (err) {
       if (err instanceof ApiError) {

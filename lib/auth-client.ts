@@ -82,8 +82,7 @@ export async function apiRegister(
   firstName: string,
   lastName: string | null,
   email: string,
-  password: string,
-  passwordConfirmation: string
+  passwordHash: string
 ) {
   const res = await request<AuthPayload>("/auth/register", {
     method: "POST",
@@ -92,8 +91,7 @@ export async function apiRegister(
       first_name: firstName,
       last_name: lastName,
       email,
-      password,
-      password_confirmation: passwordConfirmation,
+      password_hash: passwordHash,
     }),
   });
 
@@ -104,10 +102,10 @@ export async function apiRegister(
   return res.data;
 }
 
-export async function apiLogin(email: string, password: string) {
+export async function apiLogin(email: string, passwordHash: string) {
   const res = await request<AuthPayload>("/auth/login", {
     method: "POST",
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password_hash: passwordHash }),
   });
 
   const storage = getAuthTokenStorage();
@@ -137,7 +135,10 @@ export async function apiLogout() {
 }
 
 export async function apiGetCurrentUser() {
-  const res = await request<AuthUser>("/user", { method: "GET", auth: true });
+  const res = await request<AuthUser>("/user", {
+    method: "GET",
+    auth: true,
+  });
   const storage = getAuthTokenStorage();
   storage.setUser(res.data);
   return res.data;

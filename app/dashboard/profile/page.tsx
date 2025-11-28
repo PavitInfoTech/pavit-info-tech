@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
 import { getAuthTokenStorage } from "@/lib/auth-storage";
+import { sha256Hex } from "@/lib/crypto-utils";
 
 // Profile Avatar with upload capability
 function ProfileAvatar({
@@ -254,7 +255,7 @@ function ChangePasswordModal({
           },
           body: JSON.stringify({
             current_password: currentPassword,
-            password: newPassword,
+            password_hash: await sha256Hex(newPassword),
             password_confirmation: confirmPassword,
           }),
         }
