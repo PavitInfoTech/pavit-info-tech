@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { Card } from "@/components/ui/card";
@@ -34,6 +34,8 @@ import {
   MoreVertical,
   LogOut,
 } from "lucide-react";
+import { useAuth } from "@/lib/use-auth";
+import { getAuthTokenStorage } from "@/lib/auth-storage";
 
 // Profile Avatar with upload capability
 function ProfileAvatar({
@@ -234,11 +236,50 @@ function ChangePasswordModal({
     setIsChanging(true);
     setError("");
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const storage = getAuthTokenStorage();
+      const token = storage.getToken();
+      if (!token) {
+        throw new Error("Not authenticated");
+      }
 
-    setIsChanging(false);
-    onSuccess();
+      const res = await fetch(
+        "https://api.pavitinfotech.com/auth/password/change",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            current_password: currentPassword,
+            password: newPassword,
+            password_confirmation: confirmPassword,
+          }),
+        }
+      );
+
+      const json = await res.json();
+      if (!res.ok || json.status === "error") {
+        if (json.errors && typeof json.errors === "object") {
+          const firstKey = Object.keys(json.errors)[0];
+          const firstMsg = json.errors[firstKey]?.[0];
+          setError(firstMsg || json.message || "Failed to change password");
+        } else {
+          setError(json.message || "Failed to change password");
+        }
+        return;
+      }
+
+      onSuccess();
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "Unexpected error changing password"
+      );
+    } finally {
+      setIsChanging(false);
+    }
   };
 
   return (
@@ -381,7 +422,11 @@ const CONNECTED_DEVICES = [
 ];
 
 // Device Icon component
-function DeviceIcon({ type }: { type: "laptop" | "phone" | "tablet" | "desktop" }) {
+function DeviceIcon({
+  type,
+}: {
+  type: "laptop" | "phone" | "tablet" | "desktop";
+}) {
   switch (type) {
     case "laptop":
       return <Laptop className='w-5 h-5' />;
@@ -487,6 +532,8 @@ function DeleteModal({
   onConfirm: () => void;
 }) {
   const [confirmText, setConfirmText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <motion.div
@@ -555,6 +602,7 @@ function DeleteModal({
               placeholder='DELETE MY ACCOUNT'
               className='bg-white/5 border-red-500/30 font-mono'
             />
+            {error && <p className='text-sm text-red-400 mt-1'>{error}</p>}
           </div>
         </div>
 
@@ -565,11 +613,48 @@ function DeleteModal({
           <Button
             variant='destructive'
             className='flex-1 bg-red-500/20 hover:bg-red-500/30 text-red-400'
-            onClick={onConfirm}
-            disabled={confirmText !== "DELETE MY ACCOUNT"}
+            onClick={async () => {
+              if (confirmText !== "DELETE MY ACCOUNT") return;
+              setIsDeleting(true);
+              setError(null);
+              try {
+                const storage = getAuthTokenStorage();
+                const token = storage.getToken();
+                if (!token) {
+                  throw new Error("Not authenticated");
+                }
+
+                const res = await fetch("https://api.pavitinfotech.com/user", {
+                  method: "DELETE",
+                  headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                });
+
+                const json = await res.json().catch(() => null);
+                if (!res.ok || (json && json.status === "error")) {
+                  const message =
+                    json?.message || "Failed to delete your account";
+                  setError(message);
+                  return;
+                }
+
+                onConfirm();
+              } catch (e) {
+                setError(
+                  e instanceof Error
+                    ? e.message
+                    : "Unexpected error deleting account"
+                );
+              } finally {
+                setIsDeleting(false);
+              }
+            }}
+            disabled={confirmText !== "DELETE MY ACCOUNT" || isDeleting}
           >
             <Trash2 className='w-4 h-4 mr-2' />
-            Delete Forever
+            {isDeleting ? "Deleting..." : "Delete Forever"}
           </Button>
         </div>
       </motion.div>
@@ -578,13 +663,16 @@ function DeleteModal({
 }
 
 export default function ProfilePage() {
+  const { user, refresh } = useAuth({ requireAuth: true });
   const [formData, setFormData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
+    username: "",
+    firstName: "",
+    lastName: "",
+    email: "",
     company: "Tech Corp",
     phone: "+1 (555) 123-4567",
   });
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -593,18 +681,67 @@ export default function ProfilePage() {
   const [passwordChanged, setPasswordChanged] = useState(false);
   const [devices, setDevices] = useState(CONNECTED_DEVICES);
   const [showBillingToast, setShowBillingToast] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    setFormData((prev) => ({
+      ...prev,
+      username: user.username,
+      firstName: user.first_name,
+      lastName: user.last_name ?? "",
+      email: user.email,
+    }));
+    setIsLoadingUser(false);
+  }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setSaveSuccess(false);
+    setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
     setIsSaving(true);
+    setError(null);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const storage = getAuthTokenStorage();
+      const token = storage.getToken();
+      if (!token) {
+        throw new Error("Not authenticated");
+      }
+
+      const res = await fetch("https://api.pavitinfotech.com/user", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          username: formData.username.trim(),
+          first_name: formData.firstName.trim(),
+          last_name: formData.lastName.trim() || null,
+          email: formData.email.trim(),
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok || json.status === "error") {
+        if (json.errors && typeof json.errors === "object") {
+          const firstKey = Object.keys(json.errors)[0];
+          const firstMsg = json.errors[firstKey]?.[0];
+          setError(firstMsg || json.message || "Failed to update profile");
+        } else {
+          setError(json.message || "Failed to update profile");
+        }
+        return;
+      }
+
+      await refresh();
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } finally {
@@ -638,12 +775,20 @@ export default function ProfilePage() {
             className='flex flex-col md:flex-row items-center gap-6 p-6 rounded-2xl bg-linear-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 border border-[oklch(0.25_0.05_260)]'
           >
             <ProfileAvatar
-              initials={`${formData.firstName[0]}${formData.lastName[0]}`}
+              initials={
+                formData.firstName || formData.lastName
+                  ? `${(formData.firstName || "")[0] ?? ""}${
+                      (formData.lastName || "")[0] ?? ""
+                    }` || formData.username.slice(0, 2).toUpperCase()
+                  : formData.username.slice(0, 2).toUpperCase()
+              }
             />
 
             <div className='flex-1 text-center md:text-left'>
               <h1 className='text-3xl font-bold font-serif mb-1'>
-                {formData.firstName} {formData.lastName}
+                {formData.firstName || formData.lastName
+                  ? `${formData.firstName} ${formData.lastName}`.trim()
+                  : formData.username}
               </h1>
               <p className='text-muted-foreground mb-3'>{formData.email}</p>
               <div className='flex flex-wrap items-center justify-center md:justify-start gap-2'>
@@ -692,7 +837,19 @@ export default function ProfilePage() {
                 </div>
 
                 <form onSubmit={handleSubmit} className='space-y-5'>
+                  {isLoadingUser && (
+                    <p className='text-sm text-muted-foreground'>
+                      Loading your profile...
+                    </p>
+                  )}
                   <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    <FormField
+                      label='Username'
+                      icon={User}
+                      name='username'
+                      value={formData.username}
+                      onChange={handleChange}
+                    />
                     <FormField
                       label='First Name'
                       icon={User}
@@ -757,6 +914,15 @@ export default function ProfilePage() {
                         "Save Changes"
                       )}
                     </Button>
+                    {error && (
+                      <motion.span
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className='text-sm text-red-400'
+                      >
+                        {error}
+                      </motion.span>
+                    )}
                     {saveSuccess && (
                       <motion.span
                         initial={{ opacity: 0, x: -10 }}
@@ -966,7 +1132,14 @@ export default function ProfilePage() {
         {showDeleteModal && (
           <DeleteModal
             onClose={() => setShowDeleteModal(false)}
-            onConfirm={() => setShowDeleteModal(false)}
+            onConfirm={() => {
+              const storage = getAuthTokenStorage();
+              storage.clear();
+              setShowDeleteModal(false);
+              if (typeof window !== "undefined") {
+                window.location.href = "/";
+              }
+            }}
           />
         )}
       </AnimatePresence>
@@ -993,9 +1166,7 @@ export default function ProfilePage() {
             <div className='w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center'>
               <CreditCard className='w-4 h-4 text-amber-400' />
             </div>
-            <p className='text-sm'>
-              Redirecting to billing portal...
-            </p>
+            <p className='text-sm'>Redirecting to billing portal...</p>
           </motion.div>
         )}
       </AnimatePresence>

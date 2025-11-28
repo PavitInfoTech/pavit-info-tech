@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -18,6 +18,7 @@ import {
   Crown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/lib/use-auth";
 
 const menuItems = [
   {
@@ -162,6 +163,26 @@ export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const [notifications] = useState(3);
+  const router = useRouter();
+  const { user } = useAuth();
+
+  const displayName = user
+    ? user.first_name || user.last_name
+      ? `${user.first_name}${user.last_name ? ` ${user.last_name}` : ""}`
+      : user.username
+    : "John Doe";
+
+  const initials = user
+    ? user.first_name || user.last_name
+      ? `${user.first_name} ${user.last_name ?? ""}`
+          .trim()
+          .split(" ")
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0]?.toUpperCase())
+          .join("")
+      : user.username.slice(0, 2).toUpperCase()
+    : "JD";
 
   return (
     <>
@@ -307,13 +328,13 @@ export function Sidebar() {
               {/* Avatar with status ring */}
               <div className='relative'>
                 <div className='w-11 h-11 rounded-xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center font-bold text-sm'>
-                  JD
+                  {initials}
                 </div>
                 <div className='absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-[oklch(0.10_0.02_260)]' />
               </div>
 
               <div className='flex-1 min-w-0'>
-                <p className='text-sm font-semibold truncate'>John Doe</p>
+                <p className='text-sm font-semibold truncate'>{displayName}</p>
                 <div className='flex items-center gap-1'>
                   <Crown className='w-3 h-3 text-amber-400' />
                   <span className='text-[10px] text-amber-400 font-medium'>
@@ -327,16 +348,20 @@ export function Sidebar() {
           </Link>
 
           {/* Sign Out */}
-          <Link href='/auth/signin' onClick={() => setIsOpen(false)}>
-            <motion.button
-              whileHover={{ x: 2 }}
-              whileTap={{ scale: 0.98 }}
-              className='w-full mt-2 flex items-center gap-2 px-4 py-2.5 text-sm text-white/50 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors'
-            >
-              <LogOut className='w-4 h-4' />
-              <span>Sign Out</span>
-            </motion.button>
-          </Link>
+          <motion.button
+            whileHover={{ x: 2 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={async () => {
+              setIsOpen(false);
+              const { apiLogout } = await import("@/lib/auth-client");
+              await apiLogout();
+              router.push("/");
+            }}
+            className='w-full mt-2 flex items-center gap-2 px-4 py-2.5 text-sm text-white/50 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors'
+          >
+            <LogOut className='w-4 h-4' />
+            <span>Sign Out</span>
+          </motion.button>
         </div>
       </aside>
 

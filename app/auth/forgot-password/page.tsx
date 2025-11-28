@@ -38,7 +38,9 @@ export default function ForgotPasswordPage() {
       setSubmitted(true);
     } catch (err) {
       if (err instanceof ApiError) {
-        setError(err.payload.message || "Failed to process request. Please try again.");
+        setError(
+          err.payload.message || "Failed to process request. Please try again."
+        );
       } else {
         setError("Failed to process request. Please try again.");
       }

@@ -19,6 +19,7 @@ import { AlertCircle, Eye, EyeOff, Loader, Check } from "lucide-react";
 
 export function SignUpForm() {
   const [formData, setFormData] = useState({
+    username: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -45,7 +46,12 @@ export function SignUpForm() {
     e.preventDefault();
     setError("");
 
-    if (!formData.firstName || !formData.email || !formData.password) {
+    if (
+      !formData.username ||
+      !formData.firstName ||
+      !formData.email ||
+      !formData.password
+    ) {
       setError("Please fill in all fields");
       return;
     }
@@ -72,8 +78,14 @@ export function SignUpForm() {
 
     setIsLoading(true);
     try {
-      const name = formData.firstName.trim();
-      await apiRegister(name, formData.email, formData.password, formData.confirmPassword);
+      await apiRegister(
+        formData.username.trim(),
+        formData.firstName.trim(),
+        formData.lastName.trim() || null,
+        formData.email,
+        formData.password,
+        formData.confirmPassword
+      );
       router.push("/dashboard");
     } catch (err) {
       if (err instanceof ApiError) {
@@ -111,12 +123,35 @@ export function SignUpForm() {
         <div className='space-y-2'>
           <label className='text-sm font-medium'>Username</label>
           <Input
-            name='firstName'
-            placeholder='Your name'
-            value={formData.firstName}
+            name='username'
+            placeholder='johndoe'
+            value={formData.username}
             onChange={handleChange}
             disabled={isLoading}
           />
+        </div>
+
+        <div className='grid grid-cols-2 gap-4'>
+          <div className='space-y-2'>
+            <label className='text-sm font-medium'>First name</label>
+            <Input
+              name='firstName'
+              placeholder='John'
+              value={formData.firstName}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
+          <div className='space-y-2'>
+            <label className='text-sm font-medium'>Last name (optional)</label>
+            <Input
+              name='lastName'
+              placeholder='Doe'
+              value={formData.lastName}
+              onChange={handleChange}
+              disabled={isLoading}
+            />
+          </div>
         </div>
 
         <div className='space-y-2'>

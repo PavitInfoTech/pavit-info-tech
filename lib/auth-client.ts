@@ -29,7 +29,7 @@ export class ApiError extends Error {
 
 async function request<T>(
   path: string,
-  options: RequestInit & { auth?: boolean } = {},
+  options: RequestInit & { auth?: boolean } = {}
 ): Promise<ApiSuccess<T>> {
   const url = `${API_BASE_URL}${path}`;
   const headers: HeadersInit = {
@@ -42,7 +42,7 @@ async function request<T>(
     const storage = getAuthTokenStorage();
     const token = storage.getToken();
     if (token) {
-      (headers as any)["Authorization"] = `Bearer ${token}`;
+      (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
     }
   }
 
@@ -51,7 +51,8 @@ async function request<T>(
     headers,
   });
 
-  const json = (await res.json()) as ApiSuccess<T> | ApiErrorPayload;
+  const raw = (await res.json()) as unknown;
+  const json = raw as ApiSuccess<T> | ApiErrorPayload;
 
   if (!res.ok || (json as ApiErrorPayload).status === "error") {
     throw new ApiError(json as ApiErrorPayload);
@@ -62,9 +63,13 @@ async function request<T>(
 
 interface AuthUser {
   id: number;
-  name: string;
+  username: string;
+  first_name: string;
+  last_name?: string | null;
   email: string;
   avatar?: string | null;
+  email_verified_at?: string | null;
+  created_at?: string;
 }
 
 interface AuthPayload {
@@ -72,10 +77,24 @@ interface AuthPayload {
   token: string;
 }
 
-export async function apiRegister(name: string, email: string, password: string, passwordConfirmation: string) {
+export async function apiRegister(
+  username: string,
+  firstName: string,
+  lastName: string | null,
+  email: string,
+  password: string,
+  passwordConfirmation: string
+) {
   const res = await request<AuthPayload>("/auth/register", {
     method: "POST",
-    body: JSON.stringify({ name, email, password, password_confirmation: passwordConfirmation }),
+    body: JSON.stringify({
+      username,
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      password,
+      password_confirmation: passwordConfirmation,
+    }),
   });
 
   const storage = getAuthTokenStorage();
@@ -115,6 +134,13 @@ export async function apiLogout() {
   }
   const storage = getAuthTokenStorage();
   storage.clear();
+}
+
+export async function apiGetCurrentUser() {
+  const res = await request<AuthUser>("/user", { method: "GET", auth: true });
+  const storage = getAuthTokenStorage();
+  storage.setUser(res.data);
+  return res.data;
 }
 
 export type { AuthUser, AuthPayload };

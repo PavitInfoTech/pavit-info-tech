@@ -2,7 +2,7 @@
 
 export interface StoredUser {
   id: number;
-  name: string;
+  username: string;
   email: string;
   avatar?: string | null;
 }
@@ -21,8 +21,12 @@ function isCookieConsentAccepted() {
 
 function setCookie(name: string, value: string, days = 7) {
   if (typeof document === "undefined") return;
-  const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
-  document.cookie = `${name}=${encodeURIComponent(value)}; Expires=${expires}; Path=/; SameSite=Lax`;
+  const expires = new Date(
+    Date.now() + days * 24 * 60 * 60 * 1000
+  ).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(
+    value
+  )}; Expires=${expires}; Path=/; SameSite=Lax`;
 }
 
 function getCookie(name: string): string | null {
@@ -72,7 +76,9 @@ export function getAuthTokenStorage() {
     getUser(): StoredUser | null {
       if (typeof window === "undefined") return null;
       try {
-        const raw = useCookies ? getCookie(USER_KEY) : localStorage.getItem(USER_KEY);
+        const raw = useCookies
+          ? getCookie(USER_KEY)
+          : localStorage.getItem(USER_KEY);
         if (!raw) return null;
         return JSON.parse(raw) as StoredUser;
       } catch {
