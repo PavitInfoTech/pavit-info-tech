@@ -381,7 +381,11 @@ const CONNECTED_DEVICES = [
 ];
 
 // Device Icon component
-function DeviceIcon({ type }: { type: "laptop" | "phone" | "tablet" | "desktop" }) {
+function DeviceIcon({
+  type,
+}: {
+  type: "laptop" | "phone" | "tablet" | "desktop";
+}) {
   switch (type) {
     case "laptop":
       return <Laptop className='w-5 h-5' />;
@@ -993,9 +997,7 @@ export default function ProfilePage() {
             <div className='w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center'>
               <CreditCard className='w-4 h-4 text-amber-400' />
             </div>
-            <p className='text-sm'>
-              Redirecting to billing portal...
-            </p>
+            <p className='text-sm'>Redirecting to billing portal...</p>
           </motion.div>
         )}
       </AnimatePresence>
