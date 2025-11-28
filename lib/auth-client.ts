@@ -82,7 +82,8 @@ export async function apiRegister(
   firstName: string,
   lastName: string | null,
   email: string,
-  passwordHash: string
+  passwordHash: string,
+  passwordHashConfirmation: string
 ) {
   const res = await request<AuthPayload>("/auth/register", {
     method: "POST",
@@ -92,6 +93,7 @@ export async function apiRegister(
       last_name: lastName,
       email,
       password_hash: passwordHash,
+      password_hash_confirmation: passwordHashConfirmation,
     }),
   });
 

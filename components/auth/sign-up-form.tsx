@@ -80,12 +80,14 @@ export function SignUpForm() {
     setIsLoading(true);
     try {
       const passwordHash = await sha256Hex(formData.password);
+      const passwordConfirmHash = await sha256Hex(formData.confirmPassword);
       await apiRegister(
         formData.username.trim(),
         formData.firstName.trim(),
         formData.lastName.trim() || null,
         formData.email,
-        passwordHash
+        passwordHash,
+        passwordConfirmHash
       );
       router.push("/dashboard");
     } catch (err) {

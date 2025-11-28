@@ -254,9 +254,9 @@ function ChangePasswordModal({
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            current_password: currentPassword,
+            current_password_hash: await sha256Hex(currentPassword),
             password_hash: await sha256Hex(newPassword),
-            password_confirmation: confirmPassword,
+            password_hash_confirmation: await sha256Hex(confirmPassword),
           }),
         }
       );
