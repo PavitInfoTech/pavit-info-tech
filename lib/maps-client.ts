@@ -31,10 +31,9 @@ export class MapsApiError extends Error {
 }
 
 export interface MapsEmbedResponse {
-  google_maps_link: string;
-  osm_search_link: string;
+  embed_url: string;
+  maps_link: string;
   iframe: string;
-  leaflet_html: string;
   address: string;
   zoom: number;
 }
@@ -184,10 +183,10 @@ function setCachedMapData(
 }
 
 /**
- * Fetch map data from the backend API
+ * Fetch Google Maps embed data from the backend API
  * Public endpoint - no authentication required
  * Caches results based on user's storage preference
- * Returns OpenStreetMap + Leaflet.js embedded map
+ * Returns Google Maps embed URL and iframe
  */
 export async function getMapEmbed(params: {
   address: string;

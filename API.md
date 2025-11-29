@@ -493,30 +493,29 @@ Content-Type: application/json
     -   Returns the job status and result (or error) for async requests:
     -   Response (200): { status: 'success', data: { id, status, result?, error?, meta?, created_at, updated_at } }
 
-### Maps (OpenStreetMap + Leaflet.js)
+### Google Maps Embed
 
 -   POST /api/maps/pin (or POST /maps/pin if `API_DOMAIN` is set)
 
     -   Public: does not require authentication (no Bearer token needed)
-    -   No API key required — uses free OpenStreetMap and Nominatim geocoding
+    -   No API key required — uses Google Maps embed URL format
 
     -   Body: { address: string (required), zoom?: integer, width?: integer, height?: integer }
     -   Validation rules:
         -   `address` => required|string|max:500
-        -   `zoom` => sometimes|integer|min:1|max:19 (default: 15)
+        -   `zoom` => sometimes|integer|min:1|max:21 (default: 15)
         -   `width` => sometimes|integer|min:1|max:2048 (default: 600, for iframe)
         -   `height` => sometimes|integer|min:1|max:2048 (default: 450, for iframe)
-    -   Action: Returns map URLs and an embeddable Leaflet.js map for the given address. Uses OpenStreetMap tiles and Nominatim for geocoding — completely free, no API key needed.
+    -   Action: Returns Google Maps URLs for embedding and linking. No API key required.
     -   Response structure:
         ```json
         {
             "status": "success",
             "message": "Map URLs generated",
             "data": {
-                "google_maps_link": "https://www.google.com/maps/search/?api=1&query=...",
-                "osm_search_link": "https://www.openstreetmap.org/search?query=...",
-                "iframe": "<iframe width=\"600\" height=\"450\" srcdoc=\"...\"></iframe>",
-                "leaflet_html": "<!DOCTYPE html><html>...(self-contained Leaflet map)...</html>",
+                "embed_url": "https://maps.google.com/maps?q=...&z=15&output=embed",
+                "maps_link": "https://www.google.com/maps/search/?api=1&query=...",
+                "iframe": "<iframe width=\"600\" height=\"450\" src=\"...\"></iframe>",
                 "address": "1600 Amphitheatre Parkway, Mountain View, CA",
                 "zoom": 15
             },
@@ -525,16 +524,13 @@ Content-Type: application/json
         }
         ```
     -   Response fields:
-        -   `google_maps_link` — Direct link to Google Maps (opens in browser/app, no API key needed)
-        -   `osm_search_link` — Direct link to OpenStreetMap search
-        -   `iframe` — Ready-to-use HTML iframe with embedded Leaflet.js map (uses `srcdoc` attribute)
-        -   `leaflet_html` — Self-contained HTML page with Leaflet.js map; uses Nominatim for geocoding at runtime
+        -   `embed_url` — URL for use in an iframe `src` attribute (no API key needed)
+        -   `maps_link` — Direct link to Google Maps (opens in browser/app)
+        -   `iframe` — Ready-to-use HTML iframe element
         -   `address` — The original address provided
         -   `zoom` — The zoom level used
     -   Errors & failure modes:
         -   422 Validation failed — missing or invalid address/fields
-
-    -   **Note**: The `iframe` uses `srcdoc` attribute with a self-contained HTML page that includes Leaflet.js. The map performs client-side geocoding using Nominatim (OpenStreetMap's free geocoding service) to convert the address to coordinates, then displays an interactive map with a marker.
 
 ### Ping / health check
 
