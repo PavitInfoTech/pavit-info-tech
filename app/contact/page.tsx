@@ -18,7 +18,17 @@ import {
   Building2,
   Headphones,
   Check,
+  Clock,
+  MapPin,
+  AlertCircle,
 } from "lucide-react";
+import { useChat } from "@/components/chatbot/chat-context";
+import { GoogleMap, PAVIT_LOCATION } from "@/components/map";
+import {
+  sendContactMessage,
+  MailApiError,
+  getValidationErrors,
+} from "@/lib/mail-client";
 
 // Intent options for step 1
 const intentOptions = [
@@ -89,9 +99,14 @@ export default function ContactPage() {
     industry: "",
     message: "",
     urgency: "normal",
+    demoTime: "",
+    partnershipType: "",
+    deployment: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const { openChat } = useChat();
 
   // FAQ accordion state
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
@@ -106,15 +121,75 @@ export default function ContactPage() {
       ...prev,
       [e.target.name]: e.target.value,
     }));
+    // Clear error when user starts typing
+    if (submitError) setSubmitError(null);
+  };
+
+  // Build message for API based on intent and form data
+  const buildContactMessage = (): string => {
+    const intentLabel =
+      intentOptions.find((o) => o.id === selectedIntent)?.label || "General";
+    let message = `[${intentLabel}]\n\n`;
+    message += `Company: ${formData.company}\n`;
+
+    switch (selectedIntent) {
+      case "demo":
+        message += `Preferred Demo Time: ${
+          formData.demoTime || "Not specified"
+        }\n`;
+        message += `\nChallenges:\n${formData.message || "Not provided"}`;
+        break;
+      case "pricing":
+        message += `Device Count: ${formData.deviceCount || "Not specified"}\n`;
+        message += `Industry: ${formData.industry || "Not specified"}\n`;
+        message += `Deployment: ${formData.deployment || "Not specified"}\n`;
+        break;
+      case "support":
+        message += `Urgency: ${formData.urgency}\n`;
+        message += `\nIssue Description:\n${
+          formData.message || "Not provided"
+        }`;
+        break;
+      case "partnership":
+        message += `Partnership Type: ${
+          formData.partnershipType || "Not specified"
+        }\n`;
+        message += `\nDetails:\n${formData.message || "Not provided"}`;
+        break;
+      default:
+        message += formData.message || "";
+    }
+
+    return message;
   };
 
   // Handle form submission
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+    setSubmitError(null);
+
+    try {
+      await sendContactMessage({
+        name: formData.name,
+        email: formData.email,
+        message: buildContactMessage(),
+      });
+      setIsSubmitted(true);
+    } catch (error) {
+      if (error instanceof MailApiError) {
+        const validationErrors = getValidationErrors(error);
+        if (Object.keys(validationErrors).length > 0) {
+          // Show first validation error
+          setSubmitError(Object.values(validationErrors)[0]);
+        } else {
+          setSubmitError(error.message || "Failed to send message");
+        }
+      } else {
+        setSubmitError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Get step 2 fields based on intent
@@ -505,6 +580,14 @@ export default function ContactPage() {
                     </div>
                   </div>
 
+                  {/* Error message */}
+                  {submitError && (
+                    <div className='flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400'>
+                      <AlertCircle className='w-5 h-5 shrink-0' />
+                      <span className='text-sm'>{submitError}</span>
+                    </div>
+                  )}
+
                   <div className='flex justify-between'>
                     <Button
                       variant='outline'
@@ -554,6 +637,7 @@ export default function ContactPage() {
                   setIsSubmitted(false);
                   setCurrentStep(1);
                   setSelectedIntent(null);
+                  setSubmitError(null);
                   setFormData({
                     name: "",
                     email: "",
@@ -562,6 +646,9 @@ export default function ContactPage() {
                     industry: "",
                     message: "",
                     urgency: "normal",
+                    demoTime: "",
+                    partnershipType: "",
+                    deployment: "",
                   });
                 }}
               >
@@ -572,7 +659,81 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Section 3: FAQ Accordion */}
+      {/* Section 3: Office Location Map */}
+      <section className='py-20 px-4 bg-muted/30'>
+        <div className='max-w-6xl mx-auto'>
+          <div className='text-center mb-12'>
+            <h2 className='text-3xl md:text-4xl font-bold font-serif mb-4'>
+              Visit Our Office
+            </h2>
+            <p className='text-lg text-muted-foreground max-w-2xl mx-auto'>
+              Located in the heart of San Francisco's innovation district
+            </p>
+          </div>
+
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
+            {/* Map */}
+            <div className='lg:col-span-2'>
+              <Card className='overflow-hidden p-0'>
+                <GoogleMap
+                  address={PAVIT_LOCATION.address}
+                  zoom={15}
+                  className='h-[400px] lg:h-[500px]'
+                />
+              </Card>
+            </div>
+
+            {/* Office Info */}
+            <div className='space-y-6'>
+              <Card className='p-6'>
+                <div className='flex items-start gap-4'>
+                  <div className='w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0'>
+                    <MapPin className='w-6 h-6 text-primary' />
+                  </div>
+                  <div>
+                    <h3 className='font-semibold mb-1'>Headquarters</h3>
+                    <p className='text-sm text-muted-foreground'>
+                      {PAVIT_LOCATION.address}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className='p-6'>
+                <div className='flex items-start gap-4'>
+                  <div className='w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0'>
+                    <Clock className='w-6 h-6 text-primary' />
+                  </div>
+                  <div>
+                    <h3 className='font-semibold mb-1'>Office Hours</h3>
+                    <div className='text-sm text-muted-foreground space-y-1'>
+                      <p>Monday – Friday: 9:00 AM – 6:00 PM PT</p>
+                      <p>Saturday – Sunday: Closed</p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className='p-6'>
+                <div className='flex items-start gap-4'>
+                  <div className='w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0'>
+                    <Globe className='w-6 h-6 text-primary' />
+                  </div>
+                  <div>
+                    <h3 className='font-semibold mb-1'>Remote-First Culture</h3>
+                    <p className='text-sm text-muted-foreground'>
+                      Our team works globally. Schedule a virtual meeting
+                      anytime!
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 4: FAQ Accordion */}
       <section className='py-20 px-4'>
         <div className='max-w-3xl mx-auto'>
           <div className='text-center mb-12'>
@@ -683,7 +844,20 @@ export default function ContactPage() {
                 <p className='text-muted-foreground text-sm mb-4'>
                   Instant answers, 24/7
                 </p>
-                <Button className='gap-2'>
+                <Button
+                  className='gap-2'
+                  onClick={() => {
+                    // open the chat widget via context
+                    try {
+                      openChat();
+                    } catch {
+                      const btn = document.querySelector(
+                        "button[aria-label='Open chat']"
+                      ) as HTMLButtonElement | null;
+                      if (btn) btn.click();
+                    }
+                  }}
+                >
                   <MessageSquare className='w-4 h-4' />
                   Start Chat
                 </Button>

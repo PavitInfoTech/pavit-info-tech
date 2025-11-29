@@ -146,4 +146,50 @@ export async function apiGetCurrentUser() {
   return res.data;
 }
 
+// OAuth: Get redirect URL for Google
+export function getGoogleOAuthUrl(): string {
+  return `${API_BASE_URL}/auth/google/redirect`;
+}
+
+// OAuth: Get redirect URL for GitHub
+export function getGitHubOAuthUrl(): string {
+  return `${API_BASE_URL}/auth/github/redirect`;
+}
+
+// OAuth: Exchange Google code/credential for token
+export async function apiGoogleTokenExchange(params: {
+  code?: string;
+  credential?: string;
+  redirect_uri?: string;
+}) {
+  const res = await request<AuthPayload>("/auth/google/token", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+
+  const storage = getAuthTokenStorage();
+  storage.setToken(res.data.token);
+  storage.setUser(res.data.user);
+
+  return res.data;
+}
+
+// OAuth: Exchange GitHub code/access_token for token
+export async function apiGitHubTokenExchange(params: {
+  code?: string;
+  access_token?: string;
+  redirect_uri?: string;
+}) {
+  const res = await request<AuthPayload>("/auth/github/token", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+
+  const storage = getAuthTokenStorage();
+  storage.setToken(res.data.token);
+  storage.setUser(res.data.user);
+
+  return res.data;
+}
+
 export type { AuthUser, AuthPayload };
