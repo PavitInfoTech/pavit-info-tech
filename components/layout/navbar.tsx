@@ -11,12 +11,15 @@ import {
   Shield,
   Zap,
   ChevronDown,
+  LayoutDashboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/lib/use-auth";
 
 export function Navbar() {
   const pathname = usePathname();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isPlatformOpen, setIsPlatformOpen] = useState(false);
@@ -56,8 +59,9 @@ export function Navbar() {
     { href: "/", label: "Home" },
     { href: "/features", label: "Features" },
     { href: "/pricing", label: "Pricing" },
-    { href: "/blog", label: "Blog" },
     { href: "/about", label: "About" },
+    { href: "/blog", label: "Blog" },
+    { href: "/contact", label: "Contact" },
   ];
 
   const platformItems = [
@@ -227,6 +231,8 @@ export function Navbar() {
                           <Link
                             key={item.title}
                             href={item.href}
+                            target='_blank'
+                            rel='noopener noreferrer'
                             className='group flex items-start space-x-4 p-4 rounded-xl hover:bg-white/5 transition-colors'
                           >
                             <div className='flex-shrink-0 w-10 h-10 rounded-lg bg-linear-to-br from-cyan-400/20 to-cyan-600/20 flex items-center justify-center border border-cyan-400/20 group-hover:border-cyan-400/40 transition-colors'>
@@ -268,6 +274,8 @@ export function Navbar() {
                           </div>
                           <Link
                             href='/dashboard'
+                            target='_blank'
+                            rel='noopener noreferrer'
                             className='text-xs text-cyan-400 hover:text-cyan-300 font-medium'
                           >
                             Go to Dashboard →
@@ -281,11 +289,11 @@ export function Navbar() {
             </div>
 
             {/* Right Actions (CTAs) */}
-            <div className='hidden lg:flex items-center space-x-4'>
+            <div className='hidden lg:flex items-center space-x-4 space-y-2 flex-wrap justify-end'>
               {/* System Online Indicator */}
-              <div className='flex items-center space-x-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20'>
+              <div className='flex items-center space-x-1.5 xl:space-x-2 px-2 xl:px-3 py-1 xl:py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20'>
                 <motion.div
-                  className='w-2 h-2 rounded-full bg-emerald-400'
+                  className='w-1.5 xl:w-2 h-1.5 xl:h-2 rounded-full bg-emerald-400'
                   animate={{
                     scale: [1, 1.2, 1],
                     opacity: [1, 0.7, 1],
@@ -296,25 +304,52 @@ export function Navbar() {
                     ease: "easeInOut",
                   }}
                 />
-                <span className='text-xs font-medium text-emerald-400'>
-                  System Online
+                <span className='text-[10px] xl:text-xs font-medium text-emerald-400 whitespace-nowrap'>
+                  Online
                 </span>
               </div>
 
-              <Link
-                href='/auth/signin'
-                className='text-sm text-white/70 hover:text-white transition-colors'
-              >
-                Log In
-              </Link>
+              {!authLoading && isAuthenticated ? (
+                /* Authenticated: Show Dashboard button */
+                <Button
+                  size='sm'
+                  className='bg-linear-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-white border-0 shadow-lg shadow-cyan-500/25 gap-1.5 xl:gap-2 text-xs xl:text-sm px-2.5 xl:px-4'
+                  asChild
+                >
+                  <Link
+                    href='/dashboard'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    <LayoutDashboard className='w-3.5 xl:w-4 h-3.5 xl:h-4' />
+                    <span className='hidden xl:inline'>Dashboard</span>
+                    <span className='xl:hidden'>Dash</span>
+                  </Link>
+                </Button>
+              ) : (
+                /* Not authenticated: Show Login + Request Demo */
+                <>
+                  <Link
+                    href='/auth/signin'
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className='text-xs xl:text-sm text-white/70 hover:text-white transition-colors whitespace-nowrap'
+                  >
+                    Log In
+                  </Link>
 
-              <Button
-                size='sm'
-                className='bg-linear-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-white border-0 shadow-lg shadow-cyan-500/25'
-                asChild
-              >
-                <Link href='/contact'>Request Demo</Link>
-              </Button>
+                  <Button
+                    size='sm'
+                    className='bg-linear-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-white border-0 shadow-lg shadow-cyan-500/25 text-xs xl:text-sm px-2.5 xl:px-4'
+                    asChild
+                  >
+                    <Link href='/contact' className='whitespace-nowrap'>
+                      <span className='hidden xl:inline'>Request Demo</span>
+                      <span className='xl:hidden'>Request Demo</span>
+                    </Link>
+                  </Button>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -392,6 +427,8 @@ export function Navbar() {
                       <Link
                         key={item.title}
                         href={item.href}
+                        target='_blank'
+                        rel='noopener noreferrer'
                         className='flex items-center space-x-3 p-3 rounded-xl hover:bg-white/5 transition-colors'
                         onClick={() => setIsOpen(false)}
                       >
@@ -405,21 +442,50 @@ export function Navbar() {
                 </motion.div>
 
                 <div className='pt-4 space-y-3'>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    className='w-full bg-transparent border-white/20 text-white hover:bg-white/5'
-                    asChild
-                  >
-                    <Link href='/auth/signin'>Log In</Link>
-                  </Button>
-                  <Button
-                    size='sm'
-                    className='w-full bg-linear-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-white'
-                    asChild
-                  >
-                    <Link href='/contact'>Request Demo</Link>
-                  </Button>
+                  {!authLoading && isAuthenticated ? (
+                    /* Authenticated: Show Dashboard button */
+                    <Button
+                      size='sm'
+                      className='w-full bg-linear-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-white gap-2'
+                      asChild
+                    >
+                      <Link
+                        href='/dashboard'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <LayoutDashboard className='w-4 h-4' />
+                        Open Dashboard
+                      </Link>
+                    </Button>
+                  ) : (
+                    /* Not authenticated: Show Login + Request Demo */
+                    <>
+                      <Button
+                        variant='outline'
+                        size='sm'
+                        className='w-full bg-transparent border-white/20 text-white hover:bg-white/5'
+                        asChild
+                      >
+                        <Link
+                          href='/auth/signin'
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Log In
+                        </Link>
+                      </Button>
+                      <Button
+                        size='sm'
+                        className='w-full bg-linear-to-r from-cyan-500 to-cyan-600 hover:from-cyan-400 hover:to-cyan-500 text-white'
+                        asChild
+                      >
+                        <Link href='/contact' onClick={() => setIsOpen(false)}>
+                          Request Demo
+                        </Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </motion.div>

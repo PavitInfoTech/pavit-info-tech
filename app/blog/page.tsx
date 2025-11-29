@@ -17,18 +17,28 @@ import {
   BookOpen,
   Wrench,
   Building2,
+  Shield,
+  Zap,
   Mail,
   ChevronRight,
+  AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
+import {
+  subscribeNewsletter,
+  MailApiError,
+  getValidationErrors,
+} from "@/lib/mail-client";
 
 // Define filter tags with icons
 const filterTags = [
   { id: "ai", label: "AI", icon: Sparkles },
-  { id: "hardware", label: "Hardware", icon: Cpu },
-  { id: "case-studies", label: "Case Studies", icon: BookOpen },
+  { id: "edge", label: "Edge AI", icon: Cpu },
+  { id: "protocols", label: "Protocols", icon: BookOpen },
+  { id: "security", label: "Security", icon: Shield },
   { id: "engineering", label: "Engineering", icon: Wrench },
-  { id: "company-news", label: "Company News", icon: Building2 },
+  { id: "industry", label: "Industry", icon: Building2 },
+  { id: "performance", label: "Performance", icon: Zap },
 ];
 
 // Editor's picks for "The Deep Dive" section
@@ -111,6 +121,7 @@ export default function BlogPage() {
   const [email, setEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [subscribeError, setSubscribeError] = useState<string | null>(null);
 
   // Filter posts based on search and tags
   const filteredPosts = blogPosts.filter((post) => {
@@ -138,9 +149,26 @@ export default function BlogPage() {
   const handleSubscribe = async () => {
     if (!email) return;
     setIsSubscribing(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubscribing(false);
-    setIsSubscribed(true);
+    setSubscribeError(null);
+
+    try {
+      await subscribeNewsletter({ email });
+      setIsSubscribed(true);
+      setEmail("");
+    } catch (error) {
+      if (error instanceof MailApiError) {
+        const validationErrors = getValidationErrors(error);
+        if (validationErrors.email) {
+          setSubscribeError(validationErrors.email);
+        } else {
+          setSubscribeError(error.message || "Subscription failed");
+        }
+      } else {
+        setSubscribeError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setIsSubscribing(false);
+    }
   };
 
   // Featured article data
@@ -234,7 +262,7 @@ export default function BlogPage() {
             {/* Right: Featured Image */}
             <div className='relative'>
               {/* Main image container */}
-              <div className='relative aspect-[4/3] rounded-2xl overflow-hidden bg-linear-to-br from-primary/20 via-cyan-500/20 to-blue-500/20 border border-primary/20'>
+              <div className='relative aspect-4/3 rounded-2xl overflow-hidden bg-linear-to-br from-primary/20 via-cyan-500/20 to-blue-500/20 border border-primary/20'>
                 {/* Abstract data visualization */}
                 <svg
                   viewBox='0 0 400 300'
@@ -584,25 +612,36 @@ export default function BlogPage() {
 
           {/* Subscription form */}
           {!isSubscribed ? (
-            <div className='flex flex-col sm:flex-row gap-4 max-w-md mx-auto'>
-              <Input
-                type='email'
-                placeholder='your@email.com'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className='h-14 bg-white/90 border-0 text-black placeholder:text-black/50 rounded-xl flex-1'
-              />
-              <Button
-                onClick={handleSubscribe}
-                disabled={isSubscribing || !email}
-                className='h-14 px-8 bg-black hover:bg-black/80 text-white rounded-xl font-medium'
-              >
-                {isSubscribing ? (
-                  <div className='w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin' />
-                ) : (
-                  "Subscribe"
-                )}
-              </Button>
+            <div className='space-y-3 max-w-md mx-auto'>
+              <div className='flex flex-col sm:flex-row gap-4'>
+                <Input
+                  type='email'
+                  placeholder='your@email.com'
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (subscribeError) setSubscribeError(null);
+                  }}
+                  className='h-14 bg-white/90 border-0 text-black placeholder:text-black/50 rounded-xl flex-1'
+                />
+                <Button
+                  onClick={handleSubscribe}
+                  disabled={isSubscribing || !email}
+                  className='h-14 px-8 bg-black hover:bg-black/80 text-white rounded-xl font-medium'
+                >
+                  {isSubscribing ? (
+                    <div className='w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin' />
+                  ) : (
+                    "Subscribe"
+                  )}
+                </Button>
+              </div>
+              {subscribeError && (
+                <div className='flex items-center justify-center gap-2 text-red-700'>
+                  <AlertCircle className='w-4 h-4' />
+                  <span className='text-sm'>{subscribeError}</span>
+                </div>
+              )}
             </div>
           ) : (
             <Card className='inline-flex items-center gap-3 px-6 py-4 bg-white/90 border-0'>

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { SiX, SiLinkedin, SiGithub } from "react-icons/si";
+import { Check, AlertCircle, Loader2 } from "lucide-react";
+import { subscribeNewsletter, MailApiError } from "@/lib/mail-client";
 
 // Magnetic social icon component
 function MagneticIcon({
@@ -171,6 +173,35 @@ export function Footer() {
     latency: 24,
     devices: 1024302,
   });
+
+  // Newsletter state
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [subscribeStatus, setSubscribeStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [subscribeError, setSubscribeError] = useState<string | null>(null);
+
+  const handleNewsletterSubmit = async () => {
+    if (!newsletterEmail) return;
+    setIsSubscribing(true);
+    setSubscribeError(null);
+
+    try {
+      await subscribeNewsletter({ email: newsletterEmail });
+      setSubscribeStatus("success");
+      setNewsletterEmail("");
+    } catch (error) {
+      setSubscribeStatus("error");
+      if (error instanceof MailApiError) {
+        setSubscribeError(error.message || "Subscription failed");
+      } else {
+        setSubscribeError("Something went wrong");
+      }
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
 
   // Live ticker simulation
   useEffect(() => {
@@ -373,16 +404,47 @@ export function Footer() {
               <h3 className='text-xs font-semibold text-white/40 uppercase tracking-wider mb-4'>
                 Stay Updated
               </h3>
-              <div className='flex'>
-                <input
-                  type='email'
-                  placeholder='Enter your email'
-                  className='flex-1 px-4 py-2 text-sm bg-white/5 border border-white/10 rounded-l-lg text-white placeholder:text-white/30 focus:outline-none focus:border-cyan-400/40'
-                />
-                <button className='px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-white text-sm font-medium rounded-r-lg transition-colors'>
-                  Subscribe
-                </button>
-              </div>
+              {subscribeStatus === "success" ? (
+                <div className='flex items-center gap-2 text-emerald-400 text-sm'>
+                  <Check className='w-4 h-4' />
+                  <span>Subscribed!</span>
+                </div>
+              ) : (
+                <div className='space-y-2'>
+                  <div className='flex'>
+                    <input
+                      type='email'
+                      placeholder='Enter your email'
+                      value={newsletterEmail}
+                      onChange={(e) => {
+                        setNewsletterEmail(e.target.value);
+                        if (subscribeStatus === "error") {
+                          setSubscribeStatus("idle");
+                          setSubscribeError(null);
+                        }
+                      }}
+                      className='flex-1 px-4 py-2 text-sm bg-white/5 border border-white/10 rounded-l-lg text-white placeholder:text-white/30 focus:outline-none focus:border-cyan-400/40'
+                    />
+                    <button
+                      onClick={handleNewsletterSubmit}
+                      disabled={isSubscribing || !newsletterEmail}
+                      className='px-4 py-2 bg-cyan-500 hover:bg-cyan-400 disabled:bg-cyan-500/50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-r-lg transition-colors flex items-center justify-center min-w-[100px]'
+                    >
+                      {isSubscribing ? (
+                        <Loader2 className='w-4 h-4 animate-spin' />
+                      ) : (
+                        "Subscribe"
+                      )}
+                    </button>
+                  </div>
+                  {subscribeStatus === "error" && subscribeError && (
+                    <div className='flex items-center gap-1.5 text-red-400 text-xs'>
+                      <AlertCircle className='w-3 h-3' />
+                      <span>{subscribeError}</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
