@@ -728,8 +728,6 @@ export default function ContactPage() {
                   </div>
                 </div>
               </Card>
-
-              
             </div>
           </div>
         </div>
@@ -853,7 +851,9 @@ export default function ContactPage() {
                     try {
                       openChat();
                     } catch {
-                      const btn = document.querySelector("button[aria-label='Open chat']") as HTMLButtonElement | null;
+                      const btn = document.querySelector(
+                        "button[aria-label='Open chat']"
+                      ) as HTMLButtonElement | null;
                       if (btn) btn.click();
                     }
                   }}
