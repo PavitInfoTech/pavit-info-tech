@@ -16,6 +16,12 @@ import {
 
 const teamMembers = [
   {
+    name: "Ervion Kaleesh",
+    role: "Founder & CEO",
+    bio: "Visionary entrepreneur driving innovation in IoT and intelligent systems",
+    initials: "EK",
+  },
+  {
     name: "Sarah Chen",
     role: "Chief Technology Officer",
     bio: "IoT and AI systems architect with 15+ years in enterprise technology",
@@ -33,50 +39,32 @@ const teamMembers = [
     bio: "Product leader focused on enterprise IoT solutions and customer success",
     initials: "PP",
   },
-  {
-    name: "James Wilson",
-    role: "Chief Security Officer",
-    bio: "Cybersecurity specialist ensuring enterprise-grade data protection",
-    initials: "JW",
-  },
 ];
 
 const milestones = [
   {
-    year: "2019",
-    title: "The Spark",
-    description:
-      "Founded with a vision to bring intelligence to industrial IoT systems.",
-  },
-  {
-    year: "2020",
-    title: "The First Algorithm",
-    description:
-      "Developed our proprietary anomaly detection engine, achieving 94% accuracy.",
-  },
-  {
-    year: "2021",
-    title: "Enterprise Launch",
-    description:
-      "Launched our platform for enterprise clients, onboarding 50 companies in year one.",
-  },
-  {
     year: "2022",
-    title: "Reaching 1M Devices",
+    title: "The Beginning",
     description:
-      "Crossed the milestone of monitoring one million connected devices globally.",
+      "PavitInfoTech founded on December 22nd with a vision to bring intelligence to industrial IoT systems.",
   },
   {
     year: "2023",
-    title: "AI Core Evolution",
+    title: "Platform Launch",
     description:
-      "Released predictive maintenance models with 97%+ accuracy and Digital Twin visualization.",
+      "Launched our core IoT platform with proprietary anomaly detection engine, achieving 94% accuracy.",
   },
   {
     year: "2024",
-    title: "Global Expansion",
+    title: "Enterprise Growth",
     description:
-      "Expanded to 30+ countries, processing over 2 billion data points daily.",
+      "Expanded enterprise offerings with predictive maintenance models and Digital Twin visualization.",
+  },
+  {
+    year: "2025",
+    title: "Scaling New Heights",
+    description:
+      "Continuing to innovate and expand our global footprint in intelligent IoT solutions.",
   },
 ];
 

@@ -115,9 +115,8 @@ export default function TermsPage() {
             <h2 className='text-2xl font-semibold mb-4'>8. Governing Law</h2>
             <p>
               These terms and conditions are governed by and construed in
-              accordance with the laws of the United States and you irrevocably
-              submit to the exclusive jurisdiction of the courts in that
-              location.
+              accordance with the laws of Sri Lanka and you irrevocably submit
+              to the exclusive jurisdiction of the courts in that location.
             </p>
           </section>
 
@@ -126,12 +125,19 @@ export default function TermsPage() {
             <p>
               If you have any questions about these Terms, please contact us at:
             </p>
-            <div className='mt-4 p-4 bg-muted rounded-lg'>
+            <div className='mt-4 p-4 bg-muted rounded-lg space-y-1'>
               <p>
-                <strong>Email:</strong> legal@pavitinfotech.com
+                <strong>Email:</strong> hello@pavitinfotech.com
               </p>
               <p>
-                <strong>Address:</strong> San Francisco, CA, United States
+                <strong>Phone:</strong> 0768924153
+              </p>
+              <p>
+                <strong>Address:</strong> 122 Galle Road, Colombo 03, Colombo,
+                00300
+              </p>
+              <p>
+                <strong>Website:</strong> https://pavitinfotech.com
               </p>
             </div>
           </section>
