@@ -822,10 +822,10 @@ export default function ContactPage() {
                 Mon–Fri, 9 AM – 6 PM PT
               </p>
               <a
-                href='tel:+1-888-555-0123'
+                href='tel:+94768924153'
                 className='text-primary hover:underline font-medium'
               >
-                +1 (888) 555-0123
+                +9476 8924 153
               </a>
             </Card>
 

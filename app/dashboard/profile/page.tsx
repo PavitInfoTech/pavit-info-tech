@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import {
   User,
   Mail,
+  MailCheck,
+  MailWarning,
   Building2,
   Phone,
   Camera,
@@ -33,6 +35,7 @@ import {
   Monitor,
   MoreVertical,
   LogOut,
+  Send,
 } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
 import { getAuthTokenStorage } from "@/lib/auth-storage";
@@ -683,6 +686,11 @@ export default function ProfilePage() {
   const [devices, setDevices] = useState(CONNECTED_DEVICES);
   const [showBillingToast, setShowBillingToast] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSendingVerification, setIsSendingVerification] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
+  const [verificationError, setVerificationError] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     if (!user) return;
@@ -765,6 +773,50 @@ export default function ProfilePage() {
     setTimeout(() => setShowBillingToast(false), 3000);
   };
 
+  const handleSendVerification = async () => {
+    setIsSendingVerification(true);
+    setVerificationError(null);
+    setVerificationSent(false);
+
+    try {
+      const storage = getAuthTokenStorage();
+      const token = storage.getToken();
+      if (!token) {
+        throw new Error("Not authenticated");
+      }
+
+      const res = await fetch(
+        "https://api.pavitinfotech.com/auth/verify/send",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ email: formData.email }),
+        }
+      );
+
+      const json = await res.json();
+      if (!res.ok || json.status === "error") {
+        setVerificationError(
+          json.message || "Failed to send verification email"
+        );
+        return;
+      }
+
+      setVerificationSent(true);
+      setTimeout(() => setVerificationSent(false), 5000);
+    } catch (e) {
+      setVerificationError(
+        e instanceof Error ? e.message : "Unexpected error sending verification"
+      );
+    } finally {
+      setIsSendingVerification(false);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className='p-6 lg:p-8'>
@@ -801,10 +853,17 @@ export default function ProfilePage() {
                   <Crown className='w-3 h-3' />
                   Pro Plan
                 </span>
-                <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-medium'>
-                  <Shield className='w-3 h-3' />
-                  Verified
-                </span>
+                {user?.email_verified_at ? (
+                  <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-medium'>
+                    <MailCheck className='w-3 h-3' />
+                    Email Verified
+                  </span>
+                ) : (
+                  <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 text-xs font-medium'>
+                    <MailWarning className='w-3 h-3' />
+                    Email Unverified
+                  </span>
+                )}
               </div>
             </div>
 
@@ -1039,6 +1098,104 @@ export default function ProfilePage() {
                       <Check className='w-4 h-4' />
                       Password updated!
                     </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Email Verification Status */}
+              <div className='mb-6'>
+                <div className='flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-[oklch(0.25_0.05_260)]'>
+                  <div
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                      user?.email_verified_at
+                        ? "bg-emerald-500/20"
+                        : "bg-amber-500/20"
+                    }`}
+                  >
+                    <MailCheck
+                      className={`w-5 h-5 ${
+                        user?.email_verified_at
+                          ? "text-emerald-400"
+                          : "text-amber-400"
+                      }`}
+                    />
+                  </div>
+                  <div className='flex-1'>
+                    <div className='flex items-center gap-2'>
+                      <p className='font-medium'>Email Verification</p>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded-full ${
+                          user?.email_verified_at
+                            ? "bg-emerald-500/20 text-emerald-400"
+                            : "bg-amber-500/20 text-amber-400"
+                        }`}
+                      >
+                        {user?.email_verified_at ? "Verified" : "Unverified"}
+                      </span>
+                    </div>
+                    <p className='text-xs text-muted-foreground'>
+                      {user?.email_verified_at
+                        ? `Verified on ${new Date(
+                            user.email_verified_at
+                          ).toLocaleDateString()}`
+                        : "Please verify your email address to unlock all features"}
+                    </p>
+                  </div>
+                  {!user?.email_verified_at && (
+                    <Button
+                      size='sm'
+                      variant='outline'
+                      onClick={handleSendVerification}
+                      disabled={isSendingVerification || verificationSent}
+                      className='border-amber-500/30 hover:bg-amber-500/10 text-amber-400'
+                    >
+                      {isSendingVerification ? (
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{
+                            repeat: Infinity,
+                            duration: 1,
+                            ease: "linear",
+                          }}
+                        >
+                          <Send className='w-4 h-4' />
+                        </motion.div>
+                      ) : verificationSent ? (
+                        <>
+                          <Check className='w-4 h-4 mr-1' />
+                          Sent!
+                        </>
+                      ) : (
+                        <>
+                          <Send className='w-4 h-4 mr-1' />
+                          Verify Email
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+                <AnimatePresence>
+                  {verificationError && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className='mt-2 text-sm text-red-400 flex items-center gap-1'
+                    >
+                      <X className='w-3 h-3' />
+                      {verificationError}
+                    </motion.p>
+                  )}
+                  {verificationSent && !verificationError && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className='mt-2 text-sm text-emerald-400 flex items-center gap-1'
+                    >
+                      <Check className='w-3 h-3' />
+                      Verification email sent! Check your inbox.
+                    </motion.p>
                   )}
                 </AnimatePresence>
               </div>

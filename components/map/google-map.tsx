@@ -14,7 +14,7 @@ interface GoogleMapProps {
 
 // PavitInfoTech headquarters
 const DEFAULT_LOCATION = {
-  address: "100 Innovation Drive, San Francisco, CA 94105",
+  address: "122 Galle Road, Colombo 03, Colombo, Sri Lanka",
 };
 
 export function GoogleMap({
@@ -74,7 +74,7 @@ export function GoogleMap({
   if (loading) {
     return (
       <div className={`relative ${className}`}>
-        <div className='w-full min-h-[400px] bg-muted/50 rounded-2xl flex items-center justify-center overflow-hidden'>
+        <div className='w-full h-[400px] lg:h-[500px] bg-muted/50 rounded-2xl flex items-center justify-center overflow-hidden'>
           <div className='flex flex-col items-center gap-4'>
             <div className='relative'>
               <div className='w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center'>
@@ -83,9 +83,7 @@ export function GoogleMap({
               <div className='absolute inset-0 rounded-full border-2 border-primary/30 animate-ping' />
             </div>
             <div className='text-center'>
-              <p className='text-sm font-medium text-foreground'>
-                Loading map
-              </p>
+              <p className='text-sm font-medium text-foreground'>Loading map</p>
               <p className='text-xs text-muted-foreground mt-1'>
                 Powered by Google Maps
               </p>
@@ -101,7 +99,7 @@ export function GoogleMap({
     return (
       <div className={`relative ${className}`}>
         {/* Map Container with creative styling */}
-        <div className='relative rounded-2xl overflow-hidden border border-border/50 shadow-xl'>
+        <div className='relative rounded-2xl overflow-hidden border border-border/50 shadow-xl h-[400px] lg:h-[500px]'>
           {/* Gradient overlay at top */}
           <div className='absolute top-0 left-0 right-0 h-16 bg-linear-to-b from-background/60 to-transparent z-10 pointer-events-none' />
 
@@ -129,12 +127,12 @@ export function GoogleMap({
             src={mapData?.embed_url || embedUrl}
             width='100%'
             height='100%'
-            style={{ border: 0, minHeight: "400px" }}
+            style={{ border: 0 }}
             allowFullScreen
             loading='lazy'
             referrerPolicy='no-referrer-when-downgrade'
             title='PavitInfoTech Location'
-            className='w-full min-h-[400px] lg:min-h-[500px]'
+            className='w-full h-full'
           />
 
           {/* Bottom gradient */}
@@ -150,7 +148,7 @@ export function GoogleMap({
   // Fallback: Creative placeholder with link to Google Maps
   return (
     <div className={`relative ${className}`}>
-      <div className='w-full min-h-[400px] bg-linear-to-br from-muted/30 via-muted/10 to-muted/30 rounded-2xl flex items-center justify-center border border-border/50 overflow-hidden'>
+      <div className='w-full h-[400px] lg:h-[500px] bg-linear-to-br from-muted/30 via-muted/10 to-muted/30 rounded-2xl flex items-center justify-center border border-border/50 overflow-hidden'>
         {/* Decorative map grid pattern */}
         <div className='absolute inset-0 opacity-5'>
           <div
