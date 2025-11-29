@@ -528,7 +528,7 @@ export default function AboutPage() {
                   <div className='w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 transition-colors'>
                     <IconComponent className='w-7 h-7 text-primary' />
                   </div>
-                  <p className='text-4xl md:text-5xl font-bold text-primary font-mono mb-2'>
+                  <p className='text-2xl md:text-3xl font-bold text-primary font-mono mb-2'>
                     {formatNumber(animatedStats[index], index)}
                     {stat.suffix}
                   </p>
