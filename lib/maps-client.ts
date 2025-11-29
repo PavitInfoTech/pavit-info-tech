@@ -31,10 +31,12 @@ export class MapsApiError extends Error {
 }
 
 export interface MapsEmbedResponse {
-  embed_url: string;
-  maps_link: string;
+  google_maps_link: string;
+  osm_search_link: string;
   iframe: string;
+  leaflet_html: string;
   address: string;
+  zoom: number;
 }
 
 interface CachedMapData {
@@ -45,7 +47,6 @@ interface CachedMapData {
     zoom?: number;
     width?: number;
     height?: number;
-    map_type?: string;
   };
 }
 
@@ -183,16 +184,16 @@ function setCachedMapData(
 }
 
 /**
- * Fetch Google Maps embed URL from the backend API
+ * Fetch map data from the backend API
  * Public endpoint - no authentication required
  * Caches results based on user's storage preference
+ * Returns OpenStreetMap + Leaflet.js embedded map
  */
 export async function getMapEmbed(params: {
   address: string;
   zoom?: number;
   width?: number;
   height?: number;
-  map_type?: "roadmap" | "satellite";
 }): Promise<MapsEmbedResponse> {
   // Check cache first
   const cached = getCachedMapData(params);
