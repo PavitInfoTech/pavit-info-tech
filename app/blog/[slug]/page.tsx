@@ -13,6 +13,15 @@ import {
   ArrowRight,
 } from "lucide-react";
 import ShareWidget from "@/components/blog/share-widget";
+import { MarkdownRenderer } from "./markdown-renderer";
+
+// Helper to extract headings for table of contents (server-side)
+function extractHeadings(content: string): string[] {
+  return content
+    .split("\n")
+    .filter((line) => line.startsWith("## "))
+    .map((line) => line.replace("## ", ""));
+}
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -48,8 +57,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     .filter((p) => p.id !== post.id && p.category === post.category)
     .slice(0, 3);
 
-  // Parse content into sections for enhanced rendering
-  const contentSections = post.content.split("\n\n").filter(Boolean);
+  // Extract headings for table of contents
+  const headings = extractHeadings(post.content);
 
   // Calculate estimated reading progress markers
   const wordCount = post.content.split(/\s+/).length;
@@ -135,89 +144,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <article className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16'>
         <div className='grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12'>
           {/* Main Content */}
-          <div className='prose prose-lg prose-invert max-w-none'>
-            {contentSections.map((section, index) => {
-              // Check if it's a heading
-              if (section.startsWith("# ")) {
-                return (
-                  <h1
-                    key={index}
-                    className='text-3xl md:text-4xl font-bold font-serif mt-12 mb-6 first:mt-0'
-                  >
-                    {section.replace("# ", "")}
-                  </h1>
-                );
-              }
-              if (section.startsWith("## ")) {
-                return (
-                  <h2
-                    key={index}
-                    className='text-2xl md:text-3xl font-bold font-serif mt-12 mb-4 text-primary'
-                  >
-                    {section.replace("## ", "")}
-                  </h2>
-                );
-              }
-              if (section.startsWith("### ")) {
-                return (
-                  <h3 key={index} className='text-xl font-bold mt-8 mb-3'>
-                    {section.replace("### ", "")}
-                  </h3>
-                );
-              }
-              // Check if it's a list
-              if (section.startsWith("- ")) {
-                const items = section
-                  .split("\n")
-                  .filter((line) => line.startsWith("- "));
-                return (
-                  <ul key={index} className='space-y-3 my-6'>
-                    {items.map((item, i) => (
-                      <li
-                        key={i}
-                        className='flex items-start gap-3 text-foreground/90'
-                      >
-                        <span className='w-1.5 h-1.5 rounded-full bg-primary mt-2.5 shrink-0' />
-                        <span>{item.replace("- ", "")}</span>
-                      </li>
-                    ))}
-                  </ul>
-                );
-              }
-              // Check if it's numbered list
-              if (/^\d+\./.test(section)) {
-                const items = section
-                  .split("\n")
-                  .filter((line) => /^\d+\./.test(line));
-                return (
-                  <ol key={index} className='space-y-4 my-6'>
-                    {items.map((item, i) => (
-                      <li
-                        key={i}
-                        className='flex items-start gap-4 text-foreground/90'
-                      >
-                        <span className='w-8 h-8 rounded-full bg-primary/10 text-primary font-semibold flex items-center justify-center shrink-0 text-sm'>
-                          {i + 1}
-                        </span>
-                        <span className='pt-1'>
-                          {item.replace(/^\d+\.\s*/, "")}
-                        </span>
-                      </li>
-                    ))}
-                  </ol>
-                );
-              }
-              // Regular paragraph
-              return (
-                <p
-                  key={index}
-                  className='text-lg leading-relaxed text-foreground/80 my-6'
-                >
-                  {section}
-                </p>
-              );
-            })}
-          </div>
+          <MarkdownRenderer content={post.content} />
 
           {/* Sidebar - Table of Contents (Desktop) */}
           <aside className='hidden lg:block'>
@@ -227,20 +154,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                   In This Article
                 </h4>
                 <nav className='space-y-2'>
-                  {contentSections
-                    .filter((s) => s.startsWith("## "))
-                    .map((heading, i) => (
-                      <a
-                        key={i}
-                        href={`#${heading
-                          .replace("## ", "")
-                          .toLowerCase()
-                          .replace(/\s+/g, "-")}`}
-                        className='block text-sm text-muted-foreground hover:text-primary transition-colors py-1'
-                      >
-                        {heading.replace("## ", "")}
-                      </a>
-                    ))}
+                  {headings.map((heading: string, i: number) => (
+                    <a
+                      key={i}
+                      href={`#${heading
+                        .toLowerCase()
+                        .replace(/\s+/g, "-")
+                        .replace(/[^\w-]/g, "")}`}
+                      className='block text-sm text-muted-foreground hover:text-primary transition-colors py-1'
+                    >
+                      {heading}
+                    </a>
+                  ))}
                 </nav>
               </div>
 

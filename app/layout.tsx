@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import { Analytics } from "@vercel/analytics/next";
 import { Chatbot } from "@/components/chatbot/chatbot";
+import { ChatProvider } from "@/components/chatbot/chat-context";
 import { CookieConsent } from "@/components/consent/cookie-consent";
 import "./globals.css";
 
@@ -56,8 +57,10 @@ export default function RootLayout({
       <body
         className={`${manrope.variable} ${spaceGrotesk.variable} ${GeistMono.variable} font-sans antialiased bg-background text-foreground`}
       >
-        {children}
-        <Chatbot />
+        <ChatProvider>
+          {children}
+          <Chatbot />
+        </ChatProvider>
         <CookieConsent />
         <Analytics />
       </body>

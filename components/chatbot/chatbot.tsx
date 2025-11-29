@@ -3,6 +3,7 @@
 import type React from "react";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useChat } from "./chat-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -28,7 +29,7 @@ interface Message {
 }
 
 export function Chatbot() {
-  const [isOpen, setIsOpen] = useState(false);
+  const { isOpen, toggleChat, closeChat, openChat } = useChat();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -126,7 +127,7 @@ export function Chatbot() {
     <>
       {/* Chat Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => toggleChat()}
         className='fixed bottom-6 right-6 w-14 h-14 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all hover:scale-110 z-40'
         aria-label='Open chat'
       >

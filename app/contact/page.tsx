@@ -22,6 +22,7 @@ import {
   MapPin,
   AlertCircle,
 } from "lucide-react";
+import { useChat } from "@/components/chatbot/chat-context";
 import { GoogleMap, PAVIT_LOCATION } from "@/components/map";
 import {
   sendContactMessage,
@@ -105,6 +106,7 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const { openChat } = useChat();
 
   // FAQ accordion state
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
@@ -727,17 +729,7 @@ export default function ContactPage() {
                 </div>
               </Card>
 
-              <Card className='p-6 border-primary/30 bg-primary/5'>
-                <div className='text-center'>
-                  <h3 className='font-semibold mb-2'>Schedule a Visit</h3>
-                  <p className='text-sm text-muted-foreground mb-4'>
-                    Want to see our IoT lab in action?
-                  </p>
-                  <Button variant='outline' className='w-full'>
-                    Book Office Tour
-                  </Button>
-                </div>
-              </Card>
+              
             </div>
           </div>
         </div>
@@ -854,7 +846,18 @@ export default function ContactPage() {
                 <p className='text-muted-foreground text-sm mb-4'>
                   Instant answers, 24/7
                 </p>
-                <Button className='gap-2'>
+                <Button
+                  className='gap-2'
+                  onClick={() => {
+                    // open the chat widget via context
+                    try {
+                      openChat();
+                    } catch {
+                      const btn = document.querySelector("button[aria-label='Open chat']") as HTMLButtonElement | null;
+                      if (btn) btn.click();
+                    }
+                  }}
+                >
                   <MessageSquare className='w-4 h-4' />
                   Start Chat
                 </Button>

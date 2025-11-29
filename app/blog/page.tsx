@@ -17,6 +17,8 @@ import {
   BookOpen,
   Wrench,
   Building2,
+  Shield,
+  Zap,
   Mail,
   ChevronRight,
   AlertCircle,
@@ -31,10 +33,12 @@ import {
 // Define filter tags with icons
 const filterTags = [
   { id: "ai", label: "AI", icon: Sparkles },
-  { id: "hardware", label: "Hardware", icon: Cpu },
-  { id: "case-studies", label: "Case Studies", icon: BookOpen },
+  { id: "edge", label: "Edge AI", icon: Cpu },
+  { id: "protocols", label: "Protocols", icon: BookOpen },
+  { id: "security", label: "Security", icon: Shield },
   { id: "engineering", label: "Engineering", icon: Wrench },
-  { id: "company-news", label: "Company News", icon: Building2 },
+  { id: "industry", label: "Industry", icon: Building2 },
+  { id: "performance", label: "Performance", icon: Zap },
 ];
 
 // Editor's picks for "The Deep Dive" section
