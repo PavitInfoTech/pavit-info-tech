@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { MapPin, ExternalLink, Navigation, Map, Globe } from "lucide-react";
+import { MapPin, Navigation, Map, Globe } from "lucide-react";
 import { getMapEmbed, type MapsEmbedResponse } from "@/lib/maps-client";
 
-interface InteractiveMapProps {
+interface GoogleMapProps {
   address?: string;
   zoom?: number;
   width?: number;
@@ -23,13 +23,10 @@ export function GoogleMap({
   width = 600,
   height = 450,
   className = "",
-}: InteractiveMapProps) {
+}: GoogleMapProps) {
   const [mapData, setMapData] = useState<MapsEmbedResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [mapView, setMapView] = useState<"interactive" | "satellite">(
-    "interactive"
-  );
 
   const fetchMap = useCallback(async () => {
     setLoading(true);
@@ -47,10 +44,9 @@ export function GoogleMap({
       setError("Failed to load map");
       const encodedAddress = encodeURIComponent(address);
       setMapData({
-        google_maps_link: `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`,
-        osm_search_link: `https://www.openstreetmap.org/search?query=${encodedAddress}`,
+        embed_url: `https://maps.google.com/maps?q=${encodedAddress}&z=${zoom}&output=embed`,
+        maps_link: `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`,
         iframe: "",
-        leaflet_html: "",
         address: address,
         zoom: zoom,
       });
@@ -64,14 +60,16 @@ export function GoogleMap({
   }, [fetchMap]);
 
   const googleMapsUrl =
-    mapData?.google_maps_link ||
+    mapData?.maps_link ||
     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
       address
     )}`;
 
-  const osmUrl =
-    mapData?.osm_search_link ||
-    `https://www.openstreetmap.org/search?query=${encodeURIComponent(address)}`;
+  const embedUrl =
+    mapData?.embed_url ||
+    `https://maps.google.com/maps?q=${encodeURIComponent(
+      address
+    )}&z=${zoom}&output=embed`;
 
   if (loading) {
     return (
@@ -86,10 +84,10 @@ export function GoogleMap({
             </div>
             <div className='text-center'>
               <p className='text-sm font-medium text-foreground'>
-                Loading interactive map
+                Loading map
               </p>
               <p className='text-xs text-muted-foreground mt-1'>
-                Powered by OpenStreetMap
+                Powered by Google Maps
               </p>
             </div>
           </div>
@@ -98,69 +96,58 @@ export function GoogleMap({
     );
   }
 
-  // If we have an iframe from the API, use the embedded Leaflet map
-  if (mapData?.iframe) {
+  // If we have an embed URL, display the Google Maps iframe
+  if (mapData?.embed_url || embedUrl) {
     return (
       <div className={`relative ${className}`}>
-        {/* Map Container with creative border */}
+        {/* Map Container with creative styling */}
         <div className='relative rounded-2xl overflow-hidden border border-border/50 shadow-xl'>
           {/* Gradient overlay at top */}
-          <div className='absolute top-0 left-0 right-0 h-16 bg-linear-to-b from-background/80 to-transparent z-10 pointer-events-none' />
+          <div className='absolute top-0 left-0 right-0 h-16 bg-linear-to-b from-background/60 to-transparent z-10 pointer-events-none' />
 
-          {/* Map View Toggle */}
+          {/* Map Controls */}
           <div className='absolute top-3 right-3 z-20'>
             <div className='flex gap-1 bg-card/90 backdrop-blur-sm rounded-lg p-1 border border-border/50 shadow-lg'>
-              <button
-                onClick={() => setMapView("interactive")}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                  mapView === "interactive"
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                }`}
-              >
-                <Map className='w-3.5 h-3.5 inline-block mr-1' />
+              <span className='px-3 py-1.5 rounded-md text-xs font-medium bg-primary text-primary-foreground shadow-sm flex items-center gap-1.5'>
+                <Map className='w-3.5 h-3.5' />
                 Map
-              </button>
+              </span>
               <a
                 href={googleMapsUrl}
                 target='_blank'
                 rel='noopener noreferrer'
-                className='px-3 py-1.5 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all'
+                className='px-3 py-1.5 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all flex items-center gap-1.5'
               >
-                <Navigation className='w-3.5 h-3.5 inline-block mr-1' />
-                Satellite
+                <Navigation className='w-3.5 h-3.5' />
+                Directions
               </a>
             </div>
           </div>
 
-          {/* Leaflet Map iframe */}
-          <div
+          {/* Google Maps iframe */}
+          <iframe
+            src={mapData?.embed_url || embedUrl}
+            width='100%'
+            height='100%'
+            style={{ border: 0, minHeight: "400px" }}
+            allowFullScreen
+            loading='lazy'
+            referrerPolicy='no-referrer-when-downgrade'
+            title='PavitInfoTech Location'
             className='w-full min-h-[400px] lg:min-h-[500px]'
-            dangerouslySetInnerHTML={{ __html: mapData.iframe }}
           />
 
           {/* Bottom gradient */}
-          <div className='absolute bottom-0 left-0 right-0 h-24 bg-linear-to-t from-background/60 to-transparent pointer-events-none' />
+          <div className='absolute bottom-0 left-0 right-0 h-24 bg-linear-to-t from-background/40 to-transparent pointer-events-none' />
         </div>
 
         {/* Address Card */}
-        <AddressCard
-          address={address}
-          googleMapsUrl={googleMapsUrl}
-          osmUrl={osmUrl}
-        />
-
-        {/* Map attribution */}
-        <div className='absolute bottom-2 right-2 z-10'>
-          <span className='text-[10px] text-muted-foreground/60 bg-background/50 backdrop-blur-sm px-2 py-0.5 rounded'>
-            © OpenStreetMap contributors
-          </span>
-        </div>
+        <AddressCard address={address} googleMapsUrl={googleMapsUrl} />
       </div>
     );
   }
 
-  // Fallback: Creative placeholder with multiple map options
+  // Fallback: Creative placeholder with link to Google Maps
   return (
     <div className={`relative ${className}`}>
       <div className='w-full min-h-[400px] bg-linear-to-br from-muted/30 via-muted/10 to-muted/30 rounded-2xl flex items-center justify-center border border-border/50 overflow-hidden'>
@@ -195,26 +182,15 @@ export function GoogleMap({
             {address}
           </p>
 
-          <div className='flex flex-col sm:flex-row gap-3 justify-center'>
-            <a
-              href={googleMapsUrl}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-all text-sm font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5'
-            >
-              <Navigation className='w-4 h-4' />
-              Google Maps
-            </a>
-            <a
-              href={osmUrl}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-card border border-border rounded-xl hover:bg-muted/50 transition-all text-sm font-medium hover:-translate-y-0.5'
-            >
-              <Globe className='w-4 h-4' />
-              OpenStreetMap
-            </a>
-          </div>
+          <a
+            href={googleMapsUrl}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-all text-sm font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5'
+          >
+            <Navigation className='w-4 h-4' />
+            Open in Google Maps
+          </a>
 
           {error && (
             <p className='text-xs text-muted-foreground mt-6 flex items-center justify-center gap-1'>
@@ -225,11 +201,7 @@ export function GoogleMap({
         </div>
       </div>
 
-      <AddressCard
-        address={address}
-        googleMapsUrl={googleMapsUrl}
-        osmUrl={osmUrl}
-      />
+      <AddressCard address={address} googleMapsUrl={googleMapsUrl} />
     </div>
   );
 }
@@ -237,11 +209,9 @@ export function GoogleMap({
 function AddressCard({
   address,
   googleMapsUrl,
-  osmUrl,
 }: {
   address: string;
   googleMapsUrl: string;
-  osmUrl: string;
 }) {
   return (
     <div className='absolute bottom-6 left-4 right-4 md:left-6 md:right-auto z-10'>
@@ -261,27 +231,16 @@ function AddressCard({
               {address}
             </p>
 
-            {/* Action buttons */}
-            <div className='flex flex-wrap gap-2'>
-              <a
-                href={googleMapsUrl}
-                target='_blank'
-                rel='noopener noreferrer'
-                className='inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors bg-primary/5 hover:bg-primary/10 px-3 py-1.5 rounded-lg'
-              >
-                <Navigation className='w-3 h-3' />
-                Directions
-              </a>
-              <a
-                href={osmUrl}
-                target='_blank'
-                rel='noopener noreferrer'
-                className='inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors bg-muted/50 hover:bg-muted px-3 py-1.5 rounded-lg'
-              >
-                <ExternalLink className='w-3 h-3' />
-                View Larger
-              </a>
-            </div>
+            {/* Action button */}
+            <a
+              href={googleMapsUrl}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors bg-primary/5 hover:bg-primary/10 px-3 py-1.5 rounded-lg'
+            >
+              <Navigation className='w-3 h-3' />
+              Get Directions
+            </a>
           </div>
         </div>
       </div>
