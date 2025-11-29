@@ -53,9 +53,55 @@ All API endpoints are exposed from `routes/api.php`.
 -   Default (development/testing): If `API_DOMAIN` is not set, routes are served with the `/api` prefix (e.g., `/api/auth/login`).
 -   Subdomain mode (production): If you set `API_DOMAIN` to your API subdomain (e.g., `api.example.com`), the same `routes/api.php` endpoints are exposed at the root path on that domain — e.g., `https://api.example.com/auth/login` (no `/api` prefix).
 
+Note: For local development you can avoid configuring DNS or host entries by enabling the optional `API_PREFIX_FALLBACK` environment variable; this registers the `/api` prefix **in addition** to the domain routes when `API_DOMAIN` is set — this is handy when you set `API_DOMAIN` but still want to call the API at `/api` during development or when `api.example.com` is not resolvable locally.
+
+## Developer tools
+
+If you do not have terminal access on the server, there is a safe, token-protected HTTP endpoint for running migrations using Artisan. It is disabled by default and should be enabled and used with caution in production environments.
+
+Endpoint:
+
+-   POST /admin/migrate
+
+Payload / headers:
+
+-   Header `X-RUN-MIG-TOKEN` or body param `token` — the value must match `RUN_MIG_TOKEN` in `.env`.
+-   Optional `seed` boolean body param to run `db:seed` after migrations.
+-   Optional `path` string body param to pass `--path` to `migrate`.
+
+Requirements & safety:
+
+-   `ALLOW_RUN_MIG=true` must be set in `.env` to allow this endpoint to run.
+-   `RUN_MIG_TOKEN` should be a long random secret and stored in server environment. Do not keep it in VCS.
+-   The route is throttled (`throttle:10,1`) by default.
+
+Example usage (curl):
+
+```
+curl -X POST https://api.pavitinfotech.com/admin/migrate \
+    -H "X-RUN-MIG-TOKEN: $RUN_MIG_TOKEN"
+```
+
+Response:
+
+-   Returns a JSON result with the Artisan output under `data.output`. If operations fail, a 500 result with details will be returned and logged.
+
+Security note: After running migrations via HTTP, disable ALLOW_RUN_MIG or rotate the token. This endpoint provides a convenient but sensitive capability and should be restricted to trusted usage only.
+
 For a full guide on configuring Google Cloud credentials, Socialite server usage, and SPA redirect handling (secure token flows and examples), see `docs/socialite-google-spa.md`.
 
 ### Authentication
+
+#### Flow overview
+
+-   **Credential (email + password hash)** — `POST /auth/register` to create an account and `POST /auth/login` to obtain a Sanctum personal access token. Tokens must be sent via `Authorization: Bearer <token>` on protected routes. Frontends are responsible for hashing the password with SHA-256 before sending it to the API.
+-   **Logout** — `POST /auth/logout` works for both API calls (returns JSON) and browser flows (redirects + clears the `api_token` cookie) and revokes the active Sanctum token.
+-   **OAuth browser redirects** — `GET /auth/{provider}/redirect` (Google/GitHub) sends the browser to the provider; `GET /auth/{provider}/callback` finishes authentication, issues a Sanctum token, and either returns JSON or sets the `api_token` cookie and redirects to the SPA.
+-   **OAuth API/token exchange** — `POST /auth/google/token` and `POST /auth/github/token` let SPAs or native apps exchange an OAuth `code`, Google Credential API `credential`, or a GitHub access token directly for a Sanctum token without browser redirects.
+-   **Email verification** — `POST /auth/verify/send` issues tokens; `GET /auth/verify/{token}` validates them and either returns JSON or redirects to the SPA.
+-   **Password reset** — `POST /auth/password/forgot` creates reset tokens and emails users; `POST /auth/password/reset` validates the token and updates the stored password hash.
+-   **Social linking** — Authenticated users can link/unlink Google/GitHub providers via `/auth/link/...` and `/auth/unlink` so future logins can use OAuth.
+-   **Profile & session hygiene** — Protected endpoints (e.g., `/user`, `/ai/generate`) require the Bearer token or the secure `api_token` cookie returned by the OAuth callbacks.
 
 > **⚠️ IMPORTANT: Password Hashing Requirement**
 >
@@ -72,6 +118,8 @@ For a full guide on configuring Google Cloud credentials, Socialite server usage
 >             .join("")
 >     );
 > ```
+
+#### Credential-based register & login
 
 -   POST /api/auth/register (or POST /auth/register if `API_DOMAIN` is set)
 
@@ -169,6 +217,13 @@ Authorization: Bearer <your-plain-text-token-here>
     -   Request body: { email, password_hash }
     -   Success (200): { status: 'success', message: 'Logged in', data: { user, token } }
 
+#### Logout (token & cookie aware)
+
+-   POST /api/auth/logout (or POST /auth/logout if `API_DOMAIN` is set)
+    -   Behavior: API clients get JSON + token revocation; browser requests (Accept HTML) revoke tokens, clear the `api_token` cookie, and 302 redirect to `${FRONTEND_URL}/auth/logout`.
+
+#### Google OAuth (browser redirect flow)
+
 -   GET /api/auth/google/redirect (or GET /auth/google/redirect if `API_DOMAIN` is set)
 
     -   Redirects to Google OAuth consent page using Laravel Socialite. This endpoint issues an HTTP redirect (302) that should be followed by the browser or frontend app. If your frontend needs the direct URL instead, call this endpoint and read the Location header of the response.
@@ -190,6 +245,24 @@ Authorization: Bearer <your-plain-text-token-here>
     -   API flow response (JSON - when Accept: application/json):
         -   { status: 'success', message: 'Authenticated via Google', data: { user: {...}, token: '<plain-text-token>' } }
 
+-   POST /api/auth/google/token (API-only token exchange)
+
+    -   Body (JSON):
+        -   `code` (string) — authorization code received from Google OAuth (required if `credential` missing)
+        -   `credential` (string) — ID token from Google One Tap / Credential API (required if `code` missing)
+        -   `redirect_uri` (string, optional) — override redirect URI used during code exchange
+    -   Behavior:
+        -   If `code` is provided, the backend exchanges it against Google's token endpoint using the configured `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, obtains an access token, resolves the user profile via Socialite, and creates/logs in the user.
+        -   If `credential` (ID token) is provided, the backend verifies it using Google's `tokeninfo` endpoint and uses the resulting profile to authenticate the user.
+        -   Always returns JSON (no redirects) with the Sanctum token.
+    -   Success response (200): `{ "status": "success", "message": "Authenticated via Google", "data": { "user": {...}, "token": "plain-text-sanctum-token" } }`
+    -   Errors:
+        -   400 — Invalid/expired code or credential, or Google API error
+        -   422 — Missing `code`/`credential` payload
+    -   Use this endpoint for native apps or SPAs that already captured the Google credential and simply need to exchange it server-side without browser redirects.
+
+#### Password reset
+
 -   POST /api/auth/password/forgot (or POST /auth/password/forgot if `API_DOMAIN` is set)
 
     -   Body: { email }
@@ -203,6 +276,8 @@ Authorization: Bearer <your-plain-text-token-here>
     -   Behavior: verifies the reset token, ensures it is not expired (2 hours), updates the user's password hash, deletes the token, and returns a new API token so the user is authenticated immediately.
     -   Success (200): { status: 'success', message: 'Password reset successfully', data: { user: {...}, token: '<plain-text-token>' } }
 
+#### Email verification
+
 -   POST /api/auth/verify/send (or POST /auth/verify/send if `API_DOMAIN` is set)
 
     -   Body: { email } or (authenticated) send to current user
@@ -214,21 +289,39 @@ Authorization: Bearer <your-plain-text-token-here>
     -   Behavior: verifies the token, sets `email_verified_at` for the user, deletes the token, and either returns JSON (API clients) or redirects the browser to `${FRONTEND_URL}/auth/verified`.
     -   Success (200 or 302): JSON { status: 'success', message: 'Email verified', data: { user } } or 302 redirect to frontend verified page.
 
--   POST /api/auth/logout (or POST /auth/logout if `API_DOMAIN` is set)
-
-    -   POST /api/auth/logout
-        -   Behavior: - For API clients (Accept: application/json), the endpoint revokes the current bearer token (or all tokens for the user) and returns JSON: { status: 'success', message: 'Logged out' } — the response includes a Set-Cookie header clearing the `api_token` cookie if present. - For browser flows (normal HTML requests), the endpoint will revoke tokens and return a 302 redirect to `${FRONTEND_URL}/auth/logout`, setting an HttpOnly cookie deletion header so the token never remains in the browser.
-
-    ### GitHub OAuth
+### GitHub OAuth (browser redirect flow)
 
     -   GET /api/auth/github/redirect — Redirects the browser to GitHub's OAuth consent page (via Socialite). If your SPA needs the URL to redirect itself, call this endpoint and read the Location header.
     -   GET /api/auth/github/callback — OAuth callback endpoint which handles the GitHub response and returns a token in JSON (for API clients) or sets a secure `api_token` cookie and redirects to the SPA route on success.
+
+#### GitHub OAuth behavior
 
     Behavior is identical to Google OAuth flow but uses the `github` Socialite driver:
 
     -   Creates the user if not present and saves `provider_name` = 'github' and `provider_id`.
     -   If a user already exists with the same email, the code attaches `provider` fields to that existing user rather than creating a new one.
     -   Returns JSON with `user` and `token` in API flows, and sets an `api_token` cookie on browser flows.
+
+-   POST /api/auth/github/token (API-only token exchange)
+
+    -   Body (JSON):
+        -   `code` (string) — authorization code returned by GitHub's OAuth authorize endpoint (required if `access_token` missing)
+        -   `access_token` (string) — GitHub access token obtained on the client (required if `code` missing)
+        -   `redirect_uri` (string, optional) — custom redirect URI used when generating the code
+    -   Behavior:
+        -   When a `code` is provided, the backend calls `https://github.com/login/oauth/access_token` with your app's client ID/secret to exchange it for an access token, then fetches the user profile using Socialite and logs the user in.
+        -   When `access_token` is provided directly, it is used immediately to fetch the GitHub profile.
+        -   Always responds with JSON, returning `{ user, token }` on success or a structured 400 error on failure.
+    -   Errors:
+        -   400 — Code exchange failed or provided access token invalid/expired
+        -   422 — Neither `code` nor `access_token` provided
+    -   Ideal for native apps or SPAs that already have the code/token and need a pure API flow with no redirects.
+
+### Social account linking / unlinking
+
+-   GET `/auth/link/{provider}/redirect` + `/auth/link/{provider}/callback` (authenticated) allow existing users to attach Google/GitHub accounts to their profile.
+-   POST `/auth/unlink` removes the provider association.
+-   These routes require Bearer tokens (they live in the authenticated group) and return JSON.
 
 ### User profile (protected)
 
@@ -401,27 +494,43 @@ Content-Type: application/json
     -   Returns the job status and result (or error) for async requests:
     -   Response (200): { status: 'success', data: { id, status, result?, error?, meta?, created_at, updated_at } }
 
-### Google Maps / Pinned static map
+### Google Maps / Embed & Link
 
 -   POST /api/maps/pin (or POST /maps/pin if `API_DOMAIN` is set)
 
-    -   Protected: requires authentication (Bearer token or auth cookie).
+    -   Public: does not require authentication (no Bearer token needed)
 
-    -   Body: { lat: number, lng: number, address?: string, label?: string, zoom?: integer, width?: integer, height?: integer }
+    -   Body: { address: string (required), zoom?: integer, width?: integer, height?: integer, map_type?: string }
     -   Validation rules:
-        -   `lat` => required|numeric
-        -   `lng` => required|numeric
-        -   `label` => sometimes|string|max:64
-        -   `zoom` => sometimes|integer|min:0|max:21
-        -   `width` => sometimes|integer|min:1|max:2048
-        -   `height` => sometimes|integer|min:1|max:2048
-    -   Action: Returns a URL to a Google Static Maps image with the requested pin.
-    -   Response structure: { status: 'success', data: { map_url: 'https://maps.googleapis.com/...' } }
+        -   `address` => required|string|max:500
+        -   `zoom` => sometimes|integer|min:0|max:21 (default: 15)
+        -   `width` => sometimes|integer|min:1|max:2048 (default: 600, for iframe)
+        -   `height` => sometimes|integer|min:1|max:2048 (default: 450, for iframe)
+        -   `map_type` => sometimes|string|in:roadmap,satellite (default: roadmap)
+    -   Action: Returns Google Maps URLs for the given address. Uses the Google Maps Embed API (requires Maps JavaScript API key with Embed API enabled).
+    -   Response structure:
+        ```json
+        {
+            "status": "success",
+            "message": "Google Maps URLs generated",
+            "data": {
+                "embed_url": "https://www.google.com/maps/embed/v1/place?key=...&q=...",
+                "maps_link": "https://www.google.com/maps/search/?api=1&query=...",
+                "iframe": "<iframe width=\"600\" height=\"450\" ... src=\"...\"></iframe>",
+                "address": "1600 Amphitheatre Parkway, Mountain View, CA"
+            },
+            "code": 200,
+            "timestamp": "2025-11-29T12:00:00Z"
+        }
+        ```
+    -   Response fields:
+        -   `embed_url` — URL for use in an iframe `src` attribute (Google Maps Embed API)
+        -   `maps_link` — Direct link to Google Maps that opens in browser or mobile app
+        -   `iframe` — Ready-to-use HTML iframe element with the embed URL
+        -   `address` — The original address provided
     -   Errors & failure modes:
-        -   401 Unauthenticated — needs Bearer token
-        -   422 Validation failed — missing/invalid lat or lng or other fields
-        -   422 Address could not be geocoded — when address is provided and no geocoding results were found
-        -   500 Server Error — missing or invalid `GOOGLE_MAPS_API_KEY` environment variable
+        -   422 Validation failed — missing or invalid address/fields
+        -   500 Server Error — missing `GOOGLE_MAPS_API_KEY` environment variable
 
 ### Ping / health check
 

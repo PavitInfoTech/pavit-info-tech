@@ -9,7 +9,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { isEmailValid } from "@/lib/auth-utils";
-import { apiLogin, ApiError } from "@/lib/auth-client";
+import {
+  apiLogin,
+  ApiError,
+  getGoogleOAuthUrl,
+  getGitHubOAuthUrl,
+} from "@/lib/auth-client";
 import { AlertCircle, Eye, EyeOff, Loader } from "lucide-react";
 import { sha256Hex } from "@/lib/crypto-utils";
 
@@ -144,7 +149,13 @@ export function SignInForm() {
         </div>
 
         <div className='grid grid-cols-2 gap-4'>
-          <Button variant='outline' disabled={isLoading}>
+          <Button
+            variant='outline'
+            disabled={isLoading}
+            onClick={() => {
+              window.location.href = getGoogleOAuthUrl();
+            }}
+          >
             <svg
               className='w-4 h-4 mr-2'
               viewBox='0 0 24 24'
@@ -154,7 +165,13 @@ export function SignInForm() {
             </svg>
             Google
           </Button>
-          <Button variant='outline' disabled={isLoading}>
+          <Button
+            variant='outline'
+            disabled={isLoading}
+            onClick={() => {
+              window.location.href = getGitHubOAuthUrl();
+            }}
+          >
             <svg
               className='w-4 h-4 mr-2'
               viewBox='0 0 24 24'

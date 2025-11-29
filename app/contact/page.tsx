@@ -18,7 +18,10 @@ import {
   Building2,
   Headphones,
   Check,
+  Clock,
+  MapPin,
 } from "lucide-react";
+import { GoogleMap, PAVIT_LOCATION } from "@/components/map";
 
 // Intent options for step 1
 const intentOptions = [
@@ -572,7 +575,95 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Section 3: FAQ Accordion */}
+      {/* Section 3: Office Location Map */}
+      <section className='py-20 px-4 bg-muted/30'>
+        <div className='max-w-6xl mx-auto'>
+          <div className='text-center mb-12'>
+            <h2 className='text-3xl md:text-4xl font-bold font-serif mb-4'>
+              Visit Our Office
+            </h2>
+            <p className='text-lg text-muted-foreground max-w-2xl mx-auto'>
+              Located in the heart of San Francisco's innovation district
+            </p>
+          </div>
+
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
+            {/* Map */}
+            <div className='lg:col-span-2'>
+              <Card className='overflow-hidden p-0'>
+                <GoogleMap
+                  lat={PAVIT_LOCATION.lat}
+                  lng={PAVIT_LOCATION.lng}
+                  address={PAVIT_LOCATION.address}
+                  zoom={15}
+                  className='h-[400px] lg:h-[500px]'
+                />
+              </Card>
+            </div>
+
+            {/* Office Info */}
+            <div className='space-y-6'>
+              <Card className='p-6'>
+                <div className='flex items-start gap-4'>
+                  <div className='w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0'>
+                    <MapPin className='w-6 h-6 text-primary' />
+                  </div>
+                  <div>
+                    <h3 className='font-semibold mb-1'>Headquarters</h3>
+                    <p className='text-sm text-muted-foreground'>
+                      {PAVIT_LOCATION.address}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className='p-6'>
+                <div className='flex items-start gap-4'>
+                  <div className='w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0'>
+                    <Clock className='w-6 h-6 text-primary' />
+                  </div>
+                  <div>
+                    <h3 className='font-semibold mb-1'>Office Hours</h3>
+                    <div className='text-sm text-muted-foreground space-y-1'>
+                      <p>Monday – Friday: 9:00 AM – 6:00 PM PT</p>
+                      <p>Saturday – Sunday: Closed</p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className='p-6'>
+                <div className='flex items-start gap-4'>
+                  <div className='w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0'>
+                    <Globe className='w-6 h-6 text-primary' />
+                  </div>
+                  <div>
+                    <h3 className='font-semibold mb-1'>Remote-First Culture</h3>
+                    <p className='text-sm text-muted-foreground'>
+                      Our team works globally. Schedule a virtual meeting
+                      anytime!
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className='p-6 border-primary/30 bg-primary/5'>
+                <div className='text-center'>
+                  <h3 className='font-semibold mb-2'>Schedule a Visit</h3>
+                  <p className='text-sm text-muted-foreground mb-4'>
+                    Want to see our IoT lab in action?
+                  </p>
+                  <Button variant='outline' className='w-full'>
+                    Book Office Tour
+                  </Button>
+                </div>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 4: FAQ Accordion */}
       <section className='py-20 px-4'>
         <div className='max-w-3xl mx-auto'>
           <div className='text-center mb-12'>
