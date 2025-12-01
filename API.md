@@ -1,4 +1,4 @@
-# Backend API — Endpoints & Configuration
+# Backend API Endpoints & Configuration
 
 This document describes the API routes added, required request parameters, example responses, and environment variables to configure for Google OAuth, email, Gorq AI, and Google Maps integration.
 
@@ -20,8 +20,8 @@ Notes:
 
 Installed and recommended packages:
 
-- Laravel Sanctum — installed and configured for personal access tokens (token-based API auth)
-- Laravel Socialite — recommended to implement Google OAuth flows
+- Laravel Sanctum installed and configured for personal access tokens (token-based API auth)
+- Laravel Socialite recommended to implement Google OAuth flows
 
 ---
 
@@ -29,17 +29,17 @@ Installed and recommended packages:
 
 These variables were added to `.env.example` and must be configured in your `.env` when you connect services:
 
-- GOOGLE_CLIENT_ID — Google OAuth client ID (Socialite)
-- GOOGLE_CLIENT_SECRET — Google OAuth secret
-- GOOGLE_REDIRECT — OAuth callback (default: `${APP_URL}/auth/google/callback`)
+- GOOGLE_CLIENT_ID Google OAuth client ID (Socialite)
+- GOOGLE_CLIENT_SECRET Google OAuth secret
+- GOOGLE_REDIRECT OAuth callback (default: `${APP_URL}/auth/google/callback`)
 - GITHUB_CLIENT_ID -
 - GITHUB_CLIENT_SECRET -
 - GITHUB_REDIRECT -
-- GORQ_API_KEY — API key for Gorq (or your AI provider)
-- GORQ_BASE_URL — Base URL for Gorq API (default `https://api.gorq.ai`)
-- GORQ_DEFAULT_MODEL — Optional default model to use
-- FRONTEND_URL — Frontend SPA address for CORS/callbacks
-- SANCTUM_STATEFUL_DOMAINS — If using Sanctum for SPA auth
+- GORQ_API_KEY API key for Gorq (or your AI provider)
+- GORQ_BASE_URL Base URL for Gorq API (default `https://api.gorq.ai`)
+- GORQ_DEFAULT_MODEL Optional default model to use
+- FRONTEND_URL Frontend SPA address for CORS/callbacks
+- SANCTUM_STATEFUL_DOMAINS If using Sanctum for SPA auth
 
 The repo already contains mail config examples (MAIL\_\* in `.env.example`) for sending messages.
 
@@ -50,9 +50,9 @@ The repo already contains mail config examples (MAIL\_\* in `.env.example`) for 
 All API endpoints are exposed from `routes/api.php`.
 
 - Default (development/testing): If `API_DOMAIN` is not set, routes are served with the `/api` prefix (e.g., `/api/auth/login`).
-- Subdomain mode (production): If you set `API_DOMAIN` to your API subdomain (e.g., `api.example.com`), the same `routes/api.php` endpoints are exposed at the root path on that domain — e.g., `https://api.example.com/auth/login` (no `/api` prefix).
+- Subdomain mode (production): If you set `API_DOMAIN` to your API subdomain (e.g., `api.example.com`), the same `routes/api.php` endpoints are exposed at the root path on that domain e.g., `https://api.example.com/auth/login` (no `/api` prefix).
 
-Note: For local development you can avoid configuring DNS or host entries by enabling the optional `API_PREFIX_FALLBACK` environment variable; this registers the `/api` prefix **in addition** to the domain routes when `API_DOMAIN` is set — this is handy when you set `API_DOMAIN` but still want to call the API at `/api` during development or when `api.example.com` is not resolvable locally.
+Note: For local development you can avoid configuring DNS or host entries by enabling the optional `API_PREFIX_FALLBACK` environment variable; this registers the `/api` prefix **in addition** to the domain routes when `API_DOMAIN` is set this is handy when you set `API_DOMAIN` but still want to call the API at `/api` during development or when `api.example.com` is not resolvable locally.
 
 ## Developer tools
 
@@ -64,7 +64,7 @@ Endpoint:
 
 Payload / headers:
 
-- Header `X-RUN-MIG-TOKEN` or body param `token` — the value must match `RUN_MIG_TOKEN` in `.env`.
+- Header `X-RUN-MIG-TOKEN` or body param `token` the value must match `RUN_MIG_TOKEN` in `.env`.
 - Optional `seed` boolean body param to run `db:seed` after migrations.
 - Optional `path` string body param to pass `--path` to `migrate`.
 
@@ -93,14 +93,14 @@ For a full guide on configuring Google Cloud credentials, Socialite server usage
 
 #### Flow overview
 
-- **Credential (email + password hash)** — `POST /auth/register` to create an account and `POST /auth/login` to obtain a Sanctum personal access token. Tokens must be sent via `Authorization: Bearer <token>` on protected routes. Frontends are responsible for hashing the password with SHA-256 before sending it to the API.
-- **Logout** — `POST /auth/logout` works for both API calls (returns JSON) and browser flows (redirects + clears the `api_token` cookie) and revokes the active Sanctum token.
-- **OAuth browser redirects** — `GET /auth/{provider}/redirect` (Google/GitHub) sends the browser to the provider; `GET /auth/{provider}/callback` finishes authentication, issues a Sanctum token, and either returns JSON or sets the `api_token` cookie and redirects to the SPA.
-- **OAuth API/token exchange** — `POST /auth/google/token` and `POST /auth/github/token` let SPAs or native apps exchange an OAuth `code`, Google Credential API `credential`, or a GitHub access token directly for a Sanctum token without browser redirects.
-- **Email verification** — `POST /auth/verify/send` issues tokens; `GET /auth/verify/{token}` validates them and either returns JSON or redirects to the SPA.
-- **Password reset** — `POST /auth/password/forgot` creates reset tokens and emails users; `POST /auth/password/reset` validates the token and updates the stored password hash.
-- **Social linking** — Authenticated users can link/unlink Google/GitHub providers via `/auth/link/...` and `/auth/unlink` so future logins can use OAuth.
-- **Profile & session hygiene** — Protected endpoints (e.g., `/user`) require the Bearer token or the secure `api_token` cookie returned by the OAuth callbacks.
+- **Credential (email + password hash)** `POST /auth/register` to create an account and `POST /auth/login` to obtain a Sanctum personal access token. Tokens must be sent via `Authorization: Bearer <token>` on protected routes. Frontends are responsible for hashing the password with SHA-256 before sending it to the API.
+- **Logout** `POST /auth/logout` works for both API calls (returns JSON) and browser flows (redirects + clears the `api_token` cookie) and revokes the active Sanctum token.
+- **OAuth browser redirects** `GET /auth/{provider}/redirect` (Google/GitHub) sends the browser to the provider; `GET /auth/{provider}/callback` finishes authentication, issues a Sanctum token, and either returns JSON or sets the `api_token` cookie and redirects to the SPA.
+- **OAuth API/token exchange** `POST /auth/google/token` and `POST /auth/github/token` let SPAs or native apps exchange an OAuth `code`, Google Credential API `credential`, or a GitHub access token directly for a Sanctum token without browser redirects.
+- **Email verification** `POST /auth/verify/send` issues tokens; `GET /auth/verify/{token}` validates them and either returns JSON or redirects to the SPA.
+- **Password reset** `POST /auth/password/forgot` creates reset tokens and emails users; `POST /auth/password/reset` validates the token and updates the stored password hash.
+- **Social linking** Authenticated users can link/unlink Google/GitHub providers via `/auth/link/...` and `/auth/unlink` so future logins can use OAuth.
+- **Profile & session hygiene** Protected endpoints (e.g., `/user`) require the Bearer token or the secure `api_token` cookie returned by the OAuth callbacks.
 
 > **⚠️ IMPORTANT: Password Hashing Requirement**
 >
@@ -230,7 +230,7 @@ Authorization: Bearer <your-plain-text-token-here>
 
 - GET /api/auth/google/callback (or GET /auth/google/callback if `API_DOMAIN` is set)
 
-  - OAuth callback — handled with Laravel Socialite.
+  - OAuth callback handled with Laravel Socialite.
   - Behavior:
     - Socialite reads Google user info (id, name, email, avatar). The backend will map provider `name` into `first_name` and `last_name` where possible and generate a `username` using the preferred username or email localpart.
     - If a user exists with the same `provider_name` + `provider_id`, that user is returned.
@@ -248,17 +248,17 @@ Authorization: Bearer <your-plain-text-token-here>
 - POST /api/auth/google/token (API-only token exchange)
 
   - Body (JSON):
-    - `code` (string) — authorization code received from Google OAuth (required if `credential` missing)
-    - `credential` (string) — ID token from Google One Tap / Credential API (required if `code` missing)
-    - `redirect_uri` (string, optional) — override redirect URI used during code exchange
+    - `code` (string) authorization code received from Google OAuth (required if `credential` missing)
+    - `credential` (string) ID token from Google One Tap / Credential API (required if `code` missing)
+    - `redirect_uri` (string, optional) override redirect URI used during code exchange
   - Behavior:
     - If `code` is provided, the backend exchanges it against Google's token endpoint using the configured `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, obtains an access token, resolves the user profile via Socialite, and creates/logs in the user.
     - If `credential` (ID token) is provided, the backend verifies it using Google's `tokeninfo` endpoint and uses the resulting profile to authenticate the user.
     - Always returns JSON (no redirects) with the Sanctum token.
   - Success response (200): `{ "status": "success", "message": "Authenticated via Google", "data": { "user": {...}, "token": "plain-text-sanctum-token" } }`
   - Errors:
-    - 400 — Invalid/expired code or credential, or Google API error
-    - 422 — Missing `code`/`credential` payload
+    - 400 Invalid/expired code or credential, or Google API error
+    - 422 Missing `code`/`credential` payload
   - Use this endpoint for native apps or SPAs that already captured the Google credential and simply need to exchange it server-side without browser redirects.
 
 #### Password reset
@@ -291,8 +291,8 @@ Authorization: Bearer <your-plain-text-token-here>
 
 ### GitHub OAuth (browser redirect flow)
 
-    -   GET /api/auth/github/redirect — Redirects the browser to GitHub's OAuth consent page (via Socialite). If your SPA needs the URL to redirect itself, call this endpoint and read the Location header.
-    -   GET /api/auth/github/callback — OAuth callback endpoint which handles the GitHub response and returns a token in JSON (for API clients) or sets a secure `api_token` cookie and redirects to the SPA route on success.
+    -   GET /api/auth/github/redirect   Redirects the browser to GitHub's OAuth consent page (via Socialite). If your SPA needs the URL to redirect itself, call this endpoint and read the Location header.
+    -   GET /api/auth/github/callback   OAuth callback endpoint which handles the GitHub response and returns a token in JSON (for API clients) or sets a secure `api_token` cookie and redirects to the SPA route on success.
 
 #### GitHub OAuth behavior
 
@@ -305,16 +305,16 @@ Authorization: Bearer <your-plain-text-token-here>
 - POST /api/auth/github/token (API-only token exchange)
 
   - Body (JSON):
-    - `code` (string) — authorization code returned by GitHub's OAuth authorize endpoint (required if `access_token` missing)
-    - `access_token` (string) — GitHub access token obtained on the client (required if `code` missing)
-    - `redirect_uri` (string, optional) — custom redirect URI used when generating the code
+    - `code` (string) authorization code returned by GitHub's OAuth authorize endpoint (required if `access_token` missing)
+    - `access_token` (string) GitHub access token obtained on the client (required if `code` missing)
+    - `redirect_uri` (string, optional) custom redirect URI used when generating the code
   - Behavior:
     - When a `code` is provided, the backend calls `https://github.com/login/oauth/access_token` with your app's client ID/secret to exchange it for an access token, then fetches the user profile using Socialite and logs the user in.
     - When `access_token` is provided directly, it is used immediately to fetch the GitHub profile.
     - Always responds with JSON, returning `{ user, token }` on success or a structured 400 error on failure.
   - Errors:
-    - 400 — Code exchange failed or provided access token invalid/expired
-    - 422 — Neither `code` nor `access_token` provided
+    - 400 Code exchange failed or provided access token invalid/expired
+    - 422 Neither `code` nor `access_token` provided
   - Ideal for native apps or SPAs that already have the code/token and need a pure API flow with no redirects.
 
 ### Social account linking / unlinking
@@ -342,9 +342,9 @@ Authorization: Bearer <your-plain-text-token-here>
         -   `avatar` => sometimes|url
     -   Success (200): returns updated user { status: 'success', message: 'Profile updated', data: { user will be returned }}
     -   Errors:
-        -   401 Unauthenticated — missing or invalid token
-        -   422 Validation failed — invalid_name/email or email already taken
-        -   500 Server error — database or other internal error
+        -   401 Unauthenticated   missing or invalid token
+        -   422 Validation failed   invalid_name/email or email already taken
+        -   500 Server error   database or other internal error
     -   Body (optional any): { username, first_name, last_name, email, avatar }
 
     Example request (GET /user):
@@ -382,15 +382,15 @@ Authorization: Bearer <your-plain-text-token-here>
         -   Behavior: Authenticated endpoint. Validates the user's current password hash, and if valid, updates the password to the new hash. This does *not* revoke active API tokens by default (frontend should re-login to refresh tokens if desired).
         -   Success (200): { status: 'success', message: 'Password changed successfully' }
         -   Errors:
-            - 401 Unauthenticated — missing or invalid token
-            - 422 Validation failed — wrong current password hash or invalid new password hash/confirmation
+            - 401 Unauthenticated   missing or invalid token
+            - 422 Validation failed   wrong current password hash or invalid new password hash/confirmation
 
     -   DELETE /api/user (or DELETE /user if `API_DOMAIN` is set)
 
         -   Behavior: Authenticated endpoint. Deletes the authenticated user's account, associated avatar file stored on the server (if found), and revokes stored API tokens.
         -   Success (200): { status: 'success', message: 'Account deleted' }
         -   Errors:
-            - 401 Unauthenticated — missing or invalid token
+            - 401 Unauthenticated   missing or invalid token
 
 - POST /api/user/avatar (or POST /user/avatar if `API_DOMAIN` is set)
 
@@ -472,7 +472,7 @@ Notes: run `php artisan storage:link` in deployment to make `storage/app/public`
 
 ### AI / Gorq
 
-- POST /api/ai/generate (or POST /ai/generate if `API_DOMAIN` is set) — Public endpoint
+- POST /api/ai/generate (or POST /ai/generate if `API_DOMAIN` is set) Public endpoint
 - POST /api/ai/generate
 
   - Body: { prompt?: string (required without messages), messages?: array (required without prompt), model?: string, max_tokens?: integer, async?: boolean }
@@ -503,10 +503,10 @@ Content-Type: application/json
 ```
 
     -   Errors & failure modes:
-        - 401 Unauthenticated — (not used) endpoint is public; some UI may prefer authenticated usage for billing/audit
-        - 422 Validation failed — missing prompt or invalid params
-        - 429 Too Many Requests — rate limiter triggered (AI rate limiter `throttle:ai`)
-                - 500 Server Error — AI provider failure or internal error. Response will include `errors` which may contain `payload` (the request payload sent to the provider) and `gorq_response` (raw response details captured from Gorq including status, body, and parsed JSON when appropriate) for debugging. This extra detail can be disabled in production if you prefer not to reveal provider responses.
+        - 401 Unauthenticated   (not used) endpoint is public; some UI may prefer authenticated usage for billing/audit
+        - 422 Validation failed   missing prompt or invalid params
+        - 429 Too Many Requests   rate limiter triggered (AI rate limiter `throttle:ai`)
+                - 500 Server Error   AI provider failure or internal error. Response will include `errors` which may contain `payload` (the request payload sent to the provider) and `gorq_response` (raw response details captured from Gorq including status, body, and parsed JSON when appropriate) for debugging. This extra detail can be disabled in production if you prefer not to reveal provider responses.
 
         -   Example request (Chat Completions style):
 
@@ -548,7 +548,7 @@ Content-Type: application/json
 }
 ```
 
-    -   GET /api/ai/jobs/{id}/status (or GET /ai/jobs/{id}/status if `API_DOMAIN` is set) — Public
+    -   GET /api/ai/jobs/{id}/status (or GET /ai/jobs/{id}/status if `API_DOMAIN` is set)   Public
     -   Returns the job status and result (or error) for async requests:
     -   Response (200): { status: 'success', data: { id, status, result?, error?, meta?, created_at, updated_at } }
 
@@ -557,7 +557,7 @@ Content-Type: application/json
 - POST /api/maps/pin (or POST /maps/pin if `API_DOMAIN` is set)
 
   - Public: does not require authentication (no Bearer token needed)
-  - No API key required — uses Google Maps embed URL format
+  - No API key required uses Google Maps embed URL format
 
   - Body: { address: string (required), zoom?: integer, width?: integer, height?: integer }
   - Validation rules:
@@ -583,29 +583,29 @@ Content-Type: application/json
     }
     ```
   - Response fields:
-    - `embed_url` — URL for use in an iframe `src` attribute (no API key needed)
-    - `maps_link` — Direct link to Google Maps (opens in browser/app)
-    - `iframe` — Ready-to-use HTML iframe element
-    - `address` — The original address provided
-    - `zoom` — The zoom level used
+    - `embed_url` URL for use in an iframe `src` attribute (no API key needed)
+    - `maps_link` Direct link to Google Maps (opens in browser/app)
+    - `iframe` Ready-to-use HTML iframe element
+    - `address` The original address provided
+    - `zoom` The zoom level used
   - Errors & failure modes:
-    - 422 Validation failed — missing or invalid address/fields
+    - 422 Validation failed missing or invalid address/fields
 
 ### Ping / health check
 
-- GET /api/ping — returns a simple JSON response with `{ "status": "ok" }`. If `API_DOMAIN` is set you can use `GET /ping` on your API subdomain (e.g. `https://api.example.com/ping`) to check it is reachable.
+- GET /api/ping returns a simple JSON response with `{ "status": "ok" }`. If `API_DOMAIN` is set you can use `GET /ping` on your API subdomain (e.g. `https://api.example.com/ping`) to check it is reachable.
 
 ### Error response format
 
 When requests fail, the API returns a consistent JSON error structure with an appropriate HTTP status code. The standard fields are:
 
-- `status` — always `error` for failed responses.
-- `message` — a short human readable message such as `Unauthenticated`, `Validation failed`, or `Resource not found`.
-- `errors` — (nullable) an object keyed by field names for validation or structured errors; otherwise `null`.
-- `code` — the HTTP status code returned (e.g., `401`, `422`, `404`, `500`).
-- `timestamp` — ISO 8601 timestamp when the response was generated.
+- `status` always `error` for failed responses.
+- `message` a short human readable message such as `Unauthenticated`, `Validation failed`, or `Resource not found`.
+- `errors` (nullable) an object keyed by field names for validation or structured errors; otherwise `null`.
+- `code` the HTTP status code returned (e.g., `401`, `422`, `404`, `500`).
+- `timestamp` ISO 8601 timestamp when the response was generated.
 
-**Authentication errors (401):** Protected routes (e.g., `GET /user`) require a valid Bearer token. If you access these routes without a token or with an expired/invalid token, the API returns a 401 JSON response — it will **never** redirect to a login page. Your frontend should handle 401 responses by prompting the user to log in.
+**Authentication errors (401):** Protected routes (e.g., `GET /user`) require a valid Bearer token. If you access these routes without a token or with an expired/invalid token, the API returns a 401 JSON response it will **never** redirect to a login page. Your frontend should handle 401 responses by prompting the user to log in.
 
 Example 401 (Unauthenticated):
 
@@ -709,11 +709,11 @@ Notes:
 
 Standard success responses follow a consistent JSON response shape used throughout the API:
 
-- `status` — always `success` for successful responses.
-- `message` — brief human readable description (e.g., `OK`, `Registered`, `Logged in`).
-- `data` — JSON object or array containing the payload for the successful operation.
-- `code` — HTTP status code (e.g., `200` for OK, `201` for created).
-- `timestamp` — ISO 8601 timestamp at the time of response.
+- `status` always `success` for successful responses.
+- `message` brief human readable description (e.g., `OK`, `Registered`, `Logged in`).
+- `data` JSON object or array containing the payload for the successful operation.
+- `code` HTTP status code (e.g., `200` for OK, `201` for created).
+- `timestamp` ISO 8601 timestamp at the time of response.
 
 Example success response (GET /api/ping):
 

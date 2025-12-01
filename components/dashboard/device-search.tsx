@@ -35,7 +35,7 @@ export default function DeviceSearch({
           <Filter className='w-5 h-5 text-white/40 mr-3 flex-shrink-0' />
           <input
             className='w-full bg-transparent outline-none text-sm placeholder:text-white/40 font-medium'
-            placeholder='Search devices, IDs, or IPs — use chips to filter'
+            placeholder='Search devices, IDs, or IPs   use chips to filter'
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);

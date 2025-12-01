@@ -741,7 +741,7 @@ export default function ContactPage() {
               Frequently Asked Questions
             </h2>
             <p className='text-lg text-muted-foreground'>
-              Quick answers to common questions
+              Straight Answers to Smart Questions
             </p>
           </div>
 

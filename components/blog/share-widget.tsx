@@ -36,7 +36,7 @@ export default function ShareWidget({
   }
 
   const onX = () => {
-    const tweet = encodeURIComponent(`${title} — via PavitInfoTech`);
+    const tweet = encodeURIComponent(`${title}   via PavitInfoTech`);
     const u = encodeURIComponent(
       typeof window !== "undefined" ? window.location.href : urlBase()
     );

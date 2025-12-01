@@ -10,8 +10,8 @@ import { Check, ChevronDown, Loader2 } from "lucide-react";
 const plans = [
   {
     name: "Starter",
-    monthlyPrice: 299,
-    yearlyPrice: 249,
+    monthlyPrice: 99,
+    yearlyPrice: 82,
     description: "Perfect for small IoT deployments",
     features: [
       "Real-time device monitoring",
@@ -26,8 +26,8 @@ const plans = [
   },
   {
     name: "Pro",
-    monthlyPrice: 999,
-    yearlyPrice: 799,
+    monthlyPrice: 169,
+    yearlyPrice: 136,
     description: "For growing IoT operations",
     features: [
       "All Starter features",
@@ -125,7 +125,7 @@ export default function PricingPage() {
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 mt-16'>
         <div className='text-center mb-16'>
           <h1 className='text-5xl font-bold font-serif mb-4'>
-            Simple, Transparent Pricing
+            Predictive Power at Every Price Point
           </h1>
           <p className='text-xl text-muted-foreground max-w-3xl mx-auto mb-8'>
             Choose the perfect plan for your IoT infrastructure

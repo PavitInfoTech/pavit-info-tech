@@ -26,7 +26,7 @@ import {
 const stats = [
   { number: "10K+", label: "Devices Monitored" },
   { number: "99.9%", label: "Uptime" },
-  { number: "500ms", label: "Avg Response Time" },
+  { number: "0.5s", label: "Avg Response Time" },
   { number: "24/7", label: "Support" },
 ];
 
@@ -112,16 +112,16 @@ const industryTabs = [
 ];
 
 const partners = [
-  { name: "Siemens", logo: "SIEMENS" },
-  { name: "Bosch", logo: "BOSCH" },
-  { name: "Honeywell", logo: "HONEYWELL" },
+  { name: "SensorLink Corporation", logo: "SENSORLINK" },
+  { name: "EdgeStream Partners", logo: "EDGESTREAM" },
+  { name: "FactoryPulse", logo: "FACTORYPULSE" },
 ];
 
 const testimonials = [
   {
     quote:
       "PavitInfoTech reduced our unplanned downtime by 73%. The predictive maintenance alerts have saved us millions in emergency repairs.",
-    author: "Marcus Chen",
+    author: "Rafael Dominguez",
     role: "VP of Operations",
     company: "Global Manufacturing Corp",
     industry: "Manufacturing",
@@ -130,7 +130,7 @@ const testimonials = [
   {
     quote:
       "The real-time analytics dashboard transformed how we monitor our energy grid. We're now achieving 99.9% uptime across 12,000 nodes.",
-    author: "Dr. Sarah Mitchell",
+    author: "Nadia Kovač",
     role: "Chief Technology Officer",
     company: "EnergyFlow Systems",
     industry: "Smart Energy",
@@ -139,7 +139,7 @@ const testimonials = [
   {
     quote:
       "Cold chain compliance used to be our biggest headache. Now we have full visibility and haven't had a single compliance violation in 18 months.",
-    author: "James Rodriguez",
+    author: "Damon Volkov",
     role: "Director of Logistics",
     company: "FreshTrack Logistics",
     industry: "Logistics",
@@ -148,7 +148,7 @@ const testimonials = [
   {
     quote:
       "HIPAA compliance and medical device monitoring in one platform? Game changer. Our IT team finally sleeps at night.",
-    author: "Dr. Emily Watson",
+    author: "Amara Okonkwo",
     role: "Chief Medical Information Officer",
     company: "Regional Health Network",
     industry: "Healthcare",
@@ -179,7 +179,7 @@ export default function Home() {
             </div>
 
             <h1 className='font-serif font-extrabold tracking-tight leading-[0.86] text-[48px] md:text-[110px] lg:text-[140px] text-white mx-auto max-w-[1100px]'>
-              <span className='block md:inline'>AI-Powered</span>
+              <span className='block md:inline'>AI-Powered </span>
               <span className='block md:inline'>IoT Intelligence</span>
             </h1>
 
@@ -378,7 +378,7 @@ export default function Home() {
               Intelligence at Every Layer
             </h2>
             <p className='text-xl text-slate-400 max-w-2xl mx-auto'>
-              From data ingestion to automated action—built for enterprise
+              From data ingestion to automated action, built for enterprise
               scale.
             </p>
           </div>
@@ -774,7 +774,7 @@ export default function Home() {
               Customer Stories
             </span>
             <h2 className='text-4xl md:text-5xl font-bold font-serif mt-3 mb-4'>
-              Trusted by Industry Leaders
+              Endorsed by Teams Worldwide
             </h2>
             <p className='text-xl text-muted-foreground max-w-2xl mx-auto'>
               See how enterprises across industries are transforming their IoT
