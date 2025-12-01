@@ -1,4 +1,4 @@
-# Copilot Instructions — PavitInfoTech
+# Copilot Instructions PavitInfoTech
 
 ## Project Overview
 
@@ -15,13 +15,13 @@ pnpm lint           # eslint
 
 ## Architecture & Layout
 
-| Path                    | Purpose                                              |
-| ----------------------- | ---------------------------------------------------- |
-| `app/`                  | Next.js App Router pages (file-based routing)        |
-| `components/layout/`    | `MainLayout`, `Navbar`, `Footer` — wrap public pages |
-| `components/dashboard/` | `DashboardLayout`, `Sidebar` — wrap `/dashboard/*`   |
-| `components/ui/`        | shadcn primitives (`Button`, `Card`, `Input`, etc.)  |
-| `lib/`                  | utilities (`cn`, `auth-utils`, `blog-data`)          |
+| Path                    | Purpose                                             |
+| ----------------------- | --------------------------------------------------- |
+| `app/`                  | Next.js App Router pages (file-based routing)       |
+| `components/layout/`    | `MainLayout`, `Navbar`, `Footer` wrap public pages  |
+| `components/dashboard/` | `DashboardLayout`, `Sidebar` wrap `/dashboard/*`    |
+| `components/ui/`        | shadcn primitives (`Button`, `Card`, `Input`, etc.) |
+| `lib/`                  | utilities (`cn`, `auth-utils`, `blog-data`)         |
 
 ## Component Patterns
 
@@ -30,7 +30,7 @@ pnpm lint           # eslint
 - **Tailwind gradients**: Use `bg-linear-to-*` (Tailwind v4 syntax), not `bg-gradient-to-*`.
 - **Icons**: Import from `lucide-react`.
 
-### Example — Page with MainLayout
+### Example Page with MainLayout
 
 ```tsx
 import { MainLayout } from "@/components/layout/main-layout";
@@ -50,7 +50,7 @@ export default function ExamplePage() {
 ## Styling Conventions
 
 - **Dark-first**: CSS variables in `app/globals.css` using OKLCH color space.
-- **Responsive breakpoints**: `sm:`, `md:`, `lg:` — mobile-first.
+- **Responsive breakpoints**: `sm:`, `md:`, `lg:` mobile-first.
 - **Typography**: Use `font-serif` for headings, `font-sans` for body.
 - **Spacing**: Prefer `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8` for consistent page width.
 

@@ -283,7 +283,7 @@ export default function FeaturesPage() {
                 <span className='block text-primary'>Intelligence.</span>
               </h1>
               <p className='text-xl text-slate-400 max-w-xl'>
-                From edge sensors to cloud analytics — a unified platform
+                From edge sensors to cloud analytics, a unified platform
                 architected for scale, security, and real-time decision making.
               </p>
               <div className='flex flex-wrap gap-4 pt-4'>
@@ -388,25 +388,25 @@ export default function FeaturesPage() {
                     onClick={() => setHeroLayer("hardware")}
                     className='text-xs text-slate-200 text-left hover:text-white'
                   >
-                    • Hardware Layer — sensors & actuators
+                    • Hardware Layer sensors & actuators
                   </button>
                   <button
                     onClick={() => setHeroLayer("edge")}
                     className='text-xs text-slate-200 text-left hover:text-white'
                   >
-                    • Edge Computing — filter & preprocess
+                    • Edge Computing filter & preprocess
                   </button>
                   <button
                     onClick={() => setHeroLayer("network")}
                     className='text-xs text-slate-200 text-left hover:text-white'
                   >
-                    • Network — routing, qos
+                    • Network routing, qos
                   </button>
                   <button
                     onClick={() => setHeroLayer("cloud")}
                     className='text-xs text-slate-200 text-left hover:text-white'
                   >
-                    • Cloud — analytics & models
+                    • Cloud analytics & models
                   </button>
                 </div>
               </div>
@@ -535,7 +535,7 @@ export default function FeaturesPage() {
               </h2>
               <p className='text-lg text-slate-400 mb-8'>
                 Our ML pipeline combines time-series forecasting with
-                classification models to predict failures weeks in advance — not
+                classification models to predict failures weeks in advance not
                 hours.
               </p>
 
@@ -915,7 +915,7 @@ export default function FeaturesPage() {
             </h2>
             <p className='text-xl text-slate-400 max-w-3xl mx-auto'>
               Build complex automation rules with a visual editor. No code
-              required — just logic.
+              required, just logic.
             </p>
           </div>
 

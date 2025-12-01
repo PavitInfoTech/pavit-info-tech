@@ -177,7 +177,7 @@ export default function BlogPage() {
     title: "The Death of Reactive Maintenance",
     subtitle: "Why 2025 is the Year of Prediction",
     excerpt:
-      "For decades, industrial operations have been trapped in a cycle of break-fix. Equipment fails, production stops, engineers scramble. But a fundamental shift is underway. Predictive AI is making reactive maintenance obsolete—and the companies that don't adapt will be left behind.",
+      "For decades, industrial operations have been trapped in a cycle of break-fix. Equipment fails, production stops, engineers scramble. But a fundamental shift is underway. Predictive AI is making reactive maintenance obsolete and the companies that don't adapt will be left behind.",
     author: "Dr. Sarah Chen",
     role: "Chief AI Officer",
     date: "November 2025",

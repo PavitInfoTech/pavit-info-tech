@@ -16,27 +16,27 @@ import {
 
 const teamMembers = [
   {
-    name: "Ervion Kaleesh",
-    role: "Founder & CEO",
-    bio: "Visionary entrepreneur driving innovation in IoT and intelligent systems",
+    name: "Elias Nordström",
+    role: "VP of Product Development",
+    bio: "Transforms customer insights into intelligent features that solve real problems.",
     initials: "EK",
   },
   {
-    name: "Sarah Chen",
-    role: "Chief Technology Officer",
-    bio: "IoT and AI systems architect with 15+ years in enterprise technology",
+    name: "Kavya Deshmukh",
+    role: "Lead AI Engineer",
+    bio: "Builds predictive algorithms that detect failures before they happen automatically.",
     initials: "SC",
   },
   {
-    name: "Michael Rodriguez",
-    role: "Head of ML & Predictive Analytics",
-    bio: "Machine learning expert specializing in anomaly detection and forecasting",
+    name: "Idris Kamara",
+    role: "Director of Platform Innovation",
+    bio: "Pioneers breakthrough technologies enabling real-time intelligence across enterprise IoT systems.",
     initials: "MR",
   },
   {
-    name: "Priya Patel",
-    role: "VP Product",
-    bio: "Product leader focused on enterprise IoT solutions and customer success",
+    name: "Sienna Voss",
+    role: "Head of IoT Architecture",
+    bio: "Designs scalable IoT ecosystems connecting thousands of devices seamlessly daily.",
     initials: "PP",
   },
 ];
@@ -222,7 +222,7 @@ export default function AboutPage() {
             <span className='block text-primary'>and Digital Worlds.</span>
           </h1>
           <p className='text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto leading-relaxed'>
-            We believe technology should serve humanity — not the other way
+            We believe technology should serve humanity, not the other way
             around. Our mission is to bring warmth, intelligence, and purpose to
             every connected device.
           </p>
@@ -330,8 +330,8 @@ export default function AboutPage() {
               AI for Good
             </h2>
             <p className='text-xl text-slate-400 max-w-3xl mx-auto'>
-              We believe intelligent IoT isn’t just about efficiency — it’s
-              about building a sustainable future for our planet.
+              We believe intelligent IoT isn’t just about efficiency it’s about
+              building a sustainable future for our planet.
             </p>
           </div>
 
@@ -401,7 +401,7 @@ export default function AboutPage() {
               Meet Our Team
             </h2>
             <p className='text-xl text-muted-foreground max-w-2xl mx-auto'>
-              The minds behind the machine — building the future of intelligent
+              The minds behind the machine, building the future of intelligent
               IoT.
             </p>
           </div>
@@ -500,7 +500,7 @@ export default function AboutPage() {
               Live Platform Stats
             </h2>
             <p className='text-xl text-slate-400 max-w-2xl mx-auto'>
-              Numbers that tell our story — updated in real-time from our global
+              Numbers that tell our story, updated in real-time from our global
               network.
             </p>
           </div>

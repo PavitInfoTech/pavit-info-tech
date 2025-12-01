@@ -86,8 +86,7 @@ export default function DevicesPage() {
                 Device Inventory
               </h1>
               <p className='text-muted-foreground text-base'>
-                Filter, search and manage thousands of assets — high density
-                mode
+                Filter, search and manage thousands of assets high density mode
               </p>
             </div>
 

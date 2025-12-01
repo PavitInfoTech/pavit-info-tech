@@ -23,7 +23,7 @@ export const blogPosts: BlogPost[] = [
 
 ## Why 2025 is the Year of Prediction
 
-For decades, industrial operations have been trapped in a cycle of break-fix. Equipment fails, production stops, engineers scramble. But a fundamental shift is underway. Predictive AI is making reactive maintenance obsolete—and the companies that don't adapt will be left behind.
+For decades, industrial operations have been trapped in a cycle of break-fix. Equipment fails, production stops, engineers scramble. But a fundamental shift is underway. Predictive AI is making reactive maintenance obsolete and the companies that don't adapt will be left behind.
 
 ## The Hidden Cost of Reactive Maintenance
 
@@ -71,7 +71,7 @@ Transitioning from reactive to predictive maintenance requires:
 
 ## Conclusion
 
-The companies that embrace predictive maintenance today will dominate their industries tomorrow. Those that cling to reactive approaches will find themselves increasingly uncompetitive—drowning in avoidable costs while their competitors operate with surgical precision.
+The companies that embrace predictive maintenance today will dominate their industries tomorrow. Those that cling to reactive approaches will find themselves increasingly uncompetitive drowning in avoidable costs while their competitors operate with surgical precision.
 
 The death of reactive maintenance isn't a prediction. It's already happening.`,
     author: "Dr. Sarah Chen",
@@ -516,7 +516,7 @@ Gorilla, Delta-of-Delta, and custom algorithms for IoT telemetry data.
 
 ## The Storage Challenge
 
-IoT devices generate enormous volumes of time-series data. A single sensor sampling at 1Hz produces 31.5 million data points per year. At 8 bytes per reading, that's 252MB per sensor—before any metadata.
+IoT devices generate enormous volumes of time-series data. A single sensor sampling at 1Hz produces 31.5 million data points per year. At 8 bytes per reading, that's 252MB per sensor before any metadata.
 
 Efficient compression is essential for:
 - **Storage costs**: Reduce database footprint by 90%+
@@ -854,7 +854,7 @@ class DigitalTwinViewer {
 | Metric | Target | Achieved |
 |--------|--------|----------|
 | Sync Latency (P50) | <100ms | 45ms |
-| Sync Latency (P99) | <500ms | 280ms |
+| Sync Latency (P99) | <0.5s | 280ms |
 | State Accuracy | >99.9% | 99.97% |
 | Bandwidth per Asset | <1KB/s | 0.4KB/s |
 
