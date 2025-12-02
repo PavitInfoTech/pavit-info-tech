@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/use-auth";
+import { useSubscription } from "@/lib/use-subscription";
 
 const menuItems = [
   {
@@ -165,6 +166,7 @@ export function Sidebar() {
   const [notifications] = useState(3);
   const router = useRouter();
   const { user } = useAuth();
+  const { plan } = useSubscription();
 
   const displayName = user
     ? user.first_name || user.last_name
@@ -338,7 +340,7 @@ export function Sidebar() {
                 <div className='flex items-center gap-1'>
                   <Crown className='w-3 h-3 text-amber-400' />
                   <span className='text-[10px] text-amber-400 font-medium'>
-                    Pro Plan
+                    {plan ? `${plan.name} Plan` : "No Plan"}
                   </span>
                 </div>
               </div>
