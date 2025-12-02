@@ -6,8 +6,8 @@ This document describes the API routes added, required request parameters, examp
 
 ## Quick setup / migrations
 
-- Add required environment variables in `.env` (see `.env.example`).
-- Run database migrations:
+-   Add required environment variables in `.env` (see `.env.example`).
+-   Run database migrations:
 
 ```powershell
 php artisan migrate
@@ -36,8 +36,8 @@ The following tables are created by the migrations:
 
 Installed and recommended packages:
 
-- Laravel Sanctum — installed and configured for personal access tokens (token-based API auth)
-- Laravel Socialite — recommended to implement Google OAuth flows
+-   Laravel Sanctum — installed and configured for personal access tokens (token-based API auth)
+-   Laravel Socialite — recommended to implement Google OAuth flows
 
 ---
 
@@ -45,17 +45,17 @@ Installed and recommended packages:
 
 These variables were added to `.env.example` and must be configured in your `.env` when you connect services:
 
-- GOOGLE_CLIENT_ID — Google OAuth client ID (Socialite)
-- GOOGLE_CLIENT_SECRET — Google OAuth secret
-- GOOGLE_REDIRECT — OAuth callback (default: `${APP_URL}/auth/google/callback`)
-- GITHUB_CLIENT_ID -
-- GITHUB_CLIENT_SECRET -
-- GITHUB_REDIRECT -
-- GORQ_API_KEY — API key for Gorq (or your AI provider)
-- GORQ_BASE_URL — Base URL for Gorq API (default `https://api.gorq.ai`)
-- GORQ_DEFAULT_MODEL — Optional default model to use
-- FRONTEND_URL — Frontend SPA address for CORS/callbacks
-- SANCTUM_STATEFUL_DOMAINS — If using Sanctum for SPA auth
+-   GOOGLE_CLIENT_ID — Google OAuth client ID (Socialite)
+-   GOOGLE_CLIENT_SECRET — Google OAuth secret
+-   GOOGLE_REDIRECT — OAuth callback (default: `${APP_URL}/auth/google/callback`)
+-   GITHUB_CLIENT_ID -
+-   GITHUB_CLIENT_SECRET -
+-   GITHUB_REDIRECT -
+-   GORQ_API_KEY — API key for Gorq (or your AI provider)
+-   GORQ_BASE_URL — Base URL for Gorq API (default `https://api.gorq.ai`)
+-   GORQ_DEFAULT_MODEL — Optional default model to use
+-   FRONTEND_URL — Frontend SPA address for CORS/callbacks
+-   SANCTUM_STATEFUL_DOMAINS — If using Sanctum for SPA auth
 
 The repo already contains mail config examples (MAIL\_\* in `.env.example`) for sending messages.
 
@@ -65,67 +65,82 @@ The repo already contains mail config examples (MAIL\_\* in `.env.example`) for 
 
 All API endpoints are exposed from `routes/api.php`.
 
-- Default (development/testing): If `API_DOMAIN` is not set, routes are served with the `/api` prefix (e.g., `/api/auth/login`).
-- Subdomain mode (production): If you set `API_DOMAIN` to your API subdomain (e.g., `api.example.com`), the same `routes/api.php` endpoints are exposed at the root path on that domain — e.g., `https://api.example.com/auth/login` (no `/api` prefix).
+-   Default (development/testing): If `API_DOMAIN` is not set, routes are served with the `/api` prefix (e.g., `/api/auth/login`).
+-   Subdomain mode (production): If you set `API_DOMAIN` to your API subdomain (e.g., `api.example.com`), the same `routes/api.php` endpoints are exposed at the root path on that domain — e.g., `https://api.example.com/auth/login` (no `/api` prefix).
 
 Note: For local development you can avoid configuring DNS or host entries by enabling the optional `API_PREFIX_FALLBACK` environment variable; this registers the `/api` prefix **in addition** to the domain routes when `API_DOMAIN` is set — this is handy when you set `API_DOMAIN` but still want to call the API at `/api` during development or when `api.example.com` is not resolvable locally.
 
 ### All endpoints at a glance
 
-| Method              | URI                                        | Description                               | Auth  |
-| ------------------- | ------------------------------------------ | ----------------------------------------- | ----- |
-| GET                 | `/api/ping`                                | Health check                              | No    |
-| **Authentication**  |                                            |                                           |       |
-| POST                | `/api/auth/register`                       | Register new user                         | No    |
-| POST                | `/api/auth/login`                          | Login with email/password                 | No    |
-| POST                | `/api/auth/logout`                         | Logout (revoke token)                     | Yes   |
-| GET                 | `/api/auth/google/redirect`                | Redirect to Google OAuth                  | No    |
-| GET                 | `/api/auth/google/callback`                | Google OAuth callback                     | No    |
-| POST                | `/api/auth/google/token`                   | Exchange Google code/credential for token | No    |
-| GET                 | `/api/auth/github/redirect`                | Redirect to GitHub OAuth                  | No    |
-| GET                 | `/api/auth/github/callback`                | GitHub OAuth callback                     | No    |
-| POST                | `/api/auth/github/token`                   | Exchange GitHub code/token for API token  | No    |
-| POST                | `/api/auth/password/forgot`                | Request password reset email              | No    |
-| POST                | `/api/auth/password/reset`                 | Reset password with token                 | No    |
-| POST                | `/api/auth/password/change`                | Change password (authenticated)           | Yes   |
-| POST                | `/api/auth/verify/send`                    | Send/resend verification email            | No    |
-| GET                 | `/api/auth/verify/{token}`                 | Verify email with token                   | No    |
-| GET                 | `/api/auth/link/google/redirect`           | Link Google account                       | Yes   |
-| GET                 | `/api/auth/link/google/callback`           | Google link callback                      | Yes   |
-| GET                 | `/api/auth/link/github/redirect`           | Link GitHub account                       | Yes   |
-| GET                 | `/api/auth/link/github/callback`           | GitHub link callback                      | Yes   |
-| POST                | `/api/auth/unlink`                         | Unlink OAuth provider                     | Yes   |
-| **User Profile**    |                                            |                                           |       |
-| GET                 | `/api/user`                                | Get current user profile                  | Yes   |
-| PUT                 | `/api/user`                                | Update user profile                       | Yes   |
-| DELETE              | `/api/user`                                | Delete user account                       | Yes   |
-| POST                | `/api/user/avatar`                         | Upload avatar image                       | Yes   |
-| GET                 | `/api/users/{id}/public`                   | Get public profile                        | No    |
-| **Mail**            |                                            |                                           |       |
-| POST                | `/api/mail/contact`                        | Send contact message                      | No    |
-| POST                | `/api/mail/newsletter`                     | Subscribe to newsletter                   | No    |
-| GET                 | `/api/mail/newsletter/verify/{token}`      | Verify newsletter subscription            | No    |
-| GET                 | `/api/mail/newsletter/unsubscribe/{token}` | Unsubscribe from newsletter               | No    |
-| POST                | `/api/mail/password-reset`                 | Send password reset email                 | No    |
-| **AI / Gorq**       |                                            |                                           |       |
-| POST                | `/api/ai/generate`                         | Generate AI response                      | No    |
-| GET                 | `/api/ai/jobs/{id}/status`                 | Get async AI job status                   | No    |
-| **Maps**            |                                            |                                           |       |
-| POST                | `/api/maps/pin`                            | Generate Google Maps embed URL            | No    |
-| **Plans**           |                                            |                                           |       |
-| GET                 | `/api/subscription-plans`                  | List all plans                            | No    |
-| GET                 | `/api/subscription-plans/{slug}`           | Get plan by slug                          | No    |
-| **Payments**        |                                            |                                           |       |
-| POST                | `/api/subscriptions`                       | Pay for a plan (purchase)                 | Yes   |
-| POST                | `/api/payments/process`                    | Process one-time payment                  | Yes   |
-| GET                 | `/api/payments`                            | List payment history                      | Yes   |
-| GET                 | `/api/payments/last-plan`                  | Get last purchased plan                   | Yes   |
-| GET                 | `/api/payments/{transactionId}`            | Verify/get payment details                | Yes   |
-| POST                | `/api/payments/refund/{transactionId}`     | Request refund                            | Yes   |
-| POST                | `/api/payments/revert-plan`                | Revert/clear current plan                 | Yes   |
-| POST                | `/api/payments/webhook`                    | Payment webhook handler                   | No    |
-| **Admin/Dev Tools** |                                            |                                           |       |
-| POST                | `/api/admin/migrate`                       | Run migrations via HTTP                   | Token |
+| Method             | URI                              | Description                               | Auth |
+| ------------------ | -------------------------------- | ----------------------------------------- | ---- |
+| GET                | `/api/ping`                      | Health check                              | No   |
+| **Authentication** |                                  |                                           |      |
+| POST               | `/api/auth/register`             | Register new user                         | No   |
+| POST               | `/api/auth/login`                | Login with email/password                 | No   |
+| POST               | `/api/auth/logout`               | Logout (revoke token)                     | Yes  |
+| GET                | `/api/auth/google/redirect`      | Redirect to Google OAuth                  | No   |
+| GET                | `/api/auth/google/callback`      | Google OAuth callback                     | No   |
+| POST               | `/api/auth/google/token`         | Exchange Google code/credential for token | No   |
+| GET                | `/api/auth/github/redirect`      | Redirect to GitHub OAuth                  | No   |
+| GET                | `/api/auth/github/callback`      | GitHub OAuth callback                     | No   |
+| POST               | `/api/auth/github/token`         | Exchange GitHub code/token for API token  | No   |
+| POST               | `/api/auth/password/forgot`      | Request password reset email              | No   |
+| POST               | `/api/auth/password/reset`       | Reset password with token                 | No   |
+| POST               | `/api/auth/password/change`      | Change password (authenticated)           | Yes  |
+| POST               | `/api/auth/verify/send`          | Send/resend verification email            | No   |
+| GET                | `/api/auth/verify/{token}`       | Verify email with token                   | No   |
+| GET                | `/api/auth/link/google/redirect` | Link Google account                       | Yes  |
+| GET                | `/api/auth/link/google/callback` | Google link callback                      | Yes  |
+| GET                | `/api/auth/link/github/redirect` | Link GitHub account                       | Yes  |
+| GET                | `/api/auth/link/github/callback` | GitHub link callback                      | Yes  |
+| POST               | `/api/auth/unlink`               | Unlink OAuth provider                     | Yes  |
+| **User Profile**   |                                  |                                           |      |
+
+> Note: The browser redirect/callback OAuth routes require the server session so Socialite can maintain the OAuth state parameter. These routes are registered with the `web` (session) middleware in the API, which makes browser-based OAuth redirects work correctly. Because your frontend is on the root domain and the API is on a subdomain, set session cookie options in `.env` so cookies are shared across subdomains.
+
+Example settings for pavitinfotech.com + api.pavitinfotech.com
+
+```
+SESSION_DRIVER=file
+SESSION_DOMAIN=.pavitinfotech.com
+SESSION_SECURE_COOKIE=true    # only in production with HTTPS
+SESSION_SAME_SITE=lax         # allows top-level navigation redirects to set cookie
+```
+
+> If your frontend is on an entirely different top-level domain (e.g., frontend.com and api.example.com) you can't share cookies — use the token-exchange endpoints (`POST /api/auth/google/token`, `POST /api/auth/github/token`) for stateless API-only flows or `Socialite::stateless()` with your own CSRF/state protection.
+
+> If your frontend is on a different top-level domain and cannot share cookies, prefer using the token-exchange endpoints (`POST /api/auth/google/token`, `POST /api/auth/github/token`) for API-only flows or use `Socialite::stateless()` after adding custom CSRF/state protection.
+> | GET | `/api/user` | Get current user profile | Yes |
+> | PUT | `/api/user` | Update user profile | Yes |
+> | DELETE | `/api/user` | Delete user account | Yes |
+> | POST | `/api/user/avatar` | Upload avatar image | Yes |
+> | GET | `/api/users/{id}/public` | Get public profile | No |
+> | **Mail** | | | |
+> | POST | `/api/mail/contact` | Send contact message | No |
+> | POST | `/api/mail/newsletter` | Subscribe to newsletter | No |
+> | GET | `/api/mail/newsletter/verify/{token}` | Verify newsletter subscription | No |
+> | GET | `/api/mail/newsletter/unsubscribe/{token}` | Unsubscribe from newsletter | No |
+> | POST | `/api/mail/password-reset` | Send password reset email | No |
+> | **AI / Gorq** | | | |
+> | POST | `/api/ai/generate` | Generate AI response | No |
+> | GET | `/api/ai/jobs/{id}/status` | Get async AI job status | No |
+> | **Maps** | | | |
+> | POST | `/api/maps/pin` | Generate Google Maps embed URL | No |
+> | **Plans** | | | |
+> | GET | `/api/subscription-plans` | List all plans | No |
+> | GET | `/api/subscription-plans/{slug}` | Get plan by slug | No |
+> | **Payments** | | | |
+> | POST | `/api/subscriptions` | Pay for a plan (purchase) | Yes |
+> | POST | `/api/payments/process` | Process one-time payment | Yes |
+> | GET | `/api/payments` | List payment history | Yes |
+> | GET | `/api/payments/last-plan` | Get last purchased plan | Yes |
+> | GET | `/api/payments/{transactionId}` | Verify/get payment details | Yes |
+> | POST | `/api/payments/refund/{transactionId}` | Request refund | Yes |
+> | POST | `/api/payments/revert-plan` | Revert/clear current plan | Yes |
+> | POST | `/api/payments/webhook` | Payment webhook handler | No |
+> | **Admin/Dev Tools** | | | |
+> | POST | `/api/admin/migrate` | Run migrations via HTTP | Token |
 
 ## Developer tools
 
@@ -133,19 +148,19 @@ If you do not have terminal access on the server, there is a safe, token-protect
 
 Endpoint:
 
-- POST /admin/migrate
+-   POST /admin/migrate
 
 Payload / headers:
 
-- Header `X-RUN-MIG-TOKEN` or body param `token` — the value must match `RUN_MIG_TOKEN` in `.env`.
-- Optional `seed` boolean body param to run `db:seed` after migrations.
-- Optional `path` string body param to pass `--path` to `migrate`.
+-   Header `X-RUN-MIG-TOKEN` or body param `token` — the value must match `RUN_MIG_TOKEN` in `.env`.
+-   Optional `seed` boolean body param to run `db:seed` after migrations.
+-   Optional `path` string body param to pass `--path` to `migrate`.
 
 Requirements & safety:
 
-- `ALLOW_RUN_MIG=true` must be set in `.env` to allow this endpoint to run.
-- `RUN_MIG_TOKEN` should be a long random secret and stored in server environment. Do not keep it in VCS.
-- The route is throttled (`throttle:10,1`) by default.
+-   `ALLOW_RUN_MIG=true` must be set in `.env` to allow this endpoint to run.
+-   `RUN_MIG_TOKEN` should be a long random secret and stored in server environment. Do not keep it in VCS.
+-   The route is throttled (`throttle:10,1`) by default.
 
 Example usage (curl):
 
@@ -156,7 +171,7 @@ curl -X POST https://api.pavitinfotech.com/admin/migrate \
 
 Response:
 
-- Returns a JSON result with the Artisan output under `data.output`. If operations fail, a 500 result with details will be returned and logged.
+-   Returns a JSON result with the Artisan output under `data.output`. If operations fail, a 500 result with details will be returned and logged.
 
 Security note: After running migrations via HTTP, disable ALLOW_RUN_MIG or rotate the token. This endpoint provides a convenient but sensitive capability and should be restricted to trusted usage only.
 
@@ -166,14 +181,14 @@ For a full guide on configuring Google Cloud credentials, Socialite server usage
 
 #### Flow overview
 
-- **Credential (email + password hash)** — `POST /auth/register` to create an account and `POST /auth/login` to obtain a Sanctum personal access token. Tokens must be sent via `Authorization: Bearer <token>` on protected routes. Frontends are responsible for hashing the password with SHA-256 before sending it to the API.
-- **Logout** — `POST /auth/logout` works for both API calls (returns JSON) and browser flows (redirects + clears the `api_token` cookie) and revokes the active Sanctum token.
-- **OAuth browser redirects** — `GET /auth/{provider}/redirect` (Google/GitHub) sends the browser to the provider; `GET /auth/{provider}/callback` finishes authentication, issues a Sanctum token, and either returns JSON or sets the `api_token` cookie and redirects to the SPA.
-- **OAuth API/token exchange** — `POST /auth/google/token` and `POST /auth/github/token` let SPAs or native apps exchange an OAuth `code`, Google Credential API `credential`, or a GitHub access token directly for a Sanctum token without browser redirects.
-- **Email verification** — `POST /auth/verify/send` issues tokens; `GET /auth/verify/{token}` validates them and either returns JSON or redirects to the SPA.
-- **Password reset** — `POST /auth/password/forgot` creates reset tokens and emails users; `POST /auth/password/reset` validates the token and updates the stored password hash.
-- **Social linking** — Authenticated users can link/unlink Google/GitHub providers via `/auth/link/...` and `/auth/unlink` so future logins can use OAuth.
-- **Profile & session hygiene** — Protected endpoints (e.g., `/user`) require the Bearer token or the secure `api_token` cookie returned by the OAuth callbacks.
+-   **Credential (email + password hash)** — `POST /auth/register` to create an account and `POST /auth/login` to obtain a Sanctum personal access token. Tokens must be sent via `Authorization: Bearer <token>` on protected routes. Frontends are responsible for hashing the password with SHA-256 before sending it to the API.
+-   **Logout** — `POST /auth/logout` works for both API calls (returns JSON) and browser flows (redirects + clears the `api_token` cookie) and revokes the active Sanctum token.
+-   **OAuth browser redirects** — `GET /auth/{provider}/redirect` (Google/GitHub) sends the browser to the provider; `GET /auth/{provider}/callback` finishes authentication, issues a Sanctum token, and either returns JSON or sets the `api_token` cookie and redirects to the SPA.
+-   **OAuth API/token exchange** — `POST /auth/google/token` and `POST /auth/github/token` let SPAs or native apps exchange an OAuth `code`, Google Credential API `credential`, or a GitHub access token directly for a Sanctum token without browser redirects.
+-   **Email verification** — `POST /auth/verify/send` issues tokens; `GET /auth/verify/{token}` validates them and either returns JSON or redirects to the SPA.
+-   **Password reset** — `POST /auth/password/forgot` creates reset tokens and emails users; `POST /auth/password/reset` validates the token and updates the stored password hash.
+-   **Social linking** — Authenticated users can link/unlink Google/GitHub providers via `/auth/link/...` and `/auth/unlink` so future logins can use OAuth.
+-   **Profile & session hygiene** — Protected endpoints (e.g., `/user`) require the Bearer token or the secure `api_token` cookie returned by the OAuth callbacks.
 
 > **⚠️ IMPORTANT: Password Hashing Requirement**
 >
@@ -183,184 +198,185 @@ For a full guide on configuring Google Cloud credentials, Socialite server usage
 >
 > ```javascript
 > const passwordHash = await crypto.subtle
->   .digest("SHA-256", new TextEncoder().encode(password))
->   .then((buf) =>
->     Array.from(new Uint8Array(buf))
->       .map((b) => b.toString(16).padStart(2, "0"))
->       .join("")
->   );
+>     .digest("SHA-256", new TextEncoder().encode(password))
+>     .then((buf) =>
+>         Array.from(new Uint8Array(buf))
+>             .map((b) => b.toString(16).padStart(2, "0"))
+>             .join("")
+>     );
 > ```
 
 #### Credential-based register & login
 
-- POST /api/auth/register (or POST /auth/register if `API_DOMAIN` is set)
+-   POST /api/auth/register (or POST /auth/register if `API_DOMAIN` is set)
 
-  - Request body (application/json):
-    - username (string, required, unique)
-    - first_name (string, required)
-    - last_name (string, optional)
-    - email (string, required)
-    - password_hash (string, required, 64-char SHA-256 hex hash)
-    - password_hash_confirmation (string, required, must match password_hash)
-  - Behavior: Creates the user, issues a Sanctum token, and **automatically sends a verification email**. The user should verify their email by clicking the link in the email.
-  - Success (201):
-    - { status: 'success', message: 'Registered. Please check your email to verify your account.', data: { user: {...}, token: '...'} }
+    -   Request body (application/json):
+        -   username (string, required, unique)
+        -   first_name (string, required)
+        -   last_name (string, optional)
+        -   email (string, required)
+        -   password_hash (string, required, 64-char SHA-256 hex hash)
+        -   password_hash_confirmation (string, required, must match password_hash)
+    -   Behavior: Creates the user, issues a Sanctum token, and **automatically sends a verification email**. The user should verify their email by clicking the link in the email.
+    -   Success (201):
+        -   { status: 'success', message: 'Registered. Please check your email to verify your account.', data: { user: {...}, token: '...'} }
 
-  Example request (register):
+    Example request (register):
 
-  ```json
-  POST /api/auth/register
-  Content-Type: application/json
+    ```json
+    POST /api/auth/register
+    Content-Type: application/json
 
-  {
-      "username": "johndoe",
-      "first_name": "John",
-      "last_name": "Doe",
-      "email": "john@example.com",
-      "password_hash": "5e884898da28047d9165934e90a3ad56a3b6abe0c40d4f8b59e4c99f7a9c5d8e",
-      "password_hash_confirmation": "5e884898da28047d9165934e90a3ad56a3b6abe0c40d4f8b59e4c99f7a9c5d8e"
-  }
-  ```
-
-  Example response (201):
-
-  ```json
-  {
-    "status": "success",
-    "message": "Registered",
-    "data": {
-      "user": {
-        "id": 123,
+    {
         "username": "johndoe",
         "first_name": "John",
         "last_name": "Doe",
         "email": "john@example.com",
-        "avatar": null,
-        "email_verified_at": null,
-        "created_at": "2025-11-28T12:34:56Z"
-      },
-      "token": "plain-text-sanctum-token"
-    },
-    "code": 201,
-    "timestamp": "2025-11-28T12:34:56Z"
-  }
-  ```
+        "password_hash": "5e884898da28047d9165934e90a3ad56a3b6abe0c40d4f8b59e4c99f7a9c5d8e",
+        "password_hash_confirmation": "5e884898da28047d9165934e90a3ad56a3b6abe0c40d4f8b59e4c99f7a9c5d8e"
+    }
+    ```
 
-  - Note: This endpoint now issues a Laravel Sanctum personal access token (plain text). Save this token client-side and send it on protected requests with the Authorization header:
+    Example response (201):
+
+    ```json
+    {
+        "status": "success",
+        "message": "Registered",
+        "data": {
+            "user": {
+                "id": 123,
+                "username": "johndoe",
+                "first_name": "John",
+                "last_name": "Doe",
+                "email": "john@example.com",
+                "avatar": null,
+                "email_verified_at": null,
+                "created_at": "2025-11-28T12:34:56Z"
+            },
+            "token": "plain-text-sanctum-token"
+        },
+        "code": 201,
+        "timestamp": "2025-11-28T12:34:56Z"
+    }
+    ```
+
+    -   Note: This endpoint now issues a Laravel Sanctum personal access token (plain text). Save this token client-side and send it on protected requests with the Authorization header:
 
 ```
 Authorization: Bearer <your-plain-text-token-here>
 ```
 
-- POST /api/auth/login (or POST /auth/login if `API_DOMAIN` is set)
-  Example request (login):
+-   POST /api/auth/login (or POST /auth/login if `API_DOMAIN` is set)
+    Example request (login):
 
-  ```json
-  POST /api/auth/login
-  Content-Type: application/json
+    ```json
+    POST /api/auth/login
+    Content-Type: application/json
 
-  {
-      "email": "john@example.com",
-      "password_hash": "5e884898da28047d9165934e90a3ad56a3b6abe0c40d4f8b59e4c99f7a9c5d8e"
-  }
-  ```
-
-  Example response (200):
-
-  ```json
-  {
-    "status": "success",
-    "message": "Logged in",
-    "data": {
-      "user": {
-        "id": 123,
-        "username": "johndoe",
-        "first_name": "John",
-        "last_name": "Doe",
+    {
         "email": "john@example.com",
-        "avatar": null
-      },
-      "token": "plain-text-sanctum-token"
-    },
-    "code": 200,
-    "timestamp": "2025-11-28T12:35:00Z"
-  }
-  ```
+        "password_hash": "5e884898da28047d9165934e90a3ad56a3b6abe0c40d4f8b59e4c99f7a9c5d8e"
+    }
+    ```
 
-  - Request body: { email, password_hash }
-  - Success (200): { status: 'success', message: 'Logged in', data: { user, token } }
+    Example response (200):
+
+    ```json
+    {
+        "status": "success",
+        "message": "Logged in",
+        "data": {
+            "user": {
+                "id": 123,
+                "username": "johndoe",
+                "first_name": "John",
+                "last_name": "Doe",
+                "email": "john@example.com",
+                "avatar": null
+            },
+            "token": "plain-text-sanctum-token"
+        },
+        "code": 200,
+        "timestamp": "2025-11-28T12:35:00Z"
+    }
+    ```
+
+    -   Request body: { email, password_hash }
+    -   Success (200): { status: 'success', message: 'Logged in', data: { user, token } }
 
 #### Logout (token & cookie aware)
 
-- POST /api/auth/logout (or POST /auth/logout if `API_DOMAIN` is set)
-  - Behavior: API clients get JSON + token revocation; browser requests (Accept HTML) revoke tokens, clear the `api_token` cookie, and 302 redirect to `${FRONTEND_URL}/auth/logout`.
+-   POST /api/auth/logout (or POST /auth/logout if `API_DOMAIN` is set)
+    -   Behavior: API clients get JSON + token revocation; browser requests (Accept HTML) revoke tokens, clear the `api_token` cookie, and 302 redirect to `${FRONTEND_URL}/auth/logout`.
 
 #### Google OAuth (browser redirect flow)
 
-- GET /api/auth/google/redirect (or GET /auth/google/redirect if `API_DOMAIN` is set)
+-   GET /api/auth/google/redirect (or GET /auth/google/redirect if `API_DOMAIN` is set)
 
-  - Redirects to Google OAuth consent page using Laravel Socialite. This endpoint issues an HTTP redirect (302) that should be followed by the browser or frontend app. If your frontend needs the direct URL instead, call this endpoint and read the Location header of the response.
+    -   Redirects to Google OAuth consent page using Laravel Socialite. This endpoint issues an HTTP redirect (302) that should be followed by the browser or frontend app. If your frontend needs the direct URL instead, call this endpoint and read the Location header of the response.
 
-- GET /api/auth/google/callback (or GET /auth/google/callback if `API_DOMAIN` is set)
+-   GET /api/auth/google/callback (or GET /auth/google/callback if `API_DOMAIN` is set)
 
-  - OAuth callback — handled with Laravel Socialite.
-  - Behavior:
-    - Socialite reads Google user info (id, name, email, avatar). The backend will map provider `name` into `first_name` and `last_name` where possible and generate a `username` using the preferred username or email localpart.
-    - If a user exists with the same `provider_name` + `provider_id`, that user is returned.
-    - Otherwise the backend attempts to find a user by email and attach Google provider data.
-    - If no matching user exists, a new user is created and provider fields (`provider_name`, `provider_id`, `avatar`) are saved.
-    - A Laravel Sanctum personal access token is created.
-    - Behavior detail:
-      - By default the server will set a secure, HttpOnly cookie named `api_token` and redirect the browser to the SPA route (e.g. `${FRONTEND_URL}/auth/complete`) so the token never appears in the URL.
-      - If the request explicitly expects JSON (e.g., Accept: application/json), the token will be returned in the JSON response instead.
-  - Browser flow response (Redirect):
-    - 302 redirect to the SPA route, cookie `api_token` set (HttpOnly, Secure in production).
-  - API flow response (JSON - when Accept: application/json):
-    - { status: 'success', message: 'Authenticated via Google', data: { user: {...}, token: '<plain-text-token>' } }
+    -   OAuth callback — handled with Laravel Socialite.
+    -   Behavior:
+        -   Socialite reads Google user info (id, name, email, avatar). The backend will map provider `name` into `first_name` and `last_name` where possible and generate a `username` using the preferred username or email localpart.
+        -   If a user exists with the same `provider_name` + `provider_id`, that user is returned.
+        -   Otherwise the backend attempts to find a user by email and attach Google provider data.
+        -   If no matching user exists, a new user is created and provider fields (`provider_name`, `provider_id`, `avatar`) are saved.
+        -   A Laravel Sanctum personal access token is created.
+        -   Behavior detail:
+            -   **By default (browser flow):** The server sets a secure, HttpOnly cookie named `api_token` (scoped to `SESSION_DOMAIN` for cross-subdomain support) and redirects (302) to the SPA route `${FRONTEND_URL}/auth/complete`. The token never appears in the URL.
+            -   **JSON response:** Only returned when the request is an explicit AJAX call (`X-Requested-With: XMLHttpRequest`), the `Accept` header specifically prefers `application/json` without `text/html` or `*/*`, or the query param `?format=json` is present.
+    -   Browser flow response (Redirect — default for all browser requests):
+        -   302 redirect to `${FRONTEND_URL}/auth/complete`, cookie `api_token` set (HttpOnly, Secure in production, domain from `SESSION_DOMAIN`).
+    -   API flow response (JSON — only when explicitly requested):
+        -   { status: 'success', message: 'Authenticated via Google', data: { user: {...}, token: '<plain-text-token>' } }
+        -   To get JSON, use one of: `?format=json` query param, `X-Requested-With: XMLHttpRequest` header, or `Accept: application/json` (without `text/html` or `*/*`).
 
-- POST /api/auth/google/token (API-only token exchange)
+-   POST /api/auth/google/token (API-only token exchange)
 
-  - Body (JSON):
-    - `code` (string) — authorization code received from Google OAuth (required if `credential` missing)
-    - `credential` (string) — ID token from Google One Tap / Credential API (required if `code` missing)
-    - `redirect_uri` (string, optional) — override redirect URI used during code exchange
-  - Behavior:
-    - If `code` is provided, the backend exchanges it against Google's token endpoint using the configured `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, obtains an access token, resolves the user profile via Socialite, and creates/logs in the user.
-    - If `credential` (ID token) is provided, the backend verifies it using Google's `tokeninfo` endpoint and uses the resulting profile to authenticate the user.
-    - Always returns JSON (no redirects) with the Sanctum token.
-  - Success response (200): `{ "status": "success", "message": "Authenticated via Google", "data": { "user": {...}, "token": "plain-text-sanctum-token" } }`
-  - Errors:
-    - 400 — Invalid/expired code or credential, or Google API error
-    - 422 — Missing `code`/`credential` payload
-  - Use this endpoint for native apps or SPAs that already captured the Google credential and simply need to exchange it server-side without browser redirects.
+    -   Body (JSON):
+        -   `code` (string) — authorization code received from Google OAuth (required if `credential` missing)
+        -   `credential` (string) — ID token from Google One Tap / Credential API (required if `code` missing)
+        -   `redirect_uri` (string, optional) — override redirect URI used during code exchange
+    -   Behavior:
+        -   If `code` is provided, the backend exchanges it against Google's token endpoint using the configured `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, obtains an access token, resolves the user profile via Socialite, and creates/logs in the user.
+        -   If `credential` (ID token) is provided, the backend verifies it using Google's `tokeninfo` endpoint and uses the resulting profile to authenticate the user.
+        -   Always returns JSON (no redirects) with the Sanctum token.
+    -   Success response (200): `{ "status": "success", "message": "Authenticated via Google", "data": { "user": {...}, "token": "plain-text-sanctum-token" } }`
+    -   Errors:
+        -   400 — Invalid/expired code or credential, or Google API error
+        -   422 — Missing `code`/`credential` payload
+    -   Use this endpoint for native apps or SPAs that already captured the Google credential and simply need to exchange it server-side without browser redirects.
 
 #### Password reset
 
-- POST /api/auth/password/forgot (or POST /auth/password/forgot if `API_DOMAIN` is set)
+-   POST /api/auth/password/forgot (or POST /auth/password/forgot if `API_DOMAIN` is set)
 
-  - Body: { email }
-  - Behavior: server will create a password reset token stored in `password_reset_tokens` (valid for ~2 hours) and email the frontend password-reset link to the user if the account exists. The response does not reveal whether the account exists.
-  - Success (200): { status: 'success', message: 'Password reset link sent if account exists' }
+    -   Body: { email }
+    -   Behavior: server will create a password reset token stored in `password_reset_tokens` (valid for ~2 hours) and email the frontend password-reset link to the user if the account exists. The response does not reveal whether the account exists.
+    -   Success (200): { status: 'success', message: 'Password reset link sent if account exists' }
 
-- POST /api/auth/password/reset (or POST /auth/password/reset if `API_DOMAIN` is set)
+-   POST /api/auth/password/reset (or POST /auth/password/reset if `API_DOMAIN` is set)
 
-  - Body: { email, token, password_hash, password_hash_confirmation }
-  - Note: password_hash must be a 64-character SHA-256 hex hash of the new password
-  - Behavior: verifies the reset token, ensures it is not expired (2 hours), updates the user's password hash, deletes the token, and returns a new API token so the user is authenticated immediately.
-  - Success (200): { status: 'success', message: 'Password reset successfully', data: { user: {...}, token: '<plain-text-token>' } }
+    -   Body: { email, token, password_hash, password_hash_confirmation }
+    -   Note: password_hash must be a 64-character SHA-256 hex hash of the new password
+    -   Behavior: verifies the reset token, ensures it is not expired (2 hours), updates the user's password hash, deletes the token, and returns a new API token so the user is authenticated immediately.
+    -   Success (200): { status: 'success', message: 'Password reset successfully', data: { user: {...}, token: '<plain-text-token>' } }
 
 #### Email verification
 
-- POST /api/auth/verify/send (or POST /auth/verify/send if `API_DOMAIN` is set)
+-   POST /api/auth/verify/send (or POST /auth/verify/send if `API_DOMAIN` is set)
 
-  - Body: { email } or (authenticated) send to current user
-  - Behavior: **Resend verification email** for users who missed or lost the original email sent during registration. Creates/updates an email verification token stored in `email_verification_tokens` and sends a verification email. For security, the response does not reveal whether the email exists if unregistered.
-  - Success (200): { status: 'success', message: 'Verification email sent' } or 'Email already verified' if already verified
+    -   Body: { email } or (authenticated) send to current user
+    -   Behavior: **Resend verification email** for users who missed or lost the original email sent during registration. Creates/updates an email verification token stored in `email_verification_tokens` and sends a verification email. For security, the response does not reveal whether the email exists if unregistered.
+    -   Success (200): { status: 'success', message: 'Verification email sent' } or 'Email already verified' if already verified
 
-- GET /api/auth/verify/{token} (or GET /auth/verify/{token} if `API_DOMAIN` is set)
+-   GET /api/auth/verify/{token} (or GET /auth/verify/{token} if `API_DOMAIN` is set)
 
-  - Behavior: verifies the token, sets `email_verified_at` for the user, deletes the token, and either returns JSON (API clients) or redirects the browser to `${FRONTEND_URL}/auth/verified`.
-  - Success (200 or 302): JSON { status: 'success', message: 'Email verified', data: { user } } or 302 redirect to frontend verified page.
+    -   Behavior: verifies the token, sets `email_verified_at` for the user, deletes the token, and either returns JSON (API clients) or redirects the browser to `${FRONTEND_URL}/auth/verified`.
+    -   Success (200 or 302): JSON { status: 'success', message: 'Email verified', data: { user } } or 302 redirect to frontend verified page.
 
 ### GitHub OAuth (browser redirect flow)
 
@@ -375,26 +391,26 @@ Authorization: Bearer <your-plain-text-token-here>
     -   If a user already exists with the same email, the code attaches `provider` fields to that existing user rather than creating a new one.
     -   Returns JSON with `user` and `token` in API flows, and sets an `api_token` cookie on browser flows.
 
-- POST /api/auth/github/token (API-only token exchange)
+-   POST /api/auth/github/token (API-only token exchange)
 
-  - Body (JSON):
-    - `code` (string) — authorization code returned by GitHub's OAuth authorize endpoint (required if `access_token` missing)
-    - `access_token` (string) — GitHub access token obtained on the client (required if `code` missing)
-    - `redirect_uri` (string, optional) — custom redirect URI used when generating the code
-  - Behavior:
-    - When a `code` is provided, the backend calls `https://github.com/login/oauth/access_token` with your app's client ID/secret to exchange it for an access token, then fetches the user profile using Socialite and logs the user in.
-    - When `access_token` is provided directly, it is used immediately to fetch the GitHub profile.
-    - Always responds with JSON, returning `{ user, token }` on success or a structured 400 error on failure.
-  - Errors:
-    - 400 — Code exchange failed or provided access token invalid/expired
-    - 422 — Neither `code` nor `access_token` provided
-  - Ideal for native apps or SPAs that already have the code/token and need a pure API flow with no redirects.
+    -   Body (JSON):
+        -   `code` (string) — authorization code returned by GitHub's OAuth authorize endpoint (required if `access_token` missing)
+        -   `access_token` (string) — GitHub access token obtained on the client (required if `code` missing)
+        -   `redirect_uri` (string, optional) — custom redirect URI used when generating the code
+    -   Behavior:
+        -   When a `code` is provided, the backend calls `https://github.com/login/oauth/access_token` with your app's client ID/secret to exchange it for an access token, then fetches the user profile using Socialite and logs the user in.
+        -   When `access_token` is provided directly, it is used immediately to fetch the GitHub profile.
+        -   Always responds with JSON, returning `{ user, token }` on success or a structured 400 error on failure.
+    -   Errors:
+        -   400 — Code exchange failed or provided access token invalid/expired
+        -   422 — Neither `code` nor `access_token` provided
+    -   Ideal for native apps or SPAs that already have the code/token and need a pure API flow with no redirects.
 
 ### Social account linking / unlinking
 
-- GET `/auth/link/{provider}/redirect` + `/auth/link/{provider}/callback` (authenticated) allow existing users to attach Google/GitHub accounts to their profile.
-- POST `/auth/unlink` removes the provider association.
-- These routes require Bearer tokens (they live in the authenticated group) and return JSON.
+-   GET `/auth/link/{provider}/redirect` + `/auth/link/{provider}/callback` (authenticated) allow existing users to attach Google/GitHub accounts to their profile.
+-   POST `/auth/unlink` removes the provider association.
+-   These routes require Bearer tokens (they live in the authenticated group) and return JSON.
 
 ### User profile (protected)
 
@@ -465,104 +481,104 @@ Authorization: Bearer <your-plain-text-token-here>
         -   Errors:
             - 401 Unauthenticated — missing or invalid token
 
-- POST /api/user/avatar (or POST /user/avatar if `API_DOMAIN` is set)
+-   POST /api/user/avatar (or POST /user/avatar if `API_DOMAIN` is set)
 
-  - Multipart/form-data: file field `avatar` (image, max 5MB)
-  - Behavior: authenticated endpoint. Validates and stores the uploaded image under `storage/app/public/avatars/{user_id}/` and returns the public URL. If a previous avatar was stored on the server it will be deleted.
-  - Success (200): { status: 'success', message: 'Avatar uploaded', data: { avatar_url: '<url>' } }
+    -   Multipart/form-data: file field `avatar` (image, max 5MB)
+    -   Behavior: authenticated endpoint. Validates and stores the uploaded image under `storage/app/public/avatars/{user_id}/` and returns the public URL. If a previous avatar was stored on the server it will be deleted.
+    -   Success (200): { status: 'success', message: 'Avatar uploaded', data: { avatar_url: '<url>' } }
 
-  Example response for avatar upload (200):
+    Example response for avatar upload (200):
 
-  ```json
-  {
-    "status": "success",
-    "message": "Avatar uploaded",
-    "data": {
-      "avatar_url": "https://your-cdn-or-domain/storage/avatars/123/abcdef_1600000000.png"
-    },
-    "code": 200,
-    "timestamp": "2025-11-28T12:40:00Z"
-  }
-  ```
+    ```json
+    {
+        "status": "success",
+        "message": "Avatar uploaded",
+        "data": {
+            "avatar_url": "https://your-cdn-or-domain/storage/avatars/123/abcdef_1600000000.png"
+        },
+        "code": 200,
+        "timestamp": "2025-11-28T12:40:00Z"
+    }
+    ```
 
-- GET /api/users/{id}/public (or GET /users/{id}/public if `API_DOMAIN` is set)
+-   GET /api/users/{id}/public (or GET /users/{id}/public if `API_DOMAIN` is set)
 
-  - Returns a limited public profile object suitable for other users or public pages: { id, username, first_name, last_name, avatar, created_at }
+    -   Returns a limited public profile object suitable for other users or public pages: { id, username, first_name, last_name, avatar, created_at }
 
-  Example response (public profile):
+    Example response (public profile):
 
-  ```json
-  {
-    "status": "success",
-    "message": "Public profile",
-    "data": {
-      "id": 123,
-      "username": "johndoe",
-      "first_name": "John",
-      "last_name": "Doe",
-      "avatar": "https://cdn.example.com/avatars/123.png",
-      "created_at": "2025-11-28T12:34:56Z"
-    },
-    "code": 200,
-    "timestamp": "2025-11-28T12:41:00Z"
-  }
-  ```
+    ```json
+    {
+        "status": "success",
+        "message": "Public profile",
+        "data": {
+            "id": 123,
+            "username": "johndoe",
+            "first_name": "John",
+            "last_name": "Doe",
+            "avatar": "https://cdn.example.com/avatars/123.png",
+            "created_at": "2025-11-28T12:34:56Z"
+        },
+        "code": 200,
+        "timestamp": "2025-11-28T12:41:00Z"
+    }
+    ```
 
-  - Note: `avatar` in the public profile is normalized to an absolute URL (see above).
+    -   Note: `avatar` in the public profile is normalized to an absolute URL (see above).
 
 Notes: run `php artisan storage:link` in deployment to make `storage/app/public` available at `/storage` so avatar URLs are reachable by the browser.
 
 ### Mail endpoints
 
-- POST /api/mail/contact (or POST /mail/contact if `API_DOMAIN` is set)
+-   POST /api/mail/contact (or POST /mail/contact if `API_DOMAIN` is set)
 
-  - Body: { name, email, message }
-  - Action: Sends a contact message to the configured `MAIL_FROM_ADDRESS`.
+    -   Body: { name, email, message }
+    -   Action: Sends a contact message to the configured `MAIL_FROM_ADDRESS`.
 
-- POST /api/mail/newsletter (or POST /mail/newsletter if `API_DOMAIN` is set)
+-   POST /api/mail/newsletter (or POST /mail/newsletter if `API_DOMAIN` is set)
 
-  - Body: { email, name? }
-  - Validation: `email` => required|email, `name` => sometimes|string|max:255
-  - Action: Creates a newsletter subscriber with a verification token and sends a verification email. A notification is also sent to the admin inbox. Duplicate subscription attempts are idempotent.
-  - Response (200): { status: 'success', message: 'Newsletter signup processed. Please check your email to verify.', data: { subscriber_id } }
+    -   Body: { email, name? }
+    -   Validation: `email` => required|email, `name` => sometimes|string|max:255
+    -   Action: Creates a newsletter subscriber with a verification token and sends a verification email. A notification is also sent to the admin inbox. Duplicate subscription attempts are idempotent.
+    -   Response (200): { status: 'success', message: 'Newsletter signup processed. Please check your email to verify.', data: { subscriber_id } }
 
-- GET /api/mail/newsletter/verify/{token} (or GET /mail/newsletter/verify/{token} if `API_DOMAIN` is set)
+-   GET /api/mail/newsletter/verify/{token} (or GET /mail/newsletter/verify/{token} if `API_DOMAIN` is set)
 
-  - Action: Verifies the newsletter subscription via the token sent in the verification email. Once verified, sends a personalized welcome email to the subscriber. If `FRONTEND_URL` is set and request is not JSON, redirects to `{FRONTEND_URL}/newsletter/verified`.
-  - Response (200): { status: 'success', message: 'Subscription verified successfully' }
-  - Response (404): Invalid or expired token
+    -   Action: Verifies the newsletter subscription via the token sent in the verification email. Once verified, sends a personalized welcome email to the subscriber. If `FRONTEND_URL` is set and request is not JSON, redirects to `{FRONTEND_URL}/newsletter/verified`.
+    -   Response (200): { status: 'success', message: 'Subscription verified successfully' }
+    -   Response (404): Invalid or expired token
 
-- GET /api/mail/newsletter/unsubscribe/{token} (or GET /mail/newsletter/unsubscribe/{token} if `API_DOMAIN` is set)
+-   GET /api/mail/newsletter/unsubscribe/{token} (or GET /mail/newsletter/unsubscribe/{token} if `API_DOMAIN` is set)
 
-  - Action: Unsubscribes the user from the newsletter by deleting their record. The token is unique per subscriber and included in all newsletter emails. If `FRONTEND_URL` is set and request is not JSON, redirects to `{FRONTEND_URL}/newsletter/unsubscribed`.
-  - Response (200): { status: 'success', message: 'Successfully unsubscribed from newsletter', data: { email } }
-  - Response (404): Invalid or expired token
+    -   Action: Unsubscribes the user from the newsletter by deleting their record. The token is unique per subscriber and included in all newsletter emails. If `FRONTEND_URL` is set and request is not JSON, redirects to `{FRONTEND_URL}/newsletter/unsubscribed`.
+    -   Response (200): { status: 'success', message: 'Successfully unsubscribed from newsletter', data: { email } }
+    -   Response (404): Invalid or expired token
 
-- POST /api/mail/password-reset (or POST /mail/password-reset if `API_DOMAIN` is set)
-  - Body: { email }
-  - Action: Creates a password reset token and sends the `PasswordResetMail` to the user. Response does not reveal whether the email exists (security best practice).
-  - Response (200): { status: 'success', message: 'If this email is registered, a password reset link has been sent' }
+-   POST /api/mail/password-reset (or POST /mail/password-reset if `API_DOMAIN` is set)
+    -   Body: { email }
+    -   Action: Creates a password reset token and sends the `PasswordResetMail` to the user. Response does not reveal whether the email exists (security best practice).
+    -   Response (200): { status: 'success', message: 'If this email is registered, a password reset link has been sent' }
 
 ### AI / Gorq
 
-- POST /api/ai/generate (or POST /ai/generate if `API_DOMAIN` is set) — Public endpoint
-- POST /api/ai/generate
+-   POST /api/ai/generate (or POST /ai/generate if `API_DOMAIN` is set) — Public endpoint
+-   POST /api/ai/generate
 
-  - Body: { prompt?: string (required without messages), messages?: array (required without prompt), model?: string, max_tokens?: integer, async?: boolean }
-  - Validation rules:
-    - `prompt` => required_without:messages|string|max:5000
-    - `messages` => required_without:prompt|array
-    - `messages.*.role` => sometimes|string|in:system,user,assistant,tool
-    - `messages.*.content` => sometimes|string|array
-    - `model` => sometimes|string|max:255
-    - `max_tokens` => sometimes|integer|min:1|max:2048
-    - `async` => sometimes|boolean
-  - Action: Validates and sanitizes `prompt` or `messages` input, logs the request (`ai_requests` table) and either:
-    - Synchronous (default): builds a chat-style payload and forwards the request to the configured Gorq service (via `GORQ_API_KEY`) and returns the provider result. The `ai_requests` record is updated with status and result. If only `prompt` was provided, it is converted to a single-message conversation where the role is `user`.
-    - Async (async=true): creates an `ai_requests` record (status `pending`) and dispatches a queued job to process the request. Responds 202 Accepted with `job_id` and `status_url` to poll.
-  - Rate limiting: protected by `throttle:ai` rate limiter (per IP). Configure with `AI_RATE_LIMIT_PER_MINUTE` (default 60/min).
-  - Example successful sync response: { status: 'success', data: { ... } }
-  - Example async accepted response (202 Accepted):
+    -   Body: { prompt?: string (required without messages), messages?: array (required without prompt), model?: string, max_tokens?: integer, async?: boolean }
+    -   Validation rules:
+        -   `prompt` => required_without:messages|string|max:5000
+        -   `messages` => required_without:prompt|array
+        -   `messages.*.role` => sometimes|string|in:system,user,assistant,tool
+        -   `messages.*.content` => sometimes|string|array
+        -   `model` => sometimes|string|max:255
+        -   `max_tokens` => sometimes|integer|min:1|max:2048
+        -   `async` => sometimes|boolean
+    -   Action: Validates and sanitizes `prompt` or `messages` input, logs the request (`ai_requests` table) and either:
+        -   Synchronous (default): builds a chat-style payload and forwards the request to the configured Gorq service (via `GORQ_API_KEY`) and returns the provider result. The `ai_requests` record is updated with status and result. If only `prompt` was provided, it is converted to a single-message conversation where the role is `user`.
+        -   Async (async=true): creates an `ai_requests` record (status `pending`) and dispatches a queued job to process the request. Responds 202 Accepted with `job_id` and `status_url` to poll.
+    -   Rate limiting: protected by `throttle:ai` rate limiter (per IP). Configure with `AI_RATE_LIMIT_PER_MINUTE` (default 60/min).
+    -   Example successful sync response: { status: 'success', data: { ... } }
+    -   Example async accepted response (202 Accepted):
 
 ```
 HTTP/1.1 202 Accepted
@@ -627,56 +643,56 @@ Content-Type: application/json
 
 ### Google Maps Embed
 
-- POST /api/maps/pin (or POST /maps/pin if `API_DOMAIN` is set)
+-   POST /api/maps/pin (or POST /maps/pin if `API_DOMAIN` is set)
 
-  - Public: does not require authentication (no Bearer token needed)
-  - No API key required — uses Google Maps embed URL format
+    -   Public: does not require authentication (no Bearer token needed)
+    -   No API key required — uses Google Maps embed URL format
 
-  - Body: { address: string (required), zoom?: integer, width?: integer, height?: integer }
-  - Validation rules:
-    - `address` => required|string|max:500
-    - `zoom` => sometimes|integer|min:1|max:21 (default: 15)
-    - `width` => sometimes|integer|min:1|max:2048 (default: 600, for iframe)
-    - `height` => sometimes|integer|min:1|max:2048 (default: 450, for iframe)
-  - Action: Returns Google Maps URLs for embedding and linking. No API key required.
-  - Response structure:
-    ```json
-    {
-      "status": "success",
-      "message": "Map URLs generated",
-      "data": {
-        "embed_url": "https://maps.google.com/maps?q=...&z=15&output=embed",
-        "maps_link": "https://www.google.com/maps/search/?api=1&query=...",
-        "iframe": "<iframe width=\"600\" height=\"450\" src=\"...\"></iframe>",
-        "address": "1600 Amphitheatre Parkway, Mountain View, CA",
-        "zoom": 15
-      },
-      "code": 200,
-      "timestamp": "2025-11-29T12:00:00Z"
-    }
-    ```
-  - Response fields:
-    - `embed_url` — URL for use in an iframe `src` attribute (no API key needed)
-    - `maps_link` — Direct link to Google Maps (opens in browser/app)
-    - `iframe` — Ready-to-use HTML iframe element
-    - `address` — The original address provided
-    - `zoom` — The zoom level used
-  - Errors & failure modes:
-    - 422 Validation failed — missing or invalid address/fields
+    -   Body: { address: string (required), zoom?: integer, width?: integer, height?: integer }
+    -   Validation rules:
+        -   `address` => required|string|max:500
+        -   `zoom` => sometimes|integer|min:1|max:21 (default: 15)
+        -   `width` => sometimes|integer|min:1|max:2048 (default: 600, for iframe)
+        -   `height` => sometimes|integer|min:1|max:2048 (default: 450, for iframe)
+    -   Action: Returns Google Maps URLs for embedding and linking. No API key required.
+    -   Response structure:
+        ```json
+        {
+            "status": "success",
+            "message": "Map URLs generated",
+            "data": {
+                "embed_url": "https://maps.google.com/maps?q=...&z=15&output=embed",
+                "maps_link": "https://www.google.com/maps/search/?api=1&query=...",
+                "iframe": "<iframe width=\"600\" height=\"450\" src=\"...\"></iframe>",
+                "address": "1600 Amphitheatre Parkway, Mountain View, CA",
+                "zoom": 15
+            },
+            "code": 200,
+            "timestamp": "2025-11-29T12:00:00Z"
+        }
+        ```
+    -   Response fields:
+        -   `embed_url` — URL for use in an iframe `src` attribute (no API key needed)
+        -   `maps_link` — Direct link to Google Maps (opens in browser/app)
+        -   `iframe` — Ready-to-use HTML iframe element
+        -   `address` — The original address provided
+        -   `zoom` — The zoom level used
+    -   Errors & failure modes:
+        -   422 Validation failed — missing or invalid address/fields
 
 ### Ping / health check
 
-- GET /api/ping — returns a simple JSON response with `{ "status": "ok" }`. If `API_DOMAIN` is set you can use `GET /ping` on your API subdomain (e.g. `https://api.example.com/ping`) to check it is reachable.
+-   GET /api/ping — returns a simple JSON response with `{ "status": "ok" }`. If `API_DOMAIN` is set you can use `GET /ping` on your API subdomain (e.g. `https://api.example.com/ping`) to check it is reachable.
 
 ### Error response format
 
 When requests fail, the API returns a consistent JSON error structure with an appropriate HTTP status code. The standard fields are:
 
-- `status` — always `error` for failed responses.
-- `message` — a short human readable message such as `Unauthenticated`, `Validation failed`, or `Resource not found`.
-- `errors` — (nullable) an object keyed by field names for validation or structured errors; otherwise `null`.
-- `code` — the HTTP status code returned (e.g., `401`, `422`, `404`, `500`).
-- `timestamp` — ISO 8601 timestamp when the response was generated.
+-   `status` — always `error` for failed responses.
+-   `message` — a short human readable message such as `Unauthenticated`, `Validation failed`, or `Resource not found`.
+-   `errors` — (nullable) an object keyed by field names for validation or structured errors; otherwise `null`.
+-   `code` — the HTTP status code returned (e.g., `401`, `422`, `404`, `500`).
+-   `timestamp` — ISO 8601 timestamp when the response was generated.
 
 **Authentication errors (401):** Protected routes (e.g., `GET /user`) require a valid Bearer token. If you access these routes without a token or with an expired/invalid token, the API returns a 401 JSON response — it will **never** redirect to a login page. Your frontend should handle 401 responses by prompting the user to log in.
 
@@ -775,18 +791,18 @@ Content-Type: application/json
 
 Notes:
 
-- Internally thrown exceptions return the same standard format. When `APP_DEBUG=true`, additional debug details may be included in the response (`exception`, `trace`) to help troubleshooting; avoid enabling debug in production.
-- The API **never redirects** to a login page. All errors are returned as JSON with appropriate HTTP status codes. Your SPA/mobile client should handle these codes accordingly (e.g., redirect to login on 401, show validation errors on 422).
+-   Internally thrown exceptions return the same standard format. When `APP_DEBUG=true`, additional debug details may be included in the response (`exception`, `trace`) to help troubleshooting; avoid enabling debug in production.
+-   The API **never redirects** to a login page. All errors are returned as JSON with appropriate HTTP status codes. Your SPA/mobile client should handle these codes accordingly (e.g., redirect to login on 401, show validation errors on 422).
 
 ### Success response format
 
 Standard success responses follow a consistent JSON response shape used throughout the API:
 
-- `status` — always `success` for successful responses.
-- `message` — brief human readable description (e.g., `OK`, `Registered`, `Logged in`).
-- `data` — JSON object or array containing the payload for the successful operation.
-- `code` — HTTP status code (e.g., `200` for OK, `201` for created).
-- `timestamp` — ISO 8601 timestamp at the time of response.
+-   `status` — always `success` for successful responses.
+-   `message` — brief human readable description (e.g., `OK`, `Registered`, `Logged in`).
+-   `data` — JSON object or array containing the payload for the successful operation.
+-   `code` — HTTP status code (e.g., `200` for OK, `201` for created).
+-   `timestamp` — ISO 8601 timestamp at the time of response.
 
 Example success response (GET /api/ping):
 
@@ -821,9 +837,9 @@ No additional environment variables are required for the sandbox gateway. In pro
 
 Relevant tables:
 
-- `subscription_plans` — table storing available plans (name, price, interval, features)
-- `payments` — payment records (transaction_id, amount, status, gateway_response, plan_name)
-- `users` — now contains `current_plan` (nullable) which stores the last plan slug the user paid for
+-   `subscription_plans` — table storing available plans (name, price, interval, features)
+-   `payments` — payment records (transaction_id, amount, status, gateway_response, plan_name)
+-   `users` — now contains `current_plan` (nullable) which stores the last plan slug the user paid for
 
 Run migrations to create these tables:
 
@@ -843,16 +859,16 @@ The sandbox gateway accepts these test cards:
 
 **Success cards:**
 
-- `4242424242424242` — Visa (always succeeds)
-- `5555555555554444` — Mastercard (always succeeds)
-- `378282246310005` — Amex (always succeeds)
+-   `4242424242424242` — Visa (always succeeds)
+-   `5555555555554444` — Mastercard (always succeeds)
+-   `378282246310005` — Amex (always succeeds)
 
 **Failure cards:**
 
-- `4000000000000002` — Generic decline
-- `4000000000000069` — Card expired
-- `4000000000000127` — Incorrect CVV
-- `4000000000000119` — Processing error
+-   `4000000000000002` — Generic decline
+-   `4000000000000069` — Card expired
+-   `4000000000000127` — Incorrect CVV
+-   `4000000000000119` — Processing error
 
 ### Plans (public)
 
@@ -864,36 +880,40 @@ List all active plans.
 
 ```json
 {
-  "status": "success",
-  "message": "Plans retrieved",
-  "data": [
-    {
-      "id": 1,
-      "name": "Free",
-      "slug": "free",
-      "description": "Basic access with limited features",
-      "price": "0.00",
-      "currency": "USD",
-      "interval": "monthly",
-      "trial_days": 0,
-      "features": ["Basic AI queries (10/day)", "Standard support"],
-      "is_active": true
-    },
-    {
-      "id": 2,
-      "name": "Pro",
-      "slug": "pro",
-      "description": "Full access for professionals",
-      "price": "19.99",
-      "currency": "USD",
-      "interval": "monthly",
-      "trial_days": 14,
-      "features": ["Unlimited AI queries", "Priority support", "API access"],
-      "is_active": true
-    }
-  ],
-  "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+    "status": "success",
+    "message": "Plans retrieved",
+    "data": [
+        {
+            "id": 1,
+            "name": "Free",
+            "slug": "free",
+            "description": "Basic access with limited features",
+            "price": "0.00",
+            "currency": "USD",
+            "interval": "monthly",
+            "trial_days": 0,
+            "features": ["Basic AI queries (10/day)", "Standard support"],
+            "is_active": true
+        },
+        {
+            "id": 2,
+            "name": "Pro",
+            "slug": "pro",
+            "description": "Full access for professionals",
+            "price": "19.99",
+            "currency": "USD",
+            "interval": "monthly",
+            "trial_days": 14,
+            "features": [
+                "Unlimited AI queries",
+                "Priority support",
+                "API access"
+            ],
+            "is_active": true
+        }
+    ],
+    "code": 200,
+    "timestamp": "2025-12-02T12:00:00Z"
 }
 ```
 
@@ -905,28 +925,28 @@ Get a single plan by slug.
 
 ```json
 {
-  "status": "success",
-  "message": "OK",
-  "data": {
-    "id": 2,
-    "name": "Pro",
-    "slug": "pro",
-    "description": "Full access for professionals",
-    "price": "19.99",
-    "currency": "USD",
-    "interval": "monthly",
-    "trial_days": 14,
-    "features": ["Unlimited AI queries", "Priority support"],
-    "is_active": true
-  },
-  "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+    "status": "success",
+    "message": "OK",
+    "data": {
+        "id": 2,
+        "name": "Pro",
+        "slug": "pro",
+        "description": "Full access for professionals",
+        "price": "19.99",
+        "currency": "USD",
+        "interval": "monthly",
+        "trial_days": 14,
+        "features": ["Unlimited AI queries", "Priority support"],
+        "is_active": true
+    },
+    "code": 200,
+    "timestamp": "2025-12-02T12:00:00Z"
 }
 ```
 
 **Errors:**
 
-- 404 — Plan not found
+-   404 — Plan not found
 
 ### Subscribe / pay for a plan (authenticated)
 
@@ -942,63 +962,63 @@ Pay for a plan (purchase). This endpoint charges (sandbox) the card, creates a p
 
 ```json
 {
-  "plan_slug": "pro",
-  "payment_method": {
-    "card_number": "4242424242424242",
-    "expiry_month": "12",
-    "expiry_year": "28",
-    "cvv": "123",
-    "card_holder": "John Doe"
-  },
-  "billing_address": {
-    "line1": "123 Main St",
-    "city": "San Francisco",
-    "state": "CA",
-    "postal_code": "94102",
-    "country": "US"
-  }
+    "plan_slug": "pro",
+    "payment_method": {
+        "card_number": "4242424242424242",
+        "expiry_month": "12",
+        "expiry_year": "28",
+        "cvv": "123",
+        "card_holder": "John Doe"
+    },
+    "billing_address": {
+        "line1": "123 Main St",
+        "city": "San Francisco",
+        "state": "CA",
+        "postal_code": "94102",
+        "country": "US"
+    }
 }
 ```
 
 **Validation:**
 
-- `plan_slug` — required, must exist in subscription_plans
-- `payment_method.card_number` — required, 13-19 digits
-- `payment_method.expiry_month` — required, 2 digits (01-12)
-- `payment_method.expiry_year` — required, 2 digits (YY format)
-- `payment_method.cvv` — required, 3-4 digits
-- `payment_method.card_holder` — required, max 255 chars
-- `billing_address` — optional object
+-   `plan_slug` — required string. The API accepts any plan slug the client provides; if the slug does not exist, the server will create a minimal placeholder record in `subscription_plans` and treat the purchase against that slug (price will default to 0.00 when created). This allows clients to submit a plan identifier without requiring a prior admin-created plan.
+-   `payment_method.card_number` — required, 13-19 digits
+-   `payment_method.expiry_month` — required, 2 digits (01-12)
+-   `payment_method.expiry_year` — required, 2 digits (YY format)
+-   `payment_method.cvv` — required, 3-4 digits
+-   `payment_method.card_holder` — required, max 255 chars
+-   `billing_address` — optional object
 
 **Response (201):**
 
 ```json
 {
-  "status": "success",
-  "message": "Payment processed successfully",
-  "data": {
-    "payment": {
-      "id": 1,
-      "transaction_id": "TXN_A1B2C3D4E5F6G7H8I9J0K1L2",
-      "plan_name": "pro",
-      "amount": "19.99",
-      "currency": "USD",
-      "status": "completed",
-      "card_last_four": "4242",
-      "card_brand": "visa"
+    "status": "success",
+    "message": "Payment processed successfully",
+    "data": {
+        "payment": {
+            "id": 1,
+            "transaction_id": "TXN_A1B2C3D4E5F6G7H8I9J0K1L2",
+            "plan_name": "pro",
+            "amount": "19.99",
+            "currency": "USD",
+            "status": "completed",
+            "card_last_four": "4242",
+            "card_brand": "visa"
+        },
+        "message": "Plan payment processed — plan set on user account"
     },
-    "message": "Plan payment processed — plan set on user account"
-  },
-  "code": 201,
-  "timestamp": "2025-12-02T12:00:00Z"
+    "code": 201,
+    "timestamp": "2025-12-02T12:00:00Z"
 }
 ```
 
 **Errors:**
 
-- 400 — Payment declined
-- 401 — Unauthenticated
-- 422 — Validation failed
+-   400 — Payment declined
+-   401 — Unauthenticated
+-   422 — Validation failed
 
 // plan resources no longer exist — use payments endpoints and check user.current_plan for the active plan
 
@@ -1012,51 +1032,51 @@ Process a one-time payment (not a plan purchase).
 
 ```json
 {
-  "amount": 50.0,
-  "currency": "USD",
-  "description": "Premium feature unlock",
-  "payment_method": {
-    "card_number": "4242424242424242",
-    "expiry_month": "12",
-    "expiry_year": "28",
-    "cvv": "123",
-    "card_holder": "John Doe"
-  },
-  "metadata": {
-    "feature_id": "premium_export",
-    "order_id": "ORD-12345"
-  }
+    "amount": 50.0,
+    "currency": "USD",
+    "description": "Premium feature unlock",
+    "payment_method": {
+        "card_number": "4242424242424242",
+        "expiry_month": "12",
+        "expiry_year": "28",
+        "cvv": "123",
+        "card_holder": "John Doe"
+    },
+    "metadata": {
+        "feature_id": "premium_export",
+        "order_id": "ORD-12345"
+    }
 }
 ```
 
 **Validation:**
 
-- `amount` — required, numeric, min 0.50, max 999999.99
-- `currency` — optional, 3-char ISO code (default: USD)
-- `description` — optional, max 500 chars
-- `payment_method` — same as plan purchase
-- `metadata` — optional object for custom data
+-   `amount` — required, numeric, min 0.50, max 999999.99
+-   `currency` — optional, 3-char ISO code (default: USD)
+-   `description` — optional, max 500 chars
+-   `payment_method` — same as plan purchase
+-   `metadata` — optional object for custom data
 
 **Response (201):**
 
 ```json
 {
-  "status": "success",
-  "message": "Payment processed successfully",
-  "data": {
-    "id": 5,
-    "transaction_id": "TXN_X1Y2Z3A4B5C6D7E8F9G0H1I2",
-    "amount": "50.00",
-    "currency": "USD",
-    "status": "completed",
-    "type": "one-time",
-    "card_last_four": "4242",
-    "card_brand": "visa",
-    "description": "Premium feature unlock",
-    "paid_at": "2025-12-02T12:00:00Z"
-  },
-  "code": 201,
-  "timestamp": "2025-12-02T12:00:00Z"
+    "status": "success",
+    "message": "Payment processed successfully",
+    "data": {
+        "id": 5,
+        "transaction_id": "TXN_X1Y2Z3A4B5C6D7E8F9G0H1I2",
+        "amount": "50.00",
+        "currency": "USD",
+        "status": "completed",
+        "type": "one-time",
+        "card_last_four": "4242",
+        "card_brand": "visa",
+        "description": "Premium feature unlock",
+        "paid_at": "2025-12-02T12:00:00Z"
+    },
+    "code": 201,
+    "timestamp": "2025-12-02T12:00:00Z"
 }
 ```
 
@@ -1068,27 +1088,27 @@ List payment history for the authenticated user (paginated).
 
 ```json
 {
-  "status": "success",
-  "message": "OK",
-  "data": {
-    "data": [
-      {
-        "id": 1,
-        "transaction_id": "TXN_ABC123",
-        "amount": "19.99",
-        "currency": "USD",
-        "status": "completed",
-        "type": "subscription",
-        "paid_at": "2025-12-02T12:00:00Z"
-      }
-    ],
-    "current_page": 1,
-    "last_page": 1,
-    "per_page": 20,
-    "total": 1
-  },
-  "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+    "status": "success",
+    "message": "OK",
+    "data": {
+        "data": [
+            {
+                "id": 1,
+                "transaction_id": "TXN_ABC123",
+                "amount": "19.99",
+                "currency": "USD",
+                "status": "completed",
+                "type": "subscription",
+                "paid_at": "2025-12-02T12:00:00Z"
+            }
+        ],
+        "current_page": 1,
+        "last_page": 1,
+        "per_page": 20,
+        "total": 1
+    },
+    "code": 200,
+    "timestamp": "2025-12-02T12:00:00Z"
 }
 ```
 
@@ -1100,30 +1120,30 @@ Verify/retrieve a payment by transaction ID.
 
 ```json
 {
-  "status": "success",
-  "message": "OK",
-  "data": {
-    "payment": {
-      "id": 1,
-      "transaction_id": "TXN_ABC123",
-      "amount": "19.99",
-      "status": "completed"
+    "status": "success",
+    "message": "OK",
+    "data": {
+        "payment": {
+            "id": 1,
+            "transaction_id": "TXN_ABC123",
+            "amount": "19.99",
+            "status": "completed"
+        },
+        "verified": true,
+        "gateway_status": {
+            "valid": true,
+            "status": "completed",
+            "sandbox": true
+        }
     },
-    "verified": true,
-    "gateway_status": {
-      "valid": true,
-      "status": "completed",
-      "sandbox": true
-    }
-  },
-  "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+    "code": 200,
+    "timestamp": "2025-12-02T12:00:00Z"
 }
 ```
 
 **Errors:**
 
-- 404 — Payment not found
+-   404 — Payment not found
 
 #### GET /api/payments/last-plan
 
@@ -1133,34 +1153,34 @@ Get the last plan the authenticated user paid for, along with the payment record
 
 ```json
 {
-  "status": "success",
-  "message": "OK",
-  "data": {
-    "plan": {
-      "id": 2,
-      "name": "Pro",
-      "slug": "pro",
-      "description": "Full access for professionals",
-      "price": "19.99",
-      "currency": "USD",
-      "interval": "monthly",
-      "trial_days": 14,
-      "features": ["Unlimited AI queries", "Priority support"],
-      "is_active": true
+    "status": "success",
+    "message": "OK",
+    "data": {
+        "plan": {
+            "id": 2,
+            "name": "Pro",
+            "slug": "pro",
+            "description": "Full access for professionals",
+            "price": "19.99",
+            "currency": "USD",
+            "interval": "monthly",
+            "trial_days": 14,
+            "features": ["Unlimited AI queries", "Priority support"],
+            "is_active": true
+        },
+        "payment": {
+            "id": 1,
+            "transaction_id": "TXN_ABC123",
+            "plan_name": "pro",
+            "amount": "19.99",
+            "currency": "USD",
+            "status": "completed",
+            "type": "subscription",
+            "paid_at": "2025-12-02T12:00:00Z"
+        }
     },
-    "payment": {
-      "id": 1,
-      "transaction_id": "TXN_ABC123",
-      "plan_name": "pro",
-      "amount": "19.99",
-      "currency": "USD",
-      "status": "completed",
-      "type": "subscription",
-      "paid_at": "2025-12-02T12:00:00Z"
-    }
-  },
-  "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+    "code": 200,
+    "timestamp": "2025-12-02T12:00:00Z"
 }
 ```
 
@@ -1168,14 +1188,14 @@ Get the last plan the authenticated user paid for, along with the payment record
 
 ```json
 {
-  "status": "success",
-  "message": "No plan purchase found",
-  "data": {
-    "plan": null,
-    "payment": null
-  },
-  "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+    "status": "success",
+    "message": "No plan purchase found",
+    "data": {
+        "plan": null,
+        "payment": null
+    },
+    "code": 200,
+    "timestamp": "2025-12-02T12:00:00Z"
 }
 ```
 
@@ -1187,7 +1207,7 @@ Request a refund for a completed payment.
 
 ```json
 {
-  "reason": "Customer requested refund"
+    "reason": "Customer requested refund"
 }
 ```
 
@@ -1195,27 +1215,27 @@ Request a refund for a completed payment.
 
 ```json
 {
-  "status": "success",
-  "message": "Refund processed successfully",
-  "data": {
-    "id": 1,
-    "transaction_id": "TXN_ABC123",
-    "status": "refunded",
-    "metadata": {
-      "refund_reason": "Customer requested refund",
-      "refund_transaction_id": "REF_XYZ789",
-      "refunded_at": "2025-12-02T12:00:00Z"
-    }
-  },
-  "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+    "status": "success",
+    "message": "Refund processed successfully",
+    "data": {
+        "id": 1,
+        "transaction_id": "TXN_ABC123",
+        "status": "refunded",
+        "metadata": {
+            "refund_reason": "Customer requested refund",
+            "refund_transaction_id": "REF_XYZ789",
+            "refunded_at": "2025-12-02T12:00:00Z"
+        }
+    },
+    "code": 200,
+    "timestamp": "2025-12-02T12:00:00Z"
 }
 ```
 
 **Errors:**
 
-- 400 — Already refunded or not completed
-- 404 — Payment not found
+-   400 — Already refunded or not completed
+-   404 — Payment not found
 
 #### POST /api/payments/revert-plan
 
@@ -1225,39 +1245,39 @@ Change or clear the user's current plan without charging. This creates an audit 
 
 ```json
 {
-  "to_plan": "free", // optional plan slug to switch to; omit or null to clear current_plan
-  "reason": "Downgrading to free plan"
+    "to_plan": "free", // optional plan slug to switch to; omit or null to clear current_plan
+    "reason": "Downgrading to free plan"
 }
 ```
 
 **Validation:**
 
-- `to_plan` — optional, must be a valid plan slug if present
-- `reason` — optional, max 500 chars
+-   `to_plan` — optional, must be a valid plan slug if present
+-   `reason` — optional, max 500 chars
 
 **Response (200):**
 
 ```json
 {
-  "status": "success",
-  "message": "Plan reverted",
-  "data": {
-    "payment": {
-      "id": 12,
-      "type": "revert",
-      "plan_name": "free",
-      "amount": "0.00"
+    "status": "success",
+    "message": "Plan reverted",
+    "data": {
+        "payment": {
+            "id": 12,
+            "type": "revert",
+            "plan_name": "free",
+            "amount": "0.00"
+        },
+        "user": { "id": 1, "current_plan": "free" }
     },
-    "user": { "id": 1, "current_plan": "free" }
-  },
-  "code": 200
+    "code": 200
 }
 ```
 
 **Errors:**
 
-- 401 — Unauthenticated
-- 422 — Validation failed
+-   401 — Unauthenticated
+-   422 — Validation failed
 
 ### Payment Webhook (public)
 
@@ -1269,41 +1289,41 @@ Handle payment gateway webhooks (sandbox simulation).
 
 ```json
 {
-  "event_type": "payment.completed",
-  "transaction_id": "TXN_ABC123",
-  "payload": {}
+    "event_type": "payment.completed",
+    "transaction_id": "TXN_ABC123",
+    "payload": {}
 }
 ```
 
 **Supported event types:**
 
-- `payment.completed` — marks a payment as completed
-- `payment.failed` — marks a payment as failed
+-   `payment.completed` — marks a payment as completed
+-   `payment.failed` — marks a payment as failed
 
 Note: lifecycle events for a separate subscription model are not used in this API — plan state is represented by `users.current_plan` and recorded payments. Only payment events are handled in the webhook handler for the sandbox gateway.
 
 **Headers (optional):**
 
-- `X-Webhook-Signature` — HMAC signature (sandbox accepts any value)
+-   `X-Webhook-Signature` — HMAC signature (sandbox accepts any value)
 
 **Response (200):**
 
 ```json
 {
-  "status": "success",
-  "message": "Webhook processed",
-  "data": {
-    "received": true,
-    "event_type": "payment.completed"
-  },
-  "code": 200,
-  "timestamp": "2025-12-02T12:00:00Z"
+    "status": "success",
+    "message": "Webhook processed",
+    "data": {
+        "received": true,
+        "event_type": "payment.completed"
+    },
+    "code": 200,
+    "timestamp": "2025-12-02T12:00:00Z"
 }
 ```
 
 **Errors:**
 
-- 401 — Invalid webhook signature (in production)
-- 422 — Missing event_type or transaction_id
+-   401 — Invalid webhook signature (in production)
+-   422 — Missing event_type or transaction_id
 
 ---

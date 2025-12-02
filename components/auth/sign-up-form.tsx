@@ -305,7 +305,7 @@ export function SignUpForm() {
           variant='outline'
           disabled={isLoading}
           onClick={() => {
-            window.location.href = getGoogleOAuthUrl();
+            window.location.href = getGoogleOAuthUrl(redirectUrl || undefined);
           }}
         >
           <svg className='w-4 h-4 mr-2' viewBox='0 0 24 24' fill='currentColor'>
@@ -317,7 +317,7 @@ export function SignUpForm() {
           variant='outline'
           disabled={isLoading}
           onClick={() => {
-            window.location.href = getGitHubOAuthUrl();
+            window.location.href = getGitHubOAuthUrl(redirectUrl || undefined);
           }}
         >
           <svg className='w-4 h-4 mr-2' viewBox='0 0 24 24' fill='currentColor'>

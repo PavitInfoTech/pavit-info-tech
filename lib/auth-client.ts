@@ -147,13 +147,21 @@ export async function apiGetCurrentUser() {
 }
 
 // OAuth: Get redirect URL for Google
-export function getGoogleOAuthUrl(): string {
-  return `${API_BASE_URL}/auth/google/redirect`;
+export function getGoogleOAuthUrl(redirect?: string): string {
+  const baseUrl = `${API_BASE_URL}/auth/google/redirect`;
+  if (redirect) {
+    return `${baseUrl}?redirect=${encodeURIComponent(redirect)}`;
+  }
+  return baseUrl;
 }
 
 // OAuth: Get redirect URL for GitHub
-export function getGitHubOAuthUrl(): string {
-  return `${API_BASE_URL}/auth/github/redirect`;
+export function getGitHubOAuthUrl(redirect?: string): string {
+  const baseUrl = `${API_BASE_URL}/auth/github/redirect`;
+  if (redirect) {
+    return `${baseUrl}?redirect=${encodeURIComponent(redirect)}`;
+  }
+  return baseUrl;
 }
 
 // OAuth: Exchange Google code/credential for token

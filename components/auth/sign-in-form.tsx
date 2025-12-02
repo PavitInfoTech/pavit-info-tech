@@ -158,7 +158,9 @@ export function SignInForm() {
             variant='outline'
             disabled={isLoading}
             onClick={() => {
-              window.location.href = getGoogleOAuthUrl();
+              window.location.href = getGoogleOAuthUrl(
+                redirectUrl || undefined
+              );
             }}
           >
             <svg
@@ -174,7 +176,9 @@ export function SignInForm() {
             variant='outline'
             disabled={isLoading}
             onClick={() => {
-              window.location.href = getGitHubOAuthUrl();
+              window.location.href = getGitHubOAuthUrl(
+                redirectUrl || undefined
+              );
             }}
           >
             <svg
