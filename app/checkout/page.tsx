@@ -140,36 +140,13 @@ function VisualCard({
                   <div key={i} className='bg-yellow-600/30 rounded-sm' />
                 ))}
               </div>
-              {/* Contactless */}
-              <svg
-                className='w-6 h-6 text-white/60'
-                viewBox='0 0 24 24'
-                fill='none'
-                stroke='currentColor'
-              >
-                <path
-                  d='M12 20c4.4 0 8-3.6 8-8s-3.6-8-8-8'
-                  strokeWidth='2'
-                  strokeLinecap='round'
-                />
-                <path
-                  d='M12 16c2.2 0 4-1.8 4-4s-1.8-4-4-4'
-                  strokeWidth='2'
-                  strokeLinecap='round'
-                />
-                <path
-                  d='M12 12c0-1.1.9-2 2-2'
-                  strokeWidth='2'
-                  strokeLinecap='round'
-                />
-              </svg>
             </div>
             {getBrandLogo()}
           </div>
 
           {/* Card number */}
           <div className='mb-6'>
-            <div className='text-xl md:text-2xl font-mono tracking-[0.2em] text-white'>
+            <div className='text-lg md:text-xl font-mono tracking-[0.2em] text-white'>
               {formatDisplayNumber()}
             </div>
           </div>
@@ -501,7 +478,7 @@ function CheckoutContent() {
 
   // Handle card number input
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "").slice(0, 19);
+    const value = e.target.value.replace(/\D/g, "").slice(0, 16);
     setCardNumber(value);
   };
 
