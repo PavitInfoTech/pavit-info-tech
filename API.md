@@ -326,10 +326,11 @@ Authorization: Bearer <your-plain-text-token-here>
         -   If no matching user exists, a new user is created and provider fields (`provider_name`, `provider_id`, `avatar`) are saved.
         -   A Laravel Sanctum personal access token is created.
         -   Behavior detail:
-            -   **By default (browser flow):** The server sets a secure, HttpOnly cookie named `api_token` (scoped to `SESSION_DOMAIN` for cross-subdomain support) and redirects (302) to the SPA route `${FRONTEND_URL}/auth/complete`. The token never appears in the URL.
+            -   **By default (browser flow):** The server redirects (302) to `${FRONTEND_URL}/auth/complete?token=<sanctum-token>`. The token is passed as a query parameter for the frontend to extract and store.
             -   **JSON response:** Only returned when the request is an explicit AJAX call (`X-Requested-With: XMLHttpRequest`), the `Accept` header specifically prefers `application/json` without `text/html` or `*/*`, or the query param `?format=json` is present.
     -   Browser flow response (Redirect — default for all browser requests):
-        -   302 redirect to `${FRONTEND_URL}/auth/complete`, cookie `api_token` set (HttpOnly, Secure in production, domain from `SESSION_DOMAIN`).
+        -   302 redirect to `${FRONTEND_URL}/auth/complete?token=<plain-text-token>`
+        -   The frontend should extract the token from the URL, store it, and replace the URL in browser history to remove the token.
     -   API flow response (JSON — only when explicitly requested):
         -   { status: 'success', message: 'Authenticated via Google', data: { user: {...}, token: '<plain-text-token>' } }
         -   To get JSON, use one of: `?format=json` query param, `X-Requested-With: XMLHttpRequest` header, or `Accept: application/json` (without `text/html` or `*/*`).
@@ -381,7 +382,7 @@ Authorization: Bearer <your-plain-text-token-here>
 ### GitHub OAuth (browser redirect flow)
 
     -   GET /api/auth/github/redirect — Redirects the browser to GitHub's OAuth consent page (via Socialite). If your SPA needs the URL to redirect itself, call this endpoint and read the Location header.
-    -   GET /api/auth/github/callback — OAuth callback endpoint which handles the GitHub response and returns a token in JSON (for API clients) or sets a secure `api_token` cookie and redirects to the SPA route on success.
+    -   GET /api/auth/github/callback — OAuth callback endpoint which handles the GitHub response and returns a token in JSON (for API clients) or redirects to `${FRONTEND_URL}/auth/complete?token=<token>` for browser flows.
 
 #### GitHub OAuth behavior
 
@@ -389,7 +390,7 @@ Authorization: Bearer <your-plain-text-token-here>
 
     -   Creates the user if not present and saves `provider_name` = 'github' and `provider_id`.
     -   If a user already exists with the same email, the code attaches `provider` fields to that existing user rather than creating a new one.
-    -   Returns JSON with `user` and `token` in API flows, and sets an `api_token` cookie on browser flows.
+    -   Returns JSON with `user` and `token` in API flows, and redirects with token in query param on browser flows.
 
 -   POST /api/auth/github/token (API-only token exchange)
 
