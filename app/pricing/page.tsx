@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronDown, Loader2 } from "lucide-react";
+import { Check, ChevronDown, Loader2, Crown } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
+import { useSubscription } from "@/lib/use-subscription";
 
 import pricingData from "@/lib/pricing-plans.json";
 
@@ -52,6 +53,7 @@ export default function PricingPage() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const { isAuthenticated } = useAuth();
+  const { plan: currentPlan } = useSubscription();
   const router = useRouter();
 
   const handlePlanClick = (plan: (typeof plans)[number]) => {
@@ -144,6 +146,7 @@ export default function PricingPage() {
               plan.yearlyPrice
             );
             const isLoading = loadingPlan === plan.name;
+            const isCurrentPlan = currentPlan?.slug === plan.slug;
 
             return (
               <Card
@@ -152,15 +155,23 @@ export default function PricingPage() {
                   plan.highlighted
                     ? "border-primary shadow-xl md:scale-105"
                     : "hover:border-primary/50"
-                }`}
+                } ${isCurrentPlan ? "ring-2 ring-emerald-500/50" : ""}`}
               >
-                {plan.highlighted && (
+                {/* Current Plan Badge */}
+                {isCurrentPlan && (
+                  <div className='absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-emerald-500 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1.5'>
+                    <Crown className='w-3.5 h-3.5' />
+                    Current Plan
+                  </div>
+                )}
+
+                {!isCurrentPlan && plan.highlighted && (
                   <div className='absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold'>
                     Most Popular
                   </div>
                 )}
 
-                {isYearly && savings > 0 && (
+                {isYearly && savings > 0 && !isCurrentPlan && (
                   <div className='absolute top-4 right-4 px-2 py-1 bg-emerald-500/10 text-emerald-500 text-xs font-semibold rounded'>
                     Save {savings}%
                   </div>
@@ -191,23 +202,34 @@ export default function PricingPage() {
                   )}
                 </div>
 
-                <Button
-                  className={`w-full mb-6 cursor-pointer relative overflow-hidden transition-all duration-300 ${
-                    isLoading ? "pointer-events-none" : ""
-                  }`}
-                  variant={plan.highlighted ? "default" : "outline"}
-                  onClick={() => handlePlanClick(plan)}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <span className='flex items-center justify-center gap-2'>
-                      <Loader2 className='w-4 h-4 animate-spin' />
-                      <span>Processing...</span>
-                    </span>
-                  ) : (
-                    plan.cta
-                  )}
-                </Button>
+                {isCurrentPlan ? (
+                  <Button
+                    className='w-full mb-6 cursor-default'
+                    variant='outline'
+                    disabled
+                  >
+                    <Crown className='w-4 h-4 mr-2' />
+                    Your Current Plan
+                  </Button>
+                ) : (
+                  <Button
+                    className={`w-full mb-6 cursor-pointer relative overflow-hidden transition-all duration-300 ${
+                      isLoading ? "pointer-events-none" : ""
+                    }`}
+                    variant={plan.highlighted ? "default" : "outline"}
+                    onClick={() => handlePlanClick(plan)}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <span className='flex items-center justify-center gap-2'>
+                        <Loader2 className='w-4 h-4 animate-spin' />
+                        <span>Processing...</span>
+                      </span>
+                    ) : (
+                      plan.cta
+                    )}
+                  </Button>
+                )}
 
                 <div className='space-y-3'>
                   {plan.features.map((feature) => (
