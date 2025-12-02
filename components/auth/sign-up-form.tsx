@@ -330,7 +330,11 @@ export function SignUpForm() {
       <p className='text-center text-sm text-muted-foreground'>
         Already have an account?{" "}
         <Link
-          href='/auth/signin'
+          href={
+            redirectUrl
+              ? `/auth/signin?redirect=${encodeURIComponent(redirectUrl)}`
+              : "/auth/signin"
+          }
           className='text-primary hover:underline font-semibold'
         >
           Sign in
