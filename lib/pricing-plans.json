@@ -1,0 +1,110 @@
+{
+  "plans": [
+    {
+      "name": "Starter",
+      "slug": "starter",
+      "monthlyPrice": 99,
+      "yearlyPrice": 82,
+      "description": "Perfect for small IoT deployments",
+      "features": [
+        "Real-time device monitoring",
+        "Basic analytics & reports",
+        "Up to 100 devices",
+        "Email support",
+        "Standard dashboard",
+        "Data retention: 30 days"
+      ],
+      "cta": "Get Started",
+      "highlighted": false
+    },
+    {
+      "name": "Pro",
+      "slug": "pro",
+      "monthlyPrice": 169,
+      "yearlyPrice": 136,
+      "description": "For growing IoT operations",
+      "features": [
+        "All Starter features",
+        "AI anomaly detection",
+        "Predictive maintenance",
+        "Up to 1,000 devices",
+        "Priority email & chat support",
+        "Advanced customization",
+        "Data retention: 90 days",
+        "Automated alerts & notifications"
+      ],
+      "cta": "Get Started",
+      "highlighted": true
+    },
+    {
+      "name": "Enterprise",
+      "slug": "enterprise",
+      "monthlyPrice": null,
+      "yearlyPrice": null,
+      "description": "For large-scale IoT ecosystems",
+      "features": [
+        "All Pro features",
+        "Digital twin visualization",
+        "Multi-site integrations",
+        "Unlimited devices",
+        "Dedicated account manager",
+        "24/7 phone & email support",
+        "Custom integrations",
+        "Data retention: Unlimited",
+        "Advanced security & compliance"
+      ],
+      "cta": "Contact Sales",
+      "highlighted": false
+    }
+  ],
+  "comparisonRows": [
+    {
+      "feature": "Real-time Monitoring",
+      "starter": true,
+      "pro": true,
+      "enterprise": true
+    },
+    {
+      "feature": "Anomaly Detection",
+      "starter": false,
+      "pro": true,
+      "enterprise": true
+    },
+    {
+      "feature": "Predictive Maintenance",
+      "starter": false,
+      "pro": true,
+      "enterprise": true
+    },
+    {
+      "feature": "Digital Twins",
+      "starter": false,
+      "pro": false,
+      "enterprise": true
+    },
+    {
+      "feature": "Multi-site Integrations",
+      "starter": false,
+      "pro": false,
+      "enterprise": true
+    },
+    {
+      "feature": "Custom Integrations",
+      "starter": false,
+      "pro": false,
+      "enterprise": true
+    },
+    {
+      "feature": "Priority Support",
+      "starter": false,
+      "pro": true,
+      "enterprise": true
+    },
+    {
+      "feature": "24/7 Support",
+      "starter": false,
+      "pro": false,
+      "enterprise": true
+    }
+  ]
+}

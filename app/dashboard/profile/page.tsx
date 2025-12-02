@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { Card } from "@/components/ui/card";
@@ -36,18 +36,55 @@ import {
   MoreVertical,
   LogOut,
   Send,
+  Upload,
+  Loader2,
+  ArrowUpRight,
 } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
+import { useSubscription } from "@/lib/use-subscription";
 import { getAuthTokenStorage } from "@/lib/auth-storage";
 import { sha256Hex } from "@/lib/crypto-utils";
+import { useRouter } from "next/navigation";
+
+const API_BASE = "https://api.pavitinfotech.com";
+
+// Avatar upload API function
+async function uploadAvatar(file: File): Promise<string> {
+  const storage = getAuthTokenStorage();
+  const token = storage.getToken();
+  if (!token) throw new Error("Not authenticated");
+
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  const res = await fetch(`${API_BASE}/user/avatar`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  const json = await res.json();
+  if (!res.ok || json.status === "error") {
+    throw new Error(json.message || "Failed to upload avatar");
+  }
+
+  return json.data.avatar_url;
+}
 
 // Profile Avatar with upload capability
 function ProfileAvatar({
   initials,
+  avatarUrl,
   onUpload,
+  isUploading,
 }: {
   initials: string;
+  avatarUrl?: string | null;
   onUpload?: () => void;
+  isUploading?: boolean;
 }) {
   return (
     <div className='relative group'>
@@ -57,9 +94,18 @@ function ProfileAvatar({
       {/* Avatar container */}
       <motion.div
         whileHover={{ scale: 1.02 }}
-        className='relative w-28 h-28 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center'
+        className='relative w-28 h-28 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden'
       >
-        <span className='text-3xl font-bold'>{initials}</span>
+        {avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={avatarUrl}
+            alt='Profile'
+            className='w-full h-full object-cover'
+          />
+        ) : (
+          <span className='text-3xl font-bold'>{initials}</span>
+        )}
 
         {/* Status ring */}
         <div className='absolute inset-0 rounded-full border-4 border-emerald-500/50' />
@@ -69,15 +115,182 @@ function ProfileAvatar({
           whileHover={{ opacity: 1 }}
           initial={{ opacity: 0 }}
           onClick={onUpload}
-          className='absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer'
+          disabled={isUploading}
+          className='absolute inset-0 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer disabled:cursor-wait'
         >
-          <Camera className='w-6 h-6' />
+          {isUploading ? (
+            <Loader2 className='w-6 h-6 animate-spin' />
+          ) : (
+            <Camera className='w-6 h-6' />
+          )}
         </motion.button>
 
         {/* Online indicator */}
         <div className='absolute bottom-1 right-1 w-5 h-5 bg-emerald-500 rounded-full border-4 border-[oklch(0.13_0.03_260)]' />
       </motion.div>
     </div>
+  );
+}
+
+// Avatar Upload Modal
+function AvatarUploadModal({
+  onClose,
+  onSuccess,
+}: {
+  onClose: () => void;
+  onSuccess: (url: string) => void;
+}) {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      setError("Please select an image file");
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image must be less than 5MB");
+      return;
+    }
+
+    setSelectedFile(file);
+    setError("");
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => setPreview(e.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    setIsUploading(true);
+    setError("");
+
+    try {
+      const url = await uploadAvatar(selectedFile);
+      onSuccess(url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to upload avatar");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm'
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        onClick={(e) => e.stopPropagation()}
+        className='bg-[oklch(0.15_0.03_260)] border border-[oklch(0.25_0.05_260)] rounded-xl p-6 w-full max-w-md shadow-2xl'
+      >
+        <div className='flex items-center gap-3 mb-6'>
+          <div className='w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center'>
+            <Camera className='w-5 h-5 text-blue-400' />
+          </div>
+          <div>
+            <h3 className='font-semibold'>Upload Profile Picture</h3>
+            <p className='text-sm text-muted-foreground'>
+              Choose an image for your profile
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            className='ml-auto p-2 hover:bg-white/10 rounded-lg transition-colors'
+          >
+            <X className='w-4 h-4' />
+          </button>
+        </div>
+
+        <input
+          ref={fileInputRef}
+          type='file'
+          accept='image/*'
+          className='hidden'
+          onChange={handleFileSelect}
+        />
+
+        {/* Preview area */}
+        <div
+          onClick={() => fileInputRef.current?.click()}
+          className={cn(
+            "w-full h-48 rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-colors mb-4",
+            preview
+              ? "border-blue-500/50 bg-blue-500/10"
+              : "border-white/20 hover:border-white/40 bg-white/5"
+          )}
+        >
+          {preview ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={preview}
+              alt='Preview'
+              className='w-32 h-32 rounded-full object-cover'
+            />
+          ) : (
+            <>
+              <Upload className='w-8 h-8 text-white/40 mb-2' />
+              <p className='text-sm text-white/60'>Click to select an image</p>
+              <p className='text-xs text-white/40 mt-1'>
+                JPG, PNG or GIF (max 5MB)
+              </p>
+            </>
+          )}
+        </div>
+
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            className='text-sm text-red-400 flex items-center gap-2 mb-4'
+          >
+            <AlertTriangle className='w-4 h-4' />
+            {error}
+          </motion.p>
+        )}
+
+        <div className='flex gap-3'>
+          <Button variant='outline' className='flex-1' onClick={onClose}>
+            Cancel
+          </Button>
+          <Button
+            className='flex-1'
+            onClick={handleUpload}
+            disabled={!selectedFile || isUploading}
+          >
+            {isUploading ? (
+              <>
+                <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                Uploading...
+              </>
+            ) : (
+              <>
+                <Upload className='w-4 h-4 mr-2' />
+                Upload
+              </>
+            )}
+          </Button>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -668,6 +881,8 @@ function DeleteModal({
 
 export default function ProfilePage() {
   const { user, refresh } = useAuth({ requireAuth: true });
+  const { plan, payment } = useSubscription();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     username: "",
     firstName: "",
@@ -676,15 +891,16 @@ export default function ProfilePage() {
     company: "Tech Corp",
     phone: "+1 (555) 123-4567",
   });
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [passwordChanged, setPasswordChanged] = useState(false);
   const [devices, setDevices] = useState(CONNECTED_DEVICES);
-  const [showBillingToast, setShowBillingToast] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSendingVerification, setIsSendingVerification] = useState(false);
   const [verificationSent, setVerificationSent] = useState(false);
@@ -701,6 +917,7 @@ export default function ProfilePage() {
       lastName: user.last_name ?? "",
       email: user.email,
     }));
+    setAvatarUrl(user.avatar || null);
     setIsLoadingUser(false);
   }, [user]);
 
@@ -768,11 +985,6 @@ export default function ProfilePage() {
     setDevices((prev) => prev.filter((d) => d.id !== deviceId));
   };
 
-  const handleManageBilling = () => {
-    setShowBillingToast(true);
-    setTimeout(() => setShowBillingToast(false), 3000);
-  };
-
   const handleSendVerification = async () => {
     setIsSendingVerification(true);
     setVerificationError(null);
@@ -835,6 +1047,8 @@ export default function ProfilePage() {
                     }` || formData.username.slice(0, 2).toUpperCase()
                   : formData.username.slice(0, 2).toUpperCase()
               }
+              avatarUrl={avatarUrl}
+              onUpload={() => setShowAvatarModal(true)}
             />
 
             <div className='flex-1 text-center md:text-left'>
@@ -849,10 +1063,12 @@ export default function ProfilePage() {
                   <div className='w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse' />
                   Active Account
                 </span>
-                <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-medium'>
-                  <Crown className='w-3 h-3' />
-                  Pro Plan
-                </span>
+                {plan && (
+                  <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-medium'>
+                    <Crown className='w-3 h-3' />
+                    {plan.name} Plan
+                  </span>
+                )}
                 {user?.email_verified_at ? (
                   <span className='inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-medium'>
                     <MailCheck className='w-3 h-3' />
@@ -1005,40 +1221,94 @@ export default function ProfilePage() {
               className='space-y-6'
             >
               {/* Current Plan */}
-              <Card className='p-5 bg-linear-to-br from-amber-500/10 to-orange-500/10 border-amber-500/30'>
+              <Card
+                className={cn(
+                  "p-5 border",
+                  plan
+                    ? "bg-linear-to-br from-amber-500/10 to-orange-500/10 border-amber-500/30"
+                    : "bg-white/5 border-white/10"
+                )}
+              >
                 <div className='flex items-center gap-3 mb-4'>
-                  <div className='w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center'>
-                    <Crown className='w-5 h-5 text-amber-400' />
+                  <div
+                    className={cn(
+                      "w-10 h-10 rounded-lg flex items-center justify-center",
+                      plan ? "bg-amber-500/20" : "bg-white/10"
+                    )}
+                  >
+                    <Crown
+                      className={cn(
+                        "w-5 h-5",
+                        plan ? "text-amber-400" : "text-white/40"
+                      )}
+                    />
                   </div>
                   <div>
-                    <h3 className='font-semibold'>Pro Plan</h3>
-                    <p className='text-xs text-muted-foreground'>$999/month</p>
+                    <h3 className='font-semibold'>
+                      {plan ? `${plan.name} Plan` : "No Plan"}
+                    </h3>
+                    <p className='text-xs text-muted-foreground'>
+                      {plan
+                        ? `$${plan.price}/${plan.interval}`
+                        : "Select a plan to get started"}
+                    </p>
                   </div>
                 </div>
 
-                <div className='space-y-3 mb-4'>
-                  <div className='flex items-center justify-between text-sm'>
-                    <span className='text-white/60'>Status</span>
-                    <span className='text-emerald-400 font-medium'>Active</span>
-                  </div>
-                  <div className='flex items-center justify-between text-sm'>
-                    <span className='text-white/60'>Next billing</span>
-                    <span className='font-medium'>Jan 15, 2025</span>
-                  </div>
-                  <div className='flex items-center justify-between text-sm'>
-                    <span className='text-white/60'>Devices</span>
-                    <span className='font-medium'>12 / Unlimited</span>
-                  </div>
-                </div>
+                {plan ? (
+                  <>
+                    <div className='space-y-3 mb-4'>
+                      <div className='flex items-center justify-between text-sm'>
+                        <span className='text-white/60'>Status</span>
+                        <span className='text-emerald-400 font-medium'>
+                          Active
+                        </span>
+                      </div>
+                      {payment?.paid_at && (
+                        <div className='flex items-center justify-between text-sm'>
+                          <span className='text-white/60'>Last payment</span>
+                          <span className='font-medium'>
+                            {new Date(payment.paid_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      )}
+                      <div className='flex items-center justify-between text-sm'>
+                        <span className='text-white/60'>Features</span>
+                        <span className='font-medium'>
+                          {plan.features.length} included
+                        </span>
+                      </div>
+                    </div>
 
-                <Button
-                  variant='outline'
-                  className='w-full border-amber-500/30 hover:bg-amber-500/10'
-                  onClick={handleManageBilling}
-                >
-                  <CreditCard className='w-4 h-4 mr-2' />
-                  Manage Billing
-                </Button>
+                    <div className='space-y-2'>
+                      <Button
+                        variant='outline'
+                        className='w-full border-amber-500/30 hover:bg-amber-500/10'
+                        onClick={() => router.push("/pricing")}
+                      >
+                        {plan.slug === "enterprise" ? (
+                          <>
+                            <CreditCard className='w-4 h-4 mr-2' />
+                            Manage Plan
+                          </>
+                        ) : (
+                          <>
+                            <ArrowUpRight className='w-4 h-4 mr-2' />
+                            Upgrade Plan
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <Button
+                    className='w-full bg-linear-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
+                    onClick={() => router.push("/pricing")}
+                  >
+                    <Sparkles className='w-4 h-4 mr-2' />
+                    Choose a Plan
+                  </Button>
+                )}
               </Card>
 
               {/* Quick Stats */}
@@ -1312,20 +1582,17 @@ export default function ProfilePage() {
         )}
       </AnimatePresence>
 
-      {/* Billing Toast */}
+      {/* Avatar Upload Modal */}
       <AnimatePresence>
-        {showBillingToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, x: "-50%" }}
-            animate={{ opacity: 1, y: 0, x: "-50%" }}
-            exit={{ opacity: 0, y: 50, x: "-50%" }}
-            className='fixed bottom-6 left-1/2 z-50 px-4 py-3 bg-[oklch(0.18_0.03_260)] border border-amber-500/30 rounded-xl shadow-xl flex items-center gap-3'
-          >
-            <div className='w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center'>
-              <CreditCard className='w-4 h-4 text-amber-400' />
-            </div>
-            <p className='text-sm'>Redirecting to billing portal...</p>
-          </motion.div>
+        {showAvatarModal && (
+          <AvatarUploadModal
+            onClose={() => setShowAvatarModal(false)}
+            onSuccess={(url) => {
+              setAvatarUrl(url);
+              setShowAvatarModal(false);
+              refresh(); // Refresh user data to get updated avatar
+            }}
+          />
         )}
       </AnimatePresence>
     </DashboardLayout>

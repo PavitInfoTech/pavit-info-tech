@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -25,6 +25,10 @@ export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Get redirect URL from search params (for checkout flow)
+  const redirectUrl = searchParams.get("redirect");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +48,8 @@ export function SignInForm() {
     try {
       const passwordHash = await sha256Hex(password);
       await apiLogin(email, passwordHash);
-      router.push("/dashboard");
+      // Redirect to the specified URL or dashboard
+      router.push(redirectUrl || "/dashboard");
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.payload.code === 422 && err.payload.errors) {
@@ -187,7 +192,11 @@ export function SignInForm() {
       <p className='text-center text-sm text-muted-foreground'>
         Don't have an account?{" "}
         <Link
-          href='/auth/signup'
+          href={
+            redirectUrl
+              ? `/auth/signup?redirect=${encodeURIComponent(redirectUrl)}`
+              : "/auth/signup"
+          }
           className='text-primary hover:underline font-semibold'
         >
           Sign up
