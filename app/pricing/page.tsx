@@ -2,66 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronDown, Loader2 } from "lucide-react";
+import { useAuth } from "@/lib/use-auth";
 
-const plans = [
-  {
-    name: "Starter",
-    monthlyPrice: 99,
-    yearlyPrice: 82,
-    description: "Perfect for small IoT deployments",
-    features: [
-      "Real-time device monitoring",
-      "Basic analytics & reports",
-      "Up to 100 devices",
-      "Email support",
-      "Standard dashboard",
-      "Data retention: 30 days",
-    ],
-    cta: "Get Started",
-    highlighted: false,
-  },
-  {
-    name: "Pro",
-    monthlyPrice: 169,
-    yearlyPrice: 136,
-    description: "For growing IoT operations",
-    features: [
-      "All Starter features",
-      "AI anomaly detection",
-      "Predictive maintenance",
-      "Up to 1,000 devices",
-      "Priority email & chat support",
-      "Advanced customization",
-      "Data retention: 90 days",
-      "Automated alerts & notifications",
-    ],
-    cta: "Get Started",
-    highlighted: true,
-  },
-  {
-    name: "Enterprise",
-    monthlyPrice: null,
-    yearlyPrice: null,
-    description: "For large-scale IoT ecosystems",
-    features: [
-      "All Pro features",
-      "Digital twin visualization",
-      "Multi-site integrations",
-      "Unlimited devices",
-      "Dedicated account manager",
-      "24/7 phone & email support",
-      "Custom integrations",
-      "Data retention: Unlimited",
-      "Advanced security & compliance",
-    ],
-    cta: "Contact Sales",
-    highlighted: false,
-  },
-];
+import pricingData from "@/lib/pricing-plans.json";
+
+const plans = pricingData.plans;
 
 const faqs = [
   {
@@ -101,13 +51,31 @@ export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
 
-  const handlePlanClick = (planName: string) => {
-    setLoadingPlan(planName);
-    // Simulate loading delay before navigation
-    setTimeout(() => {
-      setLoadingPlan(null);
-    }, 1500);
+  const handlePlanClick = (plan: (typeof plans)[number]) => {
+    // Enterprise plan goes to contact page
+    if (plan.slug === "enterprise") {
+      router.push("/contact");
+      return;
+    }
+
+    setLoadingPlan(plan.name);
+
+    // Build checkout URL with plan and billing cycle
+    const billingCycle = isYearly ? "yearly" : "monthly";
+    const checkoutUrl = `/checkout?plan=${plan.slug}&billing=${billingCycle}`;
+
+    // If authenticated, go directly to checkout
+    // Otherwise, go to signup with redirect to checkout
+    if (isAuthenticated) {
+      router.push(checkoutUrl);
+    } else {
+      // Encode the checkout URL as redirect parameter
+      const redirectUrl = encodeURIComponent(checkoutUrl);
+      router.push(`/auth/signup?redirect=${redirectUrl}`);
+    }
   };
 
   const formatPrice = (price: number | null) => {
@@ -224,13 +192,12 @@ export default function PricingPage() {
                 </div>
 
                 <Button
-                  className={`w-full mb-6 relative overflow-hidden transition-all duration-300 ${
+                  className={`w-full mb-6 cursor-pointer relative overflow-hidden transition-all duration-300 ${
                     isLoading ? "pointer-events-none" : ""
                   }`}
                   variant={plan.highlighted ? "default" : "outline"}
-                  onClick={() => handlePlanClick(plan.name)}
+                  onClick={() => handlePlanClick(plan)}
                   disabled={isLoading}
-                  asChild={!isLoading}
                 >
                   {isLoading ? (
                     <span className='flex items-center justify-center gap-2'>
@@ -238,13 +205,7 @@ export default function PricingPage() {
                       <span>Processing...</span>
                     </span>
                   ) : (
-                    <Link
-                      href={
-                        plan.name === "Enterprise" ? "/contact" : "/auth/signup"
-                      }
-                    >
-                      {plan.cta}
-                    </Link>
+                    plan.cta
                   )}
                 </Button>
 
@@ -281,56 +242,7 @@ export default function PricingPage() {
                 </tr>
               </thead>
               <tbody>
-                {[
-                  {
-                    feature: "Real-time Monitoring",
-                    starter: true,
-                    pro: true,
-                    enterprise: true,
-                  },
-                  {
-                    feature: "Anomaly Detection",
-                    starter: false,
-                    pro: true,
-                    enterprise: true,
-                  },
-                  {
-                    feature: "Predictive Maintenance",
-                    starter: false,
-                    pro: true,
-                    enterprise: true,
-                  },
-                  {
-                    feature: "Digital Twins",
-                    starter: false,
-                    pro: false,
-                    enterprise: true,
-                  },
-                  {
-                    feature: "Multi-site Integrations",
-                    starter: false,
-                    pro: false,
-                    enterprise: true,
-                  },
-                  {
-                    feature: "Custom Integrations",
-                    starter: false,
-                    pro: false,
-                    enterprise: true,
-                  },
-                  {
-                    feature: "Priority Support",
-                    starter: false,
-                    pro: true,
-                    enterprise: true,
-                  },
-                  {
-                    feature: "24/7 Support",
-                    starter: false,
-                    pro: false,
-                    enterprise: true,
-                  },
-                ].map((row) => (
+                {pricingData.comparisonRows.map((row) => (
                   <tr key={row.feature} className='border-b border-border'>
                     <td className='py-4 px-4'>{row.feature}</td>
                     <td className='text-center py-4 px-4'>

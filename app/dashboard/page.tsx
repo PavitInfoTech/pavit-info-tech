@@ -6,10 +6,38 @@ import { HealthTicker } from "@/components/dashboard/health-ticker";
 import { StatusOrb } from "@/components/dashboard/status-orb";
 import { EventLog } from "@/components/dashboard/event-log";
 import { AlertList } from "@/components/dashboard/alert-list";
-import { Cpu, Zap, Database, TrendingUp, Activity } from "lucide-react";
+import {
+  Cpu,
+  Zap,
+  Database,
+  TrendingUp,
+  Activity,
+  Loader2,
+} from "lucide-react";
 import { motion } from "framer-motion";
+import { useAuth } from "@/lib/use-auth";
+import { useSubscription } from "@/lib/use-subscription";
 
 export default function DashboardPage() {
+  const { user, isLoading: authLoading } = useAuth({ requireAuth: true });
+  const { isLoading: subLoading } = useSubscription({ requirePlan: true });
+
+  // Show loading while checking auth and subscription
+  if (authLoading || subLoading) {
+    return (
+      <DashboardLayout>
+        <div className='flex items-center justify-center min-h-[60vh]'>
+          <div className='text-center'>
+            <Loader2 className='w-8 h-8 animate-spin mx-auto mb-4 text-blue-500' />
+            <p className='text-white/60'>Loading dashboard...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Get user's first name for welcome message
+  const firstName = user?.first_name || user?.username || "there";
   return (
     <DashboardLayout>
       {/* Health Ticker - Full Width */}
@@ -25,7 +53,7 @@ export default function DashboardPage() {
               animate={{ opacity: 1, y: 0 }}
               className='text-2xl lg:text-3xl font-bold text-white mb-2'
             >
-              Good morning, John
+              Good morning, {firstName}
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}

@@ -4,7 +4,7 @@ import type React from "react";
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -38,6 +38,10 @@ export function SignUpForm() {
   const [error, setError] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Get redirect URL from search params (for checkout flow)
+  const redirectUrl = searchParams.get("redirect");
 
   const passwordStrength = calculatePasswordStrength(formData.password);
   const passwordsMatch =
@@ -94,7 +98,8 @@ export function SignUpForm() {
         passwordHash,
         passwordConfirmHash
       );
-      router.push("/dashboard");
+      // Redirect to the specified URL or dashboard
+      router.push(redirectUrl || "/dashboard");
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.payload.code === 422 && err.payload.errors) {
