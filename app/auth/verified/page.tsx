@@ -5,6 +5,7 @@ import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CheckCircle2 } from "lucide-react";
+import { Logo } from "@/components/layout/logo";
 
 export default function EmailVerifiedPage() {
   return (
@@ -12,6 +13,7 @@ export default function EmailVerifiedPage() {
       <div className='min-h-screen flex items-center justify-center px-4 py-20'>
         <div className='w-full max-w-md'>
           <Card className='p-8 space-y-6 text-center'>
+            <Logo width={200} height={70} />
             <div className='flex justify-center'>
               <div className='w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center'>
                 <CheckCircle2 className='w-8 h-8 text-emerald-500' />

@@ -6,6 +6,7 @@ import { MainLayout } from "@/components/layout/main-layout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { apiLogout } from "@/lib/auth-client";
+import { Logo } from "@/components/layout/logo";
 
 export default function LogoutPage() {
   const router = useRouter();
@@ -22,6 +23,8 @@ export default function LogoutPage() {
       <div className='min-h-screen flex items-center justify-center px-4 py-20'>
         <div className='w-full max-w-md'>
           <Card className='p-8 space-y-6 text-center'>
+            <Logo width={200} height={70} />
+
             <h1 className='text-2xl font-bold font-serif mb-2'>
               You have been logged out
             </h1>

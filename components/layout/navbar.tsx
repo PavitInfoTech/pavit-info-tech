@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { Logo } from "@/components/layout/logo";
 import { useAuth } from "@/lib/use-auth";
 
 export function Navbar() {
@@ -142,10 +143,14 @@ export function Navbar() {
               className='flex items-center space-x-2 font-serif font-bold text-lg text-white group'
             >
               <motion.div
-                className='w-8 h-8 bg-linear-to-br from-cyan-400 to-cyan-600 rounded-lg'
-                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileHover={{ scale: 1.06 }}
                 transition={{ type: "spring", stiffness: 400 }}
-              />
+              >
+                <Logo
+                  width={120}
+                  height={50}
+                />
+              </motion.div>
               <span className='bg-linear-to-r from-white to-white/80 bg-clip-text text-transparent'>
                 PavitInfoTech
               </span>
@@ -289,7 +294,7 @@ export function Navbar() {
             </div>
 
             {/* Right Actions (CTAs) */}
-            <div className='hidden lg:flex items-center space-x-4 space-y-2 flex-wrap justify-end'>
+            <div className='hidden lg:flex items-center space-x-4 gap-2 flex-wrap justify-end'>
               {/* System Online Indicator */}
               <div className='flex items-center space-x-1.5 xl:space-x-2 px-2 xl:px-3 py-1 xl:py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20'>
                 <motion.div
@@ -331,8 +336,8 @@ export function Navbar() {
                 <>
                   <Link
                     href='/auth/signin'
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    target='_blank'
+                    rel='noopener noreferrer'
                     className='text-xs xl:text-sm text-white/70 hover:text-white transition-colors whitespace-nowrap'
                   >
                     Log In

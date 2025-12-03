@@ -13,10 +13,11 @@ import {
   Menu,
   X,
   ChevronRight,
-  Sparkles,
+  
   Bell,
   Crown,
 } from "lucide-react";
+import { Logo } from "@/components/layout/logo";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/use-auth";
 import { useSubscription } from "@/lib/use-subscription";
@@ -236,18 +237,7 @@ export function Sidebar() {
             className='flex items-center gap-3 group'
             onClick={() => setIsOpen(false)}
           >
-            {/* Animated Logo */}
-            <motion.div
-              whileHover={{ rotate: 180 }}
-              transition={{ duration: 0.5 }}
-              className='relative w-10 h-10'
-            >
-              <div className='absolute inset-0 bg-linear-to-br from-blue-500 to-purple-600 rounded-xl' />
-              <div className='absolute inset-0.5 bg-[oklch(0.12_0.02_260)] rounded-[10px] flex items-center justify-center'>
-                <Sparkles className='w-5 h-5 text-blue-400' />
-              </div>
-              <div className='absolute inset-0 bg-linear-to-br from-blue-400/30 to-purple-500/30 rounded-xl blur animate-pulse' />
-            </motion.div>
+            <Logo size={40} className='rounded-xl' />
 
             <div>
               <h1 className='font-serif font-bold text-lg bg-linear-to-r from-white to-white/80 bg-clip-text text-transparent'>

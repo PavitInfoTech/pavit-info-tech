@@ -42,6 +42,7 @@ import {
 } from "@/lib/payment-client";
 import pricingData from "@/lib/pricing-plans.json";
 import Link from "next/link";
+import { LuNfc } from "react-icons/lu";
 
 // Visual credit card component
 function VisualCard({
@@ -140,6 +141,8 @@ function VisualCard({
                   <div key={i} className='bg-yellow-600/30 rounded-sm' />
                 ))}
               </div>
+              {/* Contactless */}
+              <LuNfc className='w-6 h-6 text-white/70' />
             </div>
             {getBrandLogo()}
           </div>

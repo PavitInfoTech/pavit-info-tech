@@ -8,6 +8,7 @@ import { getAuthTokenStorage } from "@/lib/auth-storage";
 import { apiGetCurrentUser } from "@/lib/auth-client";
 import { Loader, CheckCircle, XCircle } from "lucide-react";
 import { Suspense } from "react";
+import { Logo } from "@/components/layout/logo";
 
 function getCookie(name: string): string | null {
   const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
@@ -89,6 +90,8 @@ function AuthCompleteContent() {
 
   return (
     <Card className='p-8 max-w-md w-full text-center space-y-6'>
+      <Logo width={200} height={70} />
+
       {status === "loading" && (
         <>
           <Loader className='w-12 h-12 mx-auto text-primary animate-spin' />

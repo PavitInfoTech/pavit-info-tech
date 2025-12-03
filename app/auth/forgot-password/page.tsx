@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { isEmailValid } from "@/lib/auth-utils";
 import { apiForgotPassword, ApiError } from "@/lib/auth-client";
 import { AlertCircle, ArrowLeft } from "lucide-react";
+import { Logo } from "@/components/layout/logo";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -54,6 +55,7 @@ export default function ForgotPasswordPage() {
       <div className='min-h-screen flex items-center justify-center px-4 py-20'>
         <div className='w-full max-w-md'>
           <Card className='p-8 space-y-6'>
+            <Logo width={200} height={70} />
             {!submitted ? (
               <>
                 <div>

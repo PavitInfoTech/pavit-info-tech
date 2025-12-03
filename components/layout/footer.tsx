@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { SiX, SiLinkedin, SiGithub } from "react-icons/si";
 import { Check, AlertCircle, Loader2 } from "lucide-react";
+import { Logo } from "@/components/layout/logo";
 import { subscribeNewsletter, MailApiError } from "@/lib/mail-client";
 
 // Magnetic social icon component
@@ -280,12 +281,12 @@ export function Footer() {
             {/* Logo */}
             <Link href='/' className='inline-flex items-center space-x-3 group'>
               <motion.div
-                className='w-10 h-10 bg-linear-to-br from-cyan-400 to-cyan-600 rounded-xl'
-                whileHover={{ scale: 1.1, rotate: 5 }}
-              />
-              <span className='font-serif font-bold text-xl text-white'>
-                PavitInfoTech
-              </span>
+                whileHover={{ scale: 1.06 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                {/* Use the new Logo component. Not forcing a square allows the logo to keep its natural aspect. */}
+                <Logo width={200} height={75} className='rounded-md' />
+              </motion.div>
             </Link>
 
             <p className='text-sm text-white/50 max-w-xs'>
