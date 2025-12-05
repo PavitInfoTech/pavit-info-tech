@@ -95,7 +95,6 @@ export function Navbar() {
   return (
     <>
       {/* Spacer to prevent content from going under fixed nav */}
-
       <motion.nav
         ref={navRef}
         initial={{ width: "100%", top: 0 }}
@@ -145,10 +144,7 @@ export function Navbar() {
                 whileHover={{ scale: 1.06 }}
                 transition={{ type: "spring", stiffness: 400 }}
               >
-                <Logo
-                  width={120}
-                  height={50}
-                />
+                <Logo width={120} height={50} />
               </motion.div>
               <span className='bg-linear-to-r from-white to-white/80 bg-clip-text text-transparent'>
                 PavitInfoTech

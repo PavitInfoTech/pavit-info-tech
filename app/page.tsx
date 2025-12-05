@@ -170,7 +170,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className='relative min-h-screen overflow-hidden bg-linear-to-br from-slate-900/80 via-[#071028]/70 to-slate-800/90 text-white'>
         {/* Background image */}
-        <div className='absolute inset-0 bg-[url("/Images/Home-hero.webp")] bg-fixed bg-cover bg-no-repeat bg-center opacity-20 pointer-events-none' />
+        <div className='absolute inset-0 bg-[url("/Images/Home-hero.webp")] bg-fixed bg-contain bg-no-repeat bg-center opacity-20 pointer-events-none transform translate-y-1' />
         {/* Decorative shapes behind the hero */}
         <div className='absolute -left-32 top-1/2 transform -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-linear-to-br from-primary/50 via-secondary/30 to-transparent opacity-30 blur-3xl pointer-events-none' />
         <div className='absolute -right-28 top-1/3 w-[520px] h-[520px] rounded-full bg-linear-to-tr from-secondary/40 via-primary/20 to-transparent opacity-25 blur-3xl pointer-events-none' />
