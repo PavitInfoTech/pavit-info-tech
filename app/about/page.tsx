@@ -13,6 +13,7 @@ import {
   Shield,
   TrendingUp,
 } from "lucide-react";
+import Image from "next/image";
 
 const teamMembers = [
   {
@@ -20,24 +21,28 @@ const teamMembers = [
     role: "VP of Product Development",
     bio: "Transforms customer insights into intelligent features that solve real problems.",
     initials: "EK",
+    image: "/Images/Team-member-male.webp",
   },
   {
     name: "Kavya Deshmukh",
     role: "Lead AI Engineer",
     bio: "Builds predictive algorithms that detect failures before they happen automatically.",
     initials: "SC",
+    image: "/Images/Team-member-female.webp",
   },
   {
     name: "Idris Kamara",
     role: "Director of Platform Innovation",
     bio: "Pioneers breakthrough technologies enabling real-time intelligence across enterprise IoT systems.",
     initials: "MR",
+    image: "/Images/Team-member-male1.webp",
   },
   {
     name: "Sienna Voss",
     role: "Head of IoT Architecture",
     bio: "Designs scalable IoT ecosystems connecting thousands of devices seamlessly daily.",
     initials: "PP",
+    image: "/Images/Team-member-female1.webp",
   },
 ];
 
@@ -47,24 +52,28 @@ const milestones = [
     title: "The Beginning",
     description:
       "PavitInfoTech founded on December 22nd with a vision to bring intelligence to industrial IoT systems.",
+    image: "/Images/About-1.webp",
   },
   {
     year: "2023",
     title: "Platform Launch",
     description:
       "Launched our core IoT platform with proprietary anomaly detection engine, achieving 94% accuracy.",
+    image: "/Images/About-2.webp",
   },
   {
     year: "2024",
     title: "Enterprise Growth",
     description:
       "Expanded enterprise offerings with predictive maintenance models and Digital Twin visualization.",
+    image: "/Images/About-3.webp",
   },
   {
     year: "2025",
     title: "Scaling New Heights",
     description:
       "Continuing to innovate and expand our global footprint in intelligent IoT solutions.",
+    image: "/Images/About-4.webp",
   },
 ];
 
@@ -285,25 +294,59 @@ export default function AboutPage() {
                     }`}
                   >
                     <Card
-                      className={`p-6 transition-all duration-500 ${
+                      className={`relative overflow-hidden group p-6 transition-all duration-500 ${
                         index <= activeTimeline
                           ? "bg-slate-900/80 border-primary/30"
                           : "bg-slate-900/30 border-slate-800 opacity-50"
                       }`}
                     >
-                      <span
-                        className={`text-3xl font-bold font-mono transition-colors duration-500 ${
-                          index <= activeTimeline
-                            ? "text-primary"
-                            : "text-slate-600"
+                      {/* Full-bleed background image (hidden by default) */}
+                      <div
+                        aria-hidden
+                        className={`absolute inset-0 transform transition-all duration-1000 ease-[cubic-bezier(0.22,0.9,0.36,1)] opacity-0 group-hover:opacity-50 group-hover:scale-102 bg-center bg-cover filter blur-0 group-hover:blur-xs`}
+                        style={{
+                          backgroundImage: `url(${milestone.image})`,
+                          willChange: "opacity, transform, filter",
+                        }}
+                      />
+
+                      {/* Dark overlay to keep text readable when background shows */}
+                      <div className='absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-700 group-hover:opacity-50' />
+
+                      <div
+                        className={`flex justify-between items-center mb-4 ${
+                          index % 2 === 0 ? "flex-row" : "flex-row-reverse"
                         }`}
                       >
-                        {milestone.year}
-                      </span>
-                      <h3 className='text-xl font-bold mt-2 mb-2'>
-                        {milestone.title}
-                      </h3>
-                      <p className='text-muted-foreground'>
+                        <div className='relative flex-shrink-0'>
+                          <Image
+                            src={milestone.image}
+                            alt={milestone.title}
+                            width={200}
+                            height={200}
+                            className={`rounded-full w-32 h-32 object-cover border-4 transition-all duration-300 will-change-transform ${
+                              index <= activeTimeline
+                                ? "border-primary"
+                                : "border-slate-700"
+                            } group-hover:opacity-0 group-hover:scale-95`}
+                          />
+                        </div>
+                        <div className='flex flex-col relative z-10'>
+                          <span
+                            className={`text-3xl font-bold font-mono transition-colors duration-500 ${
+                              index <= activeTimeline
+                                ? "text-primary"
+                                : "text-slate-600"
+                            }`}
+                          >
+                            {milestone.year}
+                          </span>
+                          <h3 className='text-xl font-bold mt-2 mb-2'>
+                            {milestone.title}
+                          </h3>
+                        </div>
+                      </div>
+                      <p className='text-muted-foreground relative z-10'>
                         {milestone.description}
                       </p>
                     </Card>
@@ -383,7 +426,13 @@ export default function AboutPage() {
                 </div>
               </div>
               <div className='w-48 h-48 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center'>
-                <Leaf className='w-24 h-24 text-emerald-400/50' />
+                <Image
+                  src={"/Images/About-5.webp"}
+                  alt='Sustainability'
+                  width={150}
+                  height={150}
+                  className='rounded-full object-cover'
+                />
               </div>
             </div>
           </div>

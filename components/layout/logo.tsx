@@ -35,7 +35,7 @@ export function Logo({
     >
       {/* Render the image at the given width/height without stretching; objectFit: contain preserves aspect ratio */}
       <Image
-        src="/logo/logo.webp"
+        src='/logo/logo.webp'
         alt={ariaLabel}
         width={w}
         height={h}

@@ -95,7 +95,6 @@ export function Navbar() {
   return (
     <>
       {/* Spacer to prevent content from going under fixed nav */}
-      <div className='h-20' />
 
       <motion.nav
         ref={navRef}

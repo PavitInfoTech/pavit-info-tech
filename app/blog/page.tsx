@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { BlogCard } from "@/components/blog/blog-card";
 import { Input } from "@/components/ui/input";
@@ -183,6 +183,10 @@ export default function BlogPage() {
     date: "November 2025",
     readTime: 15,
   };
+  useEffect(() => {
+    //log all filtered post titles
+    console.log("Filtered Posts:", filteredPosts.map((post) => post.title));
+  }, [filteredPosts]);
 
   return (
     <MainLayout>
@@ -446,7 +450,6 @@ export default function BlogPage() {
           </div>
         </div>
       </section>
-
       {/* Blog Grid (filtered results) */}
       <section className='py-12 px-4'>
         <div className='max-w-7xl mx-auto'>

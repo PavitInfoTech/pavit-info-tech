@@ -6,10 +6,6 @@ import { MainLayout } from "@/components/layout/main-layout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
-  Wifi,
-  Brain,
-  Zap,
-  Shield,
   Factory,
   Lightbulb,
   Truck,
@@ -22,6 +18,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import Image from "next/image";
 
 const stats = [
   { number: "10K+", label: "Devices Monitored" },
@@ -37,7 +34,7 @@ const bentoFeatures = [
     subtitle: "Universal Compatibility",
     description:
       "Connect any device with MQTT, HTTP, CoAP protocols. Zero friction data ingestion.",
-    icon: Wifi,
+    icon: "/Images/Home-icon-link.webp",
     size: "large",
   },
   {
@@ -46,7 +43,7 @@ const bentoFeatures = [
     subtitle: "Real-time Anomaly Detection",
     description:
       "AI-powered pattern recognition that catches issues before they escalate.",
-    icon: Brain,
+    icon: "/Images/Home-icon-target.webp",
     size: "medium",
   },
   {
@@ -55,7 +52,7 @@ const bentoFeatures = [
     subtitle: "Automated Workflows",
     description:
       "Trigger alerts, notifications, and automated responses instantly.",
-    icon: Zap,
+    icon: "/Images/Home-icon-people.webp",
     size: "medium",
   },
   {
@@ -63,7 +60,7 @@ const bentoFeatures = [
     title: "Secure",
     subtitle: "End-to-End Encryption",
     description: "AES-256 encryption protecting every byte of your IoT data.",
-    icon: Shield,
+    icon: "/Images/Home-icon-shield.webp",
     size: "large",
   },
 ];
@@ -126,6 +123,7 @@ const testimonials = [
     company: "Global Manufacturing Corp",
     industry: "Manufacturing",
     rating: 5,
+    image: "/Images/Testimonial-male.webp",
   },
   {
     quote:
@@ -135,6 +133,7 @@ const testimonials = [
     company: "EnergyFlow Systems",
     industry: "Smart Energy",
     rating: 5,
+    image: "/Images/Testimonial-female.webp",
   },
   {
     quote:
@@ -144,6 +143,7 @@ const testimonials = [
     company: "FreshTrack Logistics",
     industry: "Logistics",
     rating: 5,
+    image: "/Images/Testimonial-male1.webp",
   },
   {
     quote:
@@ -153,6 +153,7 @@ const testimonials = [
     company: "Regional Health Network",
     industry: "Healthcare",
     rating: 5,
+    image: "/Images/Testimonial-female1.webp",
   },
 ];
 
@@ -167,14 +168,16 @@ export default function Home() {
   return (
     <MainLayout>
       {/* Hero Section */}
-      <section className='relative overflow-hidden bg-linear-to-br from-slate-900/80 via-[#071028]/70 to-slate-800/90 text-white'>
+      <section className='relative min-h-screen overflow-hidden bg-linear-to-br from-slate-900/80 via-[#071028]/70 to-slate-800/90 text-white'>
+        {/* Background image */}
+        <div className='absolute inset-0 bg-[url("/Images/Home-hero.webp")] bg-fixed bg-cover bg-no-repeat bg-center opacity-20 pointer-events-none' />
         {/* Decorative shapes behind the hero */}
         <div className='absolute -left-32 top-1/2 transform -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-linear-to-br from-primary/50 via-secondary/30 to-transparent opacity-30 blur-3xl pointer-events-none' />
         <div className='absolute -right-28 top-1/3 w-[520px] h-[520px] rounded-full bg-linear-to-tr from-secondary/40 via-primary/20 to-transparent opacity-25 blur-3xl pointer-events-none' />
 
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-36 relative z-10 text-center'>
           <div className='space-y-6'>
-            <div className='inline-block px-4 py-2 bg-accent/10 border border-accent rounded-full text-sm font-semibold text-accent'>
+            <div className='inline-block px-4 py-2 bg-accent border border-primary rounded-full text-sm font-semibold text-white'>
               Intelligent IoT Platform
             </div>
 
@@ -386,28 +389,29 @@ export default function Home() {
           {/* Bento Grid */}
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[200px]'>
             {bentoFeatures.map((feature) => {
-              const IconComponent = feature.icon;
               const isLarge = feature.size === "large";
               return (
                 <Card
                   key={feature.id}
-                  className={`relative overflow-hidden bg-slate-900/50 border-slate-800 hover:border-primary/50 transition-all duration-300 group ${
+                  className={`relative overflow-hidden bg-slate-900/50 border-slate-800 hover:border-primary/50 py-0 transition-all duration-300 group ${
                     isLarge ? "lg:col-span-2 lg:row-span-2" : "lg:row-span-1"
                   }`}
                 >
                   <div className='absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity' />
-                  <div className='relative p-6 h-full flex flex-col'>
-                    <div
-                      className={`${
-                        isLarge ? "w-14 h-14" : "w-10 h-10"
-                      } rounded-xl bg-primary/10 flex items-center justify-center mb-4`}
-                    >
-                      <IconComponent
-                        className={`${
-                          isLarge ? "w-7 h-7" : "w-5 h-5"
-                        } text-primary`}
-                      />
-                    </div>
+                  <div
+                    className={`relative ${
+                      isLarge ? "p-10" : "p-6"
+                    } h-full flex flex-col`}
+                  >
+                    <Image
+                      src={feature.icon}
+                      alt={`${feature.title} icon`}
+                      width={250}
+                      height={250}
+                      className={`text-primary ${
+                        isLarge ? "w-20 h-20 mb-4" : "w-10 h-10"
+                      } object-contain rounded-2xl`}
+                    />
                     <div className='flex-1'>
                       <h3
                         className={`${
@@ -602,119 +606,12 @@ export default function Home() {
                 className='relative rounded-2xl overflow-hidden shadow-2xl border border-slate-700'
                 style={{ transform: "rotateX(10deg) rotateY(-5deg)" }}
               >
-                <div className='bg-slate-900 p-1'>
-                  {/* Browser Chrome */}
-                  <div className='flex items-center gap-2 px-3 py-2 bg-slate-800 rounded-t-lg'>
-                    <div className='flex gap-1.5'>
-                      <div className='w-3 h-3 rounded-full bg-red-500' />
-                      <div className='w-3 h-3 rounded-full bg-amber-500' />
-                      <div className='w-3 h-3 rounded-full bg-emerald-500' />
-                    </div>
-                    <div className='flex-1 mx-4'>
-                      <div className='bg-slate-700 rounded px-3 py-1 text-xs text-slate-400 max-w-md mx-auto'>
-                        dashboard.pavitinfotech.com
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Dashboard Content */}
-                  <div className='bg-slate-950 p-6'>
-                    <div className='grid grid-cols-12 gap-4'>
-                      {/* Sidebar */}
-                      <div className='col-span-2 space-y-3'>
-                        <div className='h-8 bg-primary/20 rounded' />
-                        <div className='h-6 bg-slate-800 rounded' />
-                        <div className='h-6 bg-slate-800 rounded' />
-                        <div className='h-6 bg-slate-800 rounded' />
-                        <div className='h-6 bg-primary/10 rounded' />
-                      </div>
-
-                      {/* Main Content */}
-                      <div className='col-span-10 space-y-4'>
-                        {/* Stats Row */}
-                        <div className='grid grid-cols-4 gap-3'>
-                          <div className='bg-slate-800/50 rounded-lg p-3 border border-slate-700'>
-                            <p className='text-xs text-slate-500'>
-                              Live Tickers
-                            </p>
-                            <p className='text-lg font-bold text-emerald-400'>
-                              12,847
-                            </p>
-                            <div className='h-8 mt-2 flex items-end gap-0.5'>
-                              {[30, 50, 40, 60, 45, 70, 55].map((h, i) => (
-                                <div
-                                  key={i}
-                                  className='flex-1 bg-emerald-500/30 rounded-t'
-                                  style={{ height: `${h}%` }}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          <div className='bg-slate-800/50 rounded-lg p-3 border border-slate-700'>
-                            <p className='text-xs text-slate-500'>
-                              Health Scores
-                            </p>
-                            <p className='text-lg font-bold text-primary'>
-                              98.2%
-                            </p>
-                            <div className='mt-2 h-2 bg-slate-700 rounded-full overflow-hidden'>
-                              <div className='h-full w-[98%] bg-primary rounded-full' />
-                            </div>
-                          </div>
-                          <div className='bg-slate-800/50 rounded-lg p-3 border border-slate-700'>
-                            <p className='text-xs text-slate-500'>Anomalies</p>
-                            <p className='text-lg font-bold text-amber-400'>
-                              3
-                            </p>
-                            <p className='text-xs text-slate-500 mt-2'>
-                              ↓ 67% from last week
-                            </p>
-                          </div>
-                          <div className='bg-slate-800/50 rounded-lg p-3 border border-slate-700'>
-                            <p className='text-xs text-slate-500'>
-                              Active Devices
-                            </p>
-                            <p className='text-lg font-bold text-white'>
-                              8,291
-                            </p>
-                            <p className='text-xs text-emerald-400 mt-2'>
-                              ● All operational
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Charts Row */}
-                        <div className='grid grid-cols-3 gap-3'>
-                          <div className='col-span-2 bg-slate-800/50 rounded-lg p-4 border border-slate-700'>
-                            <p className='text-xs text-slate-500 mb-3'>
-                              Real-time Data Flow
-                            </p>
-                            <div className='h-32 flex items-end gap-1'>
-                              {[
-                                45, 60, 55, 70, 65, 80, 75, 85, 70, 90, 85, 88,
-                                82, 95, 90,
-                              ].map((h, i) => (
-                                <div
-                                  key={i}
-                                  className='flex-1 bg-linear-to-t from-primary/50 to-primary rounded-t'
-                                  style={{ height: `${h}%` }}
-                                />
-                              ))}
-                            </div>
-                          </div>
-                          <div className='bg-slate-800/50 rounded-lg p-4 border border-slate-700'>
-                            <p className='text-xs text-slate-500 mb-3'>
-                              Digital Twin
-                            </p>
-                            <div className='h-32 flex items-center justify-center'>
-                              <Box className='w-16 h-16 text-primary/50' />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <Image
+                  src={"/Images/Home-dashboard.webp"}
+                  alt='Dashboard'
+                  width={1200}
+                  height={800}
+                />
               </div>
             </div>
 
@@ -839,14 +736,18 @@ export default function Home() {
 
                       {/* Author */}
                       <div className='flex items-center gap-4'>
-                        {/* Avatar placeholder */}
-                        <div className='w-14 h-14 rounded-full bg-linear-to-br from-primary/30 to-slate-700 flex items-center justify-center'>
-                          <span className='text-lg font-bold text-primary'>
-                            {testimonial.author
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </span>
+                        {/* Avatar */}
+                        <div className='w-14 h-14 rounded-lg bg-linear-to-br from-primary/30 to-slate-700 flex items-center justify-center'>
+                          <Image
+                            src={
+                              testimonial.image ||
+                              "/Images/Avatar-placeholder.png"
+                            }
+                            alt={testimonial.author}
+                            width={56}
+                            height={56}
+                            className='rounded-lg object-cover'
+                          />
                         </div>
                         <div>
                           <p className='font-semibold text-white'>

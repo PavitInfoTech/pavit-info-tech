@@ -13,7 +13,6 @@ import {
   Menu,
   X,
   ChevronRight,
-  
   Bell,
   Crown,
 } from "lucide-react";

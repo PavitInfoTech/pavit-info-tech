@@ -26,37 +26,36 @@ import {
   ClipboardList,
   Smartphone,
   Server,
-  Radio,
-  HardDrive,
   CheckCircle2,
   ChevronRight,
   Pause,
   Play,
   ZoomIn,
 } from "lucide-react";
+import Image from "next/image";
 
 // Edge computing features
 const edgeFeatures = [
   {
-    icon: Radio,
     title: "Edge Filtering",
     description:
       "Process and filter data at the source, reducing noise and transmitting only actionable insights.",
     stat: "90% data reduction",
+    image: "/Images/Icon-gear.webp",
   },
   {
-    icon: Wifi,
     title: "Bandwidth Optimization",
     description:
       "Intelligent compression and delta encoding minimize network usage without losing fidelity.",
     stat: "10x less bandwidth",
+    image: "/Images/Icon-hand-galaxy.webp",
   },
   {
-    icon: HardDrive,
     title: "Offline Buffering",
     description:
       "Local storage ensures zero data loss during network outages with automatic sync on reconnection.",
     stat: "99.99% data integrity",
+    image: "/Images/Icon-no-signal.webp",
   },
 ];
 
@@ -110,20 +109,20 @@ const certifications = [
 
 const securityFeatures = [
   {
-    icon: Users,
     title: "Role-Based Access Control",
+    image: "/Images/Icon-conversion-checklist.webp",
     description:
       "Granular permissions with custom roles, team hierarchies, and asset-level access policies.",
   },
   {
-    icon: ClipboardList,
     title: "Comprehensive Audit Logs",
+    image: "/Images/Icon-board.webp",
     description:
       "Immutable audit trails for every action, API call, and configuration change with 7-year retention.",
   },
   {
-    icon: Smartphone,
     title: "Multi-Factor Authentication",
+    image: "/Images/Icon-select-people.webp",
     description:
       "TOTP, hardware keys (FIDO2), and biometric options with mandatory 2FA for admin accounts.",
   },
@@ -499,16 +498,19 @@ export default function FeaturesPage() {
           {/* Feature Cards */}
           <div className='grid md:grid-cols-3 gap-6'>
             {edgeFeatures.map((feature) => {
-              const IconComponent = feature.icon;
               return (
                 <Card
                   key={feature.title}
                   className='p-6 bg-slate-900/50 border-slate-800 hover:border-primary/30 transition-colors'
                 >
                   <div className='flex items-start justify-between mb-4'>
-                    <div className='w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center'>
-                      <IconComponent className='w-6 h-6 text-primary' />
-                    </div>
+                    <Image
+                      src={feature.image}
+                      alt={feature.title}
+                      width={75}
+                      height={75}
+                      className={"w-16 h-16 rounded-lg"}
+                    />
                     <span className='px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-semibold rounded-full'>
                       {feature.stat}
                     </span>
@@ -1193,7 +1195,6 @@ export default function FeaturesPage() {
           {/* Security Features */}
           <div className='grid md:grid-cols-3 gap-6'>
             {securityFeatures.map((feature) => {
-              const IconComponent = feature.icon;
               return (
                 <Card
                   key={feature.title}
@@ -1209,9 +1210,14 @@ export default function FeaturesPage() {
                   }`}
                 >
                   <div className='flex items-start gap-3 mb-4'>
-                    <div className='w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center'>
-                      <IconComponent className='w-6 h-6 text-primary' />
-                    </div>
+                      <Image
+                        src={feature.image}
+                        alt={feature.title}
+                        width={80}
+                        height={80}
+                        className={"w-16 h-16 rounded-lg"}
+
+                      />
                     <div className='flex-1'>
                       <h3 className='text-xl font-bold mb-2'>
                         {feature.title}
