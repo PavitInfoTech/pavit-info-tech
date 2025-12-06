@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Card } from "@/components/ui/card";
@@ -68,19 +69,35 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     <MainLayout>
       {/* Hero Section */}
       <section className='relative min-h-[60vh] flex items-end overflow-hidden'>
-        {/* Background gradient */}
-        <div className='absolute inset-0 bg-linear-to-b from-primary/10 via-background to-background' />
+        {/* Featured Image Background */}
+        {post.image && (
+          <div className='absolute inset-0'>
+            <Image
+              src={post.image}
+              alt={post.title}
+              fill
+              className='object-cover'
+              priority
+            />
+            <div className='absolute inset-0 bg-linear-to-t from-background via-background/80 to-background/40' />
+          </div>
+        )}
 
-        {/* Abstract pattern */}
-        <div className='absolute inset-0 opacity-5'>
-          <div
-            className='absolute inset-0'
-            style={{
-              backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
-              backgroundSize: "48px 48px",
-            }}
-          />
-        </div>
+        {/* Fallback gradient when no image */}
+        {!post.image && (
+          <>
+            <div className='absolute inset-0 bg-linear-to-b from-primary/10 via-background to-background' />
+            <div className='absolute inset-0 opacity-5'>
+              <div
+                className='absolute inset-0'
+                style={{
+                  backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`,
+                  backgroundSize: "48px 48px",
+                }}
+              />
+            </div>
+          </>
+        )}
 
         <div className='relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 mt-16 w-full'>
           {/* Breadcrumb */}

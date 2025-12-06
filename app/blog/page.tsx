@@ -21,6 +21,7 @@ import {
   Zap,
   Mail,
   ChevronRight,
+  ChevronLeft,
   AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
@@ -29,6 +30,7 @@ import {
   MailApiError,
   getValidationErrors,
 } from "@/lib/mail-client";
+import Image from "next/image";
 
 // Define filter tags with icons
 const filterTags = [
@@ -118,10 +120,13 @@ const editorsPicks = [
 export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [email, setEmail] = useState("");
   const [isSubscribing, setIsSubscribing] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribeError, setSubscribeError] = useState<string | null>(null);
+
+  const POSTS_PER_PAGE = 4;
 
   // Filter posts based on search and tags
   const filteredPosts = blogPosts.filter((post) => {
@@ -139,6 +144,19 @@ export default function BlogPage() {
 
     return matchesSearch && matchesTags;
   });
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * POSTS_PER_PAGE;
+  const paginatedPosts = filteredPosts.slice(
+    startIndex,
+    startIndex + POSTS_PER_PAGE
+  );
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedTags]);
 
   const toggleTag = (tagId: string) => {
     setSelectedTags((prev) =>
@@ -172,20 +190,13 @@ export default function BlogPage() {
   };
 
   // Featured article data
-  const featuredArticle = {
-    slug: "death-of-reactive-maintenance",
-    title: "The Death of Reactive Maintenance",
-    subtitle: "Why 2025 is the Year of Prediction",
-    excerpt:
-      "For decades, industrial operations have been trapped in a cycle of break-fix. Equipment fails, production stops, engineers scramble. But a fundamental shift is underway. Predictive AI is making reactive maintenance obsolete and the companies that don't adapt will be left behind.",
-    author: "Dr. Sarah Chen",
-    role: "Chief AI Officer",
-    date: "November 2025",
-    readTime: 15,
-  };
+  const featuredArticle = blogPosts[0];
   useEffect(() => {
     //log all filtered post titles
-    console.log("Filtered Posts:", filteredPosts.map((post) => post.title));
+    console.log(
+      "Filtered Posts:",
+      filteredPosts.map((post) => post.title)
+    );
   }, [filteredPosts]);
 
   return (
@@ -224,9 +235,7 @@ export default function BlogPage() {
                 <h1 className='text-4xl md:text-5xl lg:text-6xl font-bold font-serif leading-tight'>
                   {featuredArticle.title}
                 </h1>
-                <p className='text-2xl md:text-3xl text-primary font-serif'>
-                  {featuredArticle.subtitle}
-                </p>
+                <span className='inline-block px-3 py-1 rounded-full bg-muted/50 text-sm text-muted-foreground'></span>
               </div>
 
               {/* Excerpt */}
@@ -244,7 +253,6 @@ export default function BlogPage() {
                     <p className='font-medium text-foreground'>
                       {featuredArticle.author}
                     </p>
-                    <p className='text-xs'>{featuredArticle.role}</p>
                   </div>
                 </div>
                 <div className='flex items-center gap-1'>
@@ -267,106 +275,15 @@ export default function BlogPage() {
             <div className='relative'>
               {/* Main image container */}
               <div className='relative aspect-4/3 rounded-2xl overflow-hidden bg-linear-to-br from-primary/20 via-cyan-500/20 to-blue-500/20 border border-primary/20'>
-                {/* Abstract data visualization */}
-                <svg
-                  viewBox='0 0 400 300'
-                  className='w-full h-full'
-                  fill='none'
-                >
-                  {/* Grid lines */}
-                  {[...Array(10)].map((_, i) => (
-                    <line
-                      key={`h-${i}`}
-                      x1='0'
-                      y1={30 * i}
-                      x2='400'
-                      y2={30 * i}
-                      stroke='currentColor'
-                      strokeOpacity='0.1'
-                    />
-                  ))}
-                  {[...Array(14)].map((_, i) => (
-                    <line
-                      key={`v-${i}`}
-                      x1={30 * i}
-                      y1='0'
-                      x2={30 * i}
-                      y2='300'
-                      stroke='currentColor'
-                      strokeOpacity='0.1'
-                    />
-                  ))}
-
-                  {/* Predictive curve - declining failures */}
-                  <path
-                    d='M 40 220 Q 100 200 150 180 Q 200 160 250 100 Q 300 60 360 40'
-                    stroke='hsl(var(--primary))'
-                    strokeWidth='3'
-                    fill='none'
-                    strokeLinecap='round'
-                  />
-
-                  {/* Reactive curve - spiky */}
-                  <path
-                    d='M 40 120 L 80 180 L 100 100 L 140 200 L 180 80 L 220 190 L 260 90 L 300 170 L 340 110 L 360 150'
-                    stroke='hsl(var(--destructive) / 0.6)'
-                    strokeWidth='2'
-                    fill='none'
-                    strokeLinecap='round'
-                    strokeDasharray='5 5'
-                  />
-
-                  {/* Data points on predictive curve */}
-                  {[
-                    { x: 100, y: 190 },
-                    { x: 150, y: 165 },
-                    { x: 200, y: 130 },
-                    { x: 250, y: 85 },
-                    { x: 300, y: 55 },
-                  ].map((point, i) => (
-                    <circle
-                      key={i}
-                      cx={point.x}
-                      cy={point.y}
-                      r='6'
-                      fill='hsl(var(--primary))'
-                      className='animate-pulse'
-                      style={{ animationDelay: `${i * 0.2}s` }}
-                    />
-                  ))}
-
-                  {/* Labels */}
-                  <text
-                    x='360'
-                    y='35'
-                    fill='hsl(var(--primary))'
-                    fontSize='12'
-                    fontWeight='bold'
-                  >
-                    Predictive
-                  </text>
-                  <text
-                    x='340'
-                    y='165'
-                    fill='hsl(var(--destructive) / 0.8)'
-                    fontSize='10'
-                  >
-                    Reactive
-                  </text>
-
-                  {/* Year marker */}
-                  <text
-                    x='200'
-                    y='280'
-                    fill='currentColor'
-                    fontSize='14'
-                    textAnchor='middle'
-                    opacity='0.5'
-                  >
-                    2025
-                  </text>
-                </svg>
-
+                {/* Image to fill the whole container with zoom (without affecting aspect ratio) */}
+                <Image
+                  src={
+                    featuredArticle.image || "/images/blog/default-featured.jpg"
+                  }
+                  alt={featuredArticle.title}
+                  fill
+                  style={{ objectFit: "cover" }}
+                />
                 {/* Floating stat cards */}
                 <div className='absolute top-4 right-4 bg-background/80 backdrop-blur-sm rounded-lg px-3 py-2 border shadow-lg'>
                   <p className='text-xs text-muted-foreground'>
@@ -454,11 +371,65 @@ export default function BlogPage() {
       <section className='py-12 px-4'>
         <div className='max-w-7xl mx-auto'>
           {filteredPosts.length > 0 ? (
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-              {filteredPosts.map((post) => (
-                <BlogCard key={post.id} post={post} />
-              ))}
-            </div>
+            <>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                {paginatedPosts.map((post) => (
+                  <BlogCard key={post.id} post={post} />
+                ))}
+              </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className='flex items-center justify-center gap-2 mt-12'>
+                  <Button
+                    variant='outline'
+                    size='icon'
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={currentPage === 1}
+                    className='w-10 h-10'
+                  >
+                    <ChevronLeft className='w-4 h-4' />
+                  </Button>
+
+                  <div className='flex items-center gap-1'>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (page) => (
+                        <Button
+                          key={page}
+                          variant={currentPage === page ? "default" : "outline"}
+                          size='icon'
+                          onClick={() => setCurrentPage(page)}
+                          className='w-10 h-10'
+                        >
+                          {page}
+                        </Button>
+                      )
+                    )}
+                  </div>
+
+                  <Button
+                    variant='outline'
+                    size='icon'
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
+                    className='w-10 h-10'
+                  >
+                    <ChevronRight className='w-4 h-4' />
+                  </Button>
+                </div>
+              )}
+
+              {/* Results info */}
+              <p className='text-center text-sm text-muted-foreground mt-4'>
+                Showing {startIndex + 1}-
+                {Math.min(startIndex + POSTS_PER_PAGE, filteredPosts.length)} of{" "}
+                {filteredPosts.length} articles
+              </p>
+            </>
           ) : (
             <div className='text-center py-16'>
               <p className='text-muted-foreground mb-4'>

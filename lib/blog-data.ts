@@ -2,6 +2,7 @@ export interface BlogPost {
   id: string;
   slug: string;
   title: string;
+  image: string;
   excerpt: string;
   content: string;
   author: string;
@@ -17,6 +18,7 @@ export const blogPosts: BlogPost[] = [
     id: "1",
     slug: "death-of-reactive-maintenance",
     title: "The Death of Reactive Maintenance",
+    image: "/images/blog/24.webp",
     excerpt:
       "For decades, industrial operations have been trapped in a cycle of break-fix. Equipment fails, production stops, engineers scramble. But a fundamental shift is underway.",
     content: `# The Death of Reactive Maintenance
@@ -85,6 +87,7 @@ The death of reactive maintenance isn't a prediction. It's already happening.`,
     id: "2",
     slug: "mqtt-low-latency-config",
     title: "How to Configure MQTT for Low-Latency Networks",
+    image: "/images/blog/25.webp",
     excerpt:
       "A deep technical guide to optimizing MQTT broker settings for sub-10ms message delivery in industrial environments.",
     content: `# How to Configure MQTT for Low-Latency Networks
@@ -223,6 +226,7 @@ These numbers represent a 10x improvement over default configurations.`,
     id: "3",
     slug: "edge-ai-deployment",
     title: "Deploying TensorFlow Lite on Edge Gateways",
+    image: "/images/blog/26.webp",
     excerpt:
       "Run inference directly on your edge devices without cloud round-trips. Complete guide to edge AI deployment.",
     content: `# Deploying TensorFlow Lite on Edge Gateways
@@ -348,6 +352,7 @@ Edge AI transforms IoT from data collection to intelligent decision-making at th
     id: "4",
     slug: "opc-ua-security",
     title: "OPC-UA Security Architecture",
+    image: "/images/blog/27.webp",
     excerpt:
       "Implementing zero-trust security patterns in industrial protocols for modern manufacturing environments.",
     content: `# OPC-UA Security Architecture
@@ -479,18 +484,18 @@ class AuditLogger:
 
 \`\`\`
 ┌─────────────────────────────────────────────────────────────┐
-│                    Enterprise Network                        │
+│                    Enterprise Network                       │
 ├─────────────────────────────────────────────────────────────┤
 │  Firewall (Port 4840 only, certificate validation)          │
 ├─────────────────────────────────────────────────────────────┤
-│                     DMZ / OPC-UA Gateway                     │
+│                     DMZ / OPC-UA Gateway                    │
 ├─────────────────────────────────────────────────────────────┤
 │  Firewall (Strict IP allowlist)                             │
 ├─────────────────────────────────────────────────────────────┤
-│                    Industrial Network                        │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐        │
-│  │ PLC 1   │  │ PLC 2   │  │ Robot   │  │ Sensor  │        │
-│  └─────────┘  └─────────┘  └─────────┘  └─────────┘        │
+│                    Industrial Network                       │
+│  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐         │
+│  │ PLC 1   │  │ PLC 2   │  │ Robot   │  │ Sensor  │         │
+│  └─────────┘  └─────────┘  └─────────┘  └─────────┘         │
 └─────────────────────────────────────────────────────────────┘
 \`\`\`
 
@@ -508,6 +513,7 @@ OPC-UA provides robust security mechanisms, but they must be properly configured
     id: "5",
     slug: "time-series-compression",
     title: "Time-Series Compression Algorithms Compared",
+    image: "/images/blog/28.webp",
     excerpt:
       "Gorilla, Delta-of-Delta, and custom algorithms for IoT telemetry data. Benchmarks and implementation details.",
     content: `# Time-Series Compression Algorithms Compared
@@ -643,20 +649,20 @@ Testing with real industrial telemetry (1M data points each):
 
 \`\`\`
 ┌─────────────────────────────────────────────────────────┐
-│                    Decision Tree                         │
+│                    Decision Tree                        │
 ├─────────────────────────────────────────────────────────┤
-│                                                          │
-│  Data Type?                                              │
+│                                                         │
+│  Data Type?                                             │
 │  ├── Floating Point → Gorilla                           │
 │  ├── Integer (monotonic) → Delta-of-Delta               │
 │  ├── Categorical → Dictionary + RLE                     │
 │  └── Mixed → Hybrid with column detection               │
-│                                                          │
-│  Query Pattern?                                          │
-│  ├── Range scans → Prioritize decode speed             │
+│                                                         │
+│  Query Pattern?                                         │
+│  ├── Range scans → Prioritize decode speed              │
 │  ├── Point lookups → Index + light compression          │
 │  └── Aggregations → Pre-aggregate + compress            │
-│                                                          │
+│                                                         │
 └─────────────────────────────────────────────────────────┘
 \`\`\`
 
@@ -679,6 +685,7 @@ The right compression strategy can reduce storage costs by 90% while maintaining
     id: "6",
     slug: "digital-twin-sync",
     title: "Real-Time Digital Twin Synchronization",
+    image: "/images/blog/29.webp",
     excerpt:
       "Keeping virtual models in sync with physical assets at scale. Architecture patterns and implementation strategies.",
     content: `# Real-Time Digital Twin Synchronization
@@ -766,23 +773,23 @@ class StateReconciler:
 
 \`\`\`
 ┌─────────────────────────────────────────────────────────┐
-│                    Cloud Layer                           │
+│                    Cloud Layer                          │
 │  ┌─────────────────────────────────────────────────────┐│
-│  │  Aggregated Digital Twins (1-min resolution)       ││
+│  │  Aggregated Digital Twins (1-min resolution)        ││
 │  └─────────────────────────────────────────────────────┘│
 ├─────────────────────────────────────────────────────────┤
-│                    Edge Layer                            │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │ Site Twin   │  │ Site Twin   │  │ Site Twin   │     │
-│  │ (1s res)    │  │ (1s res)    │  │ (1s res)    │     │
-│  └─────────────┘  └─────────────┘  └─────────────┘     │
+│                    Edge Layer                           │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐      │
+│  │ Site Twin   │  │ Site Twin   │  │ Site Twin   │      │
+│  │ (1s res)    │  │ (1s res)    │  │ (1s res)    │      │
+│  └─────────────┘  └─────────────┘  └─────────────┘      │
 ├─────────────────────────────────────────────────────────┤
-│                   Device Layer                           │
-│  ┌───┐┌───┐┌───┐  ┌───┐┌───┐┌───┐  ┌───┐┌───┐┌───┐   │
-│  │ T ││ T ││ T │  │ T ││ T ││ T │  │ T ││ T ││ T │   │
-│  │100││100││100│  │100││100││100│  │100││100││100│   │
-│  │ ms││ ms││ ms│  │ ms││ ms││ ms│  │ ms││ ms││ ms│   │
-│  └───┘└───┘└───┘  └───┘└───┘└───┘  └───┘└───┘└───┘   │
+│                   Device Layer                          │
+│  ┌───┐┌───┐┌───┐  ┌───┐┌───┐┌───┐  ┌───┐┌───┐┌───┐      │
+│  │ T ││ T ││ T │  │ T ││ T ││ T │  │ T ││ T ││ T │      │
+│  │100││100││100│  │100││100││100│  │100││100││100│      │
+│  │ ms││ ms││ ms│  │ ms││ ms││ ms│  │ ms││ ms││ ms│      │
+│  └───┘└───┘└───┘  └───┘└───┘└───┘  └───┘└───┘└───┘      │
 └─────────────────────────────────────────────────────────┘
 \`\`\`
 
@@ -870,6 +877,7 @@ Real-time digital twins bridge the gap between physical operations and digital i
     id: "7",
     slug: "protocol-bridging",
     title: "Building Protocol Bridges: Modbus to MQTT",
+    image: "/images/blog/30.webp",
     excerpt:
       "Legacy integration patterns that actually work in production. Step-by-step guide to bridging industrial protocols.",
     content: `# Building Protocol Bridges: Modbus to MQTT
@@ -910,12 +918,12 @@ MODBUS_FUNCTIONS = {
 
 \`\`\`
 ┌─────────────────────────────────────────────────────────────┐
-│                    Protocol Bridge                           │
+│                    Protocol Bridge                          │
 │  ┌───────────────┐  ┌─────────────┐  ┌───────────────────┐  │
 │  │ Modbus Client │→ │ Data Mapper │→ │ MQTT Publisher    │  │
 │  │ (RS-485/TCP)  │  │             │  │                   │  │
 │  └───────────────┘  └─────────────┘  └───────────────────┘  │
-│          ↑                                      ↓            │
+│          ↑                                      ↓           │
 │  ┌───────────────┐                   ┌───────────────────┐  │
 │  │ Poll Scheduler│                   │ Command Handler   │  │
 │  └───────────────┘                   └───────────────────┘  │
@@ -1096,6 +1104,7 @@ Protocol bridges unlock the value trapped in legacy industrial systems, enabling
     id: "8",
     slug: "predictive-maintenance-iot",
     title: "Predictive Maintenance: The Future of IoT Operations",
+    image: "/images/blog/31.webp",
     excerpt:
       "Learn how AI-powered predictive maintenance can reduce downtime and increase equipment lifespan.",
     content: `# Predictive Maintenance: The Future of IoT Operations
@@ -1130,6 +1139,7 @@ Start leveraging predictive maintenance today to maximize your IoT infrastructur
     id: "9",
     slug: "anomaly-detection-basics",
     title: "Getting Started with AI Anomaly Detection",
+    image: "/images/blog/32.webp",
     excerpt:
       "Understand how anomaly detection works and why it's crucial for IoT security and operations.",
     content: `# Getting Started with AI Anomaly Detection
@@ -1171,6 +1181,7 @@ Implementing anomaly detection can significantly improve your IoT operations and
     id: "10",
     slug: "iot-security-best-practices",
     title: "10 IoT Security Best Practices for 2025",
+    image: "/images/blog/33.webp",
     excerpt:
       "Essential security practices every IoT operator should implement to protect their infrastructure.",
     content: `# 10 IoT Security Best Practices for 2025
@@ -1229,6 +1240,7 @@ Implementing these practices will significantly strengthen your IoT security pos
     id: "11",
     slug: "digital-twins-explained",
     title: "Understanding Digital Twins in IoT",
+    image: "/images/blog/34.webp",
     excerpt:
       "Explore how digital twins can revolutionize your IoT operations and decision-making.",
     content: `# Understanding Digital Twins in IoT
@@ -1268,6 +1280,7 @@ Start with your most critical assets and gradually expand your digital twin impl
     id: "12",
     slug: "iot-industry-trends-2025",
     title: "2025 IoT Industry Trends You Need to Know",
+    image: "/images/blog/35.webp",
     excerpt:
       "Discover the top trends shaping IoT and what they mean for your business in 2025.",
     content: `# 2025 IoT Industry Trends You Need to Know

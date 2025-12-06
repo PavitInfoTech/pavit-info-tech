@@ -172,7 +172,7 @@ export function Sidebar() {
     ? user.first_name || user.last_name
       ? `${user.first_name}${user.last_name ? ` ${user.last_name}` : ""}`
       : user.username
-    : "John Doe";
+    : "User";
 
   const initials = user
     ? user.first_name || user.last_name
@@ -184,7 +184,7 @@ export function Sidebar() {
           .map((part) => part[0]?.toUpperCase())
           .join("")
       : user.username.slice(0, 2).toUpperCase()
-    : "JD";
+    : "U";
 
   return (
     <>

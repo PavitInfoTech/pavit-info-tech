@@ -696,7 +696,7 @@ function CheckoutContent() {
                   <FormInput
                     icon={User}
                     label='Card Holder Name'
-                    placeholder='JOHN DOE'
+                    placeholder='Name'
                     value={cardHolder}
                     onChange={(e) =>
                       setCardHolder(e.target.value.toUpperCase())

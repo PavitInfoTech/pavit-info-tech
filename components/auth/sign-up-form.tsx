@@ -142,7 +142,7 @@ export function SignUpForm() {
           <label className='text-sm font-medium'>Username</label>
           <Input
             name='username'
-            placeholder='johndoe'
+            placeholder='username'
             value={formData.username}
             onChange={handleChange}
             disabled={isLoading}
@@ -154,7 +154,7 @@ export function SignUpForm() {
             <label className='text-sm font-medium'>First name</label>
             <Input
               name='firstName'
-              placeholder='John'
+              placeholder='First name'
               value={formData.firstName}
               onChange={handleChange}
               disabled={isLoading}
@@ -164,7 +164,7 @@ export function SignUpForm() {
             <label className='text-sm font-medium'>Last name (optional)</label>
             <Input
               name='lastName'
-              placeholder='Doe'
+              placeholder='Last name (optional)'
               value={formData.lastName}
               onChange={handleChange}
               disabled={isLoading}
