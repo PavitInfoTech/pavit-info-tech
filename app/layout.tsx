@@ -1,7 +1,7 @@
 import type React from "react";
 import type { Metadata } from "next";
 
-import { Analytics } from "@vercel/analytics/next";
+// import { Analytics } from "@vercel/analytics/next";
 import { Chatbot } from "@/components/chatbot/chatbot";
 import { ChatProvider } from "@/components/chatbot/chat-context";
 import { CookieConsent } from "@/components/consent/cookie-consent";
@@ -51,7 +51,7 @@ export default function RootLayout({
           <Chatbot />
         </ChatProvider>
         <CookieConsent />
-        <Analytics />
+        {/* { <Analytics />} */}
       </body>
     </html>
   );
