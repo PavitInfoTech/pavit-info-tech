@@ -147,7 +147,7 @@ export function Navbar() {
                 <Logo width={120} height={50} />
               </motion.div>
               <span className='bg-linear-to-r from-white to-white/80 bg-clip-text text-transparent'>
-                PavitInfoTech
+                {/* PavitInfoTech */}
               </span>
             </Link>
 

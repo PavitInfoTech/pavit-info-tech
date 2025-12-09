@@ -27,13 +27,6 @@ export const metadata: Metadata = {
   title: "PavitInfoTech - AI-Powered IoT Platform",
   description:
     "Enterprise-grade AI-powered IoT platform with real-time monitoring, predictive analytics, and anomaly detection",
-  icons: {
-    icon: [
-      {
-        url: "/favicon.ico",
-      },
-    ],
-  },
 };
 
 export default function RootLayout({

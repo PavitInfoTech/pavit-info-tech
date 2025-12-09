@@ -10,7 +10,7 @@ export default function CookiesPage() {
     <MainLayout>
       <div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 mt-16'>
         <h1 className='text-4xl font-bold font-serif mb-8'>Cookie Policy</h1>
-        <p className='text-muted-foreground mb-8'>Last updated: January 2025</p>
+        <p className='text-muted-foreground mb-8'>Last updated: December 2025</p>
 
         <div className='prose prose-invert max-w-none space-y-8'>
           <section>

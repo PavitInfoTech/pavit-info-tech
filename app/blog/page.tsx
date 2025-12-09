@@ -462,10 +462,6 @@ export default function BlogPage() {
                 Editor's picks: Long-form technical tutorials and guides
               </p>
             </div>
-            <Button variant='outline' className='hidden md:flex gap-2'>
-              View All Tutorials
-              <ChevronRight className='w-4 h-4' />
-            </Button>
           </div>
 
           {/* Masonry Grid */}

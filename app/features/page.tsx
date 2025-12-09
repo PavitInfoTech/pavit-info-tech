@@ -33,6 +33,7 @@ import {
   ZoomIn,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 // Edge computing features
 const edgeFeatures = [
@@ -285,27 +286,21 @@ export default function FeaturesPage() {
                 From edge sensors to cloud analytics, a unified platform
                 architected for scale, security, and real-time decision making.
               </p>
-              <div className='flex flex-wrap gap-4 pt-4'>
-                <Button size='lg'>View Documentation</Button>
-                <Button size='lg' variant='outline'>
-                  API Reference
-                </Button>
-              </div>
             </div>
 
             {/* Exploded IoT Device Visual */}
-            <div className='relative h-[400px] md:h-[500px]'>
+            <div className='relative h-[300px] md:h-[400px] lg:h-[500px]'>
               {/* Central turbine/device */}
-              <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-slate-800 border-4 border-primary/50 flex items-center justify-center shadow-2xl shadow-primary/20'>
+              <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 md:w-32 md:h-32 rounded-full bg-slate-800 border-4 border-primary/50 flex items-center justify-center shadow-2xl shadow-primary/20'>
                 <Settings
-                  className='w-16 h-16 text-primary animate-spin'
+                  className='w-10 h-10 md:w-16 md:h-16 text-primary animate-spin'
                   style={{ animationDuration: "8s" }}
                 />
               </div>
 
               {/* Layer 1: Hardware */}
               <div
-                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 rounded-full border-2 border-dashed border-slate-700 animate-pulse ${
+                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 md:w-48 md:h-48 rounded-full border-2 border-dashed border-slate-700 animate-pulse ${
                   heroLayer === "hardware" ? "ring-2 ring-primary/40" : ""
                 }`}
                 style={{ animationDuration: "3s" }}
@@ -319,7 +314,7 @@ export default function FeaturesPage() {
 
               {/* Layer 2: Edge */}
               <div
-                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full border-2 border-dashed border-blue-900/50 ${
+                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 md:w-72 md:h-72 rounded-full border-2 border-dashed border-blue-900/50 ${
                   heroLayer === "edge" ? "ring-2 ring-blue-600/30" : ""
                 }`}
                 onMouseEnter={() => setHeroLayer("edge")}
@@ -328,13 +323,13 @@ export default function FeaturesPage() {
                 <div className='absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-blue-900/50 rounded text-xs text-blue-400'>
                   Edge Computing
                 </div>
-                <Cpu className='absolute top-4 right-8 w-6 h-6 text-blue-400' />
-                <Database className='absolute bottom-8 left-4 w-6 h-6 text-blue-400' />
+                <Cpu className='absolute top-3 right-6 md:top-4 md:right-8 w-4 md:w-6 h-4 md:h-6 text-blue-400' />
+                <Database className='absolute bottom-6 left-3 md:bottom-8 md:left-4 w-4 md:w-6 h-4 md:h-6 text-blue-400' />
               </div>
 
               {/* Layer 3: Network */}
               <div
-                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full border-2 border-dashed border-emerald-900/50 ${
+                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 md:w-96 md:h-96 rounded-full border-2 border-dashed border-emerald-900/50 ${
                   heroLayer === "network" ? "ring-2 ring-emerald-600/30" : ""
                 }`}
                 onMouseEnter={() => setHeroLayer("network")}
@@ -343,13 +338,13 @@ export default function FeaturesPage() {
                 <div className='absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-emerald-900/50 rounded text-xs text-emerald-400'>
                   Network Layer
                 </div>
-                <Wifi className='absolute top-8 left-8 w-6 h-6 text-emerald-400' />
-                <Server className='absolute bottom-12 right-8 w-6 h-6 text-emerald-400' />
+                <Wifi className='absolute top-6 left-6 md:top-8 md:left-8 w-4 md:w-6 h-4 md:h-6 text-emerald-400' />
+                <Server className='absolute bottom-8 right-6 md:bottom-12 md:right-8 w-4 md:w-6 h-4 md:h-6 text-emerald-400' />
               </div>
 
               {/* Layer 4: Cloud */}
               <div
-                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] rounded-full border-2 border-dashed border-purple-900/50 ${
+                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] md:w-[450px] md:h-[450px] rounded-full border-2 border-dashed border-purple-900/50 ${
                   heroLayer === "cloud" ? "ring-2 ring-purple-600/30" : ""
                 }`}
                 onMouseEnter={() => setHeroLayer("cloud")}
@@ -358,8 +353,8 @@ export default function FeaturesPage() {
                 <div className='absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-purple-900/50 rounded text-xs text-purple-400'>
                   Cloud Intelligence
                 </div>
-                <Cloud className='absolute top-4 right-20 w-6 h-6 text-purple-400' />
-                <Brain className='absolute bottom-16 left-12 w-6 h-6 text-purple-400' />
+                <Cloud className='absolute top-3 right-12 md:right-20 w-4 md:w-6 h-4 md:h-6 text-purple-400' />
+                <Brain className='absolute bottom-10 left-8 md:bottom-16 md:left-12 w-4 md:w-6 h-4 md:h-6 text-purple-400' />
               </div>
 
               {/* Floating data particles */}
@@ -729,9 +724,9 @@ export default function FeaturesPage() {
             </p>
           </div>
 
-          <div className='grid lg:grid-cols-5 gap-6'>
+          <div className='grid grid-cols-1 lg:grid-cols-5 gap-6 overflow-x-hidden'>
             {/* 3D Preview Panel */}
-            <div className='lg:col-span-3'>
+            <div className='col-span-1 lg:col-span-3'>
               <Card className='h-[400px] bg-slate-900 border-slate-800 relative overflow-hidden'>
                 {/* Fake 3D scene */}
                 <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.1),transparent_70%)]' />
@@ -746,35 +741,40 @@ export default function FeaturesPage() {
                 />
 
                 {/* Central 3D object representation */}
-                <div
-                  className='absolute left-1/2 top-1/2'
-                  style={{
-                    transform: `translate(-50%, -50%) scale(${zoom}) rotateY(${rotation}deg)`,
-                    transition: isAutoRotating ? "none" : "transform 0.5s ease",
-                    transformStyle: "preserve-3d",
-                  }}
-                >
-                  <div className='relative transform-style-3d'>
-                    {/* Turbine base */}
-                    <div className='w-40 h-40 rounded-lg bg-slate-700 border border-slate-600 flex items-center justify-center transform rotate-12 shadow-2xl'>
-                      <Box className='w-20 h-20 text-slate-400' />
-                    </div>
-
-                    {/* Rotating element */}
-                    <div className='absolute -top-8 left-1/2 -translate-x-1/2 w-24 h-24'>
-                      <div
-                        className='w-full h-full rounded-full border-4 border-primary/50 animate-spin'
-                        style={{ animationDuration: "3s" }}
-                      >
-                        <div className='absolute top-0 left-1/2 w-1 h-6 bg-primary -translate-x-1/2 -translate-y-1' />
-                        <div className='absolute bottom-0 left-1/2 w-1 h-6 bg-primary -translate-x-1/2 translate-y-1' />
-                        <div className='absolute left-0 top-1/2 w-6 h-1 bg-primary -translate-y-1/2 -translate-x-1' />
-                        <div className='absolute right-0 top-1/2 w-6 h-1 bg-primary -translate-y-1/2 translate-x-1' />
+                <div className='absolute inset-0 flex items-center justify-center'>
+                  <div
+                    className='transform-style-3d'
+                    style={{
+                      transform: `scale(${zoom}) rotateY(${rotation}deg)`,
+                      transition: isAutoRotating
+                        ? "none"
+                        : "transform 0.5s ease",
+                      transformStyle: "preserve-3d",
+                      maxWidth: "100%",
+                    }}
+                  >
+                    <div className='relative transform-style-3d max-w-full overflow-hidden'>
+                      {/* Turbine base */}
+                      <div className='w-20 h-20 md:w-28 md:h-28 lg:w-40 lg:h-40 rounded-lg bg-slate-700 border border-slate-600 flex items-center justify-center transform rotate-12 shadow-2xl'>
+                        <Box className='w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 text-slate-400' />
                       </div>
-                    </div>
 
-                    {/* Heat visualization */}
-                    <div className='absolute -right-16 top-0 w-12 h-32 rounded bg-linear-to-t from-blue-500/20 via-amber-500/40 to-red-500/60' />
+                      {/* Rotating element */}
+                      <div className='absolute -top-5 left-1/2 -translate-x-1/2 w-16 md:w-20 h-16 md:h-24'>
+                        <div
+                          className='w-full h-full rounded-full border-4 border-primary/50 animate-spin'
+                          style={{ animationDuration: "3s" }}
+                        >
+                          <div className='absolute top-0 left-1/2 w-1 h-6 bg-primary -translate-x-1/2 -translate-y-1' />
+                          <div className='absolute bottom-0 left-1/2 w-1 h-6 bg-primary -translate-x-1/2 translate-y-1' />
+                          <div className='absolute left-0 top-1/2 w-6 h-1 bg-primary -translate-y-1/2 -translate-x-1' />
+                          <div className='absolute right-0 top-1/2 w-6 h-1 bg-primary -translate-y-1/2 translate-x-1' />
+                        </div>
+                      </div>
+
+                      {/* Heat visualization */}
+                      <div className='absolute -right-8 md:-right-16 top-0 w-8 md:w-12 h-20 md:h-32 rounded bg-linear-to-t from-blue-500/20 via-amber-500/40 to-red-500/60' />
+                    </div>
                   </div>
                 </div>
 
@@ -960,10 +960,18 @@ export default function FeaturesPage() {
                     }
                     className='bg-transparent text-white font-medium focus:outline-none cursor-pointer'
                   >
-                    <option value='Temperature'>Temperature</option>
-                    <option value='Vibration'>Vibration</option>
-                    <option value='Pressure'>Pressure</option>
-                    <option value='Power'>Power</option>
+                    <option value='Temperature' className='bg-accent'>
+                      Temperature
+                    </option>
+                    <option value='Vibration' className='bg-accent'>
+                      Vibration
+                    </option>
+                    <option value='Pressure' className='bg-accent'>
+                      Pressure
+                    </option>
+                    <option value='Power' className='bg-accent'>
+                      Power
+                    </option>
                   </select>
                   <select
                     value={ruleCondition1.operator}
@@ -1014,10 +1022,18 @@ export default function FeaturesPage() {
                     }
                     className='bg-transparent text-white font-medium focus:outline-none cursor-pointer'
                   >
-                    <option value='Temperature'>Temperature</option>
-                    <option value='Vibration'>Vibration</option>
-                    <option value='Pressure'>Pressure</option>
-                    <option value='Power'>Power</option>
+                    <option value='Temperature' className='bg-accent'>
+                      Temperature
+                    </option>
+                    <option value='Vibration' className='bg-accent'>
+                      Vibration
+                    </option>
+                    <option value='Pressure' className='bg-accent'>
+                      Pressure
+                    </option>
+                    <option value='Power' className='bg-accent'>
+                      Power
+                    </option>
                   </select>
                   <select
                     value={ruleCondition2.operator}
@@ -1210,14 +1226,13 @@ export default function FeaturesPage() {
                   }`}
                 >
                   <div className='flex items-start gap-3 mb-4'>
-                      <Image
-                        src={feature.image}
-                        alt={feature.title}
-                        width={80}
-                        height={80}
-                        className={"w-16 h-16 rounded-lg"}
-
-                      />
+                    <Image
+                      src={feature.image}
+                      alt={feature.title}
+                      width={80}
+                      height={80}
+                      className={"w-16 h-16 rounded-lg"}
+                    />
                     <div className='flex-1'>
                       <h3 className='text-xl font-bold mb-2'>
                         {feature.title}
@@ -1295,10 +1310,9 @@ export default function FeaturesPage() {
             through your architecture requirements.
           </p>
           <div className='flex flex-wrap gap-4 justify-center'>
-            <Button size='lg'>Request Technical Demo</Button>
-            <Button size='lg' variant='outline'>
-              Download Architecture PDF
-            </Button>
+            <Link href='/contact'>
+              <Button size='lg'>Request Technical Demo</Button>
+            </Link>
           </div>
         </div>
       </section>

@@ -62,8 +62,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const headings = extractHeadings(post.content);
 
   // Calculate estimated reading progress markers
-  const wordCount = post.content.split(/\s+/).length;
-  const estimatedReadTime = Math.ceil(wordCount / 200);
 
   return (
     <MainLayout>
@@ -117,7 +115,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <div className='flex items-center gap-4 text-sm text-muted-foreground'>
               <span className='flex items-center gap-1.5'>
                 <Clock className='w-4 h-4' />
-                {estimatedReadTime} min read
+                {post.readTime} min read
               </span>
               <span className='flex items-center gap-1.5'>
                 <Calendar className='w-4 h-4' />
