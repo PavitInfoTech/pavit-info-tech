@@ -444,7 +444,7 @@ function CheckoutContent() {
     }
     // Immediately show a local fallback (so users see plan details even if the API is down)
     const local = (pricingData as { plans: LocalPlan[] }).plans.find(
-      (p) => p.slug === planSlug
+      (p) => p.slug.toLocaleLowerCase() === planSlug.toLocaleLowerCase()
     );
     if (local) {
       // populate a reasonable fallback plan right away so plan details show on first render
@@ -914,7 +914,12 @@ function CheckoutContent() {
                         type='button'
                         className='w-full h-12 bg-amber-500 text-black font-semibold'
                       >
-                        Contact Sales
+                        {/** Prefer CTA text from pricing data if available */}
+                        {pricingData.plans.find(
+                          (p) =>
+                            p.slug.toLocaleLowerCase() ===
+                            plan.slug.toLocaleLowerCase()
+                        )?.cta || "Contact Sales"}
                       </Button>
                     </Link>
                   )}
