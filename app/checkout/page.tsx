@@ -427,6 +427,8 @@ function CheckoutContent() {
               // prefer the monthly price from local data when API price is invalid
               price: String(localMatch.monthlyPrice ?? 0),
               // keep interval according to billing selection
+              description: localMatch.description,
+              features: localMatch.features,
               interval: isYearly ? "yearly" : "monthly",
             } as SubscriptionPlan;
             setPlan(merged);
