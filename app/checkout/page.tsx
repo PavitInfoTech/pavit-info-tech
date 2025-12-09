@@ -412,7 +412,30 @@ function CheckoutContent() {
     async function loadPlan() {
       try {
         const planData = await getSubscriptionPlan(planSlug);
-        setPlan(planData);
+
+        // If backend returned an empty/zero price (e.g. enterprise placeholder)
+        // prefer the local pricing JSON fallback so the UI doesn't show $0.
+        const fetchedPrice = parseFloat(planData?.price as unknown as string);
+        if (Number.isNaN(fetchedPrice) || fetchedPrice <= 0) {
+          const localMatch = (pricingData as { plans: LocalPlan[] }).plans.find(
+            (p) => p.slug.toLocaleLowerCase() === planSlug.toLocaleLowerCase()
+          );
+
+          if (localMatch) {
+            const merged = {
+              ...planData,
+              // prefer the monthly price from local data when API price is invalid
+              price: String(localMatch.monthlyPrice ?? 0),
+              // keep interval according to billing selection
+              interval: isYearly ? "yearly" : "monthly",
+            } as SubscriptionPlan;
+            setPlan(merged);
+          } else {
+            setPlan(planData);
+          }
+        } else {
+          setPlan(planData);
+        }
       } catch {
         // Fallback to local pricing data if API plan isn't available
         const local = (pricingData as { plans: LocalPlan[] }).plans.find(
