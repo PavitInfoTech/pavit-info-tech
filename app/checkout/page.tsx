@@ -287,6 +287,8 @@ function PlanSummary({
   const displayPrice = isYearly ? price * 12 * 0.8 : price;
   const savings = isYearly ? price * 12 * 0.2 : 0;
 
+  const isContactSales = Number.isNaN(price) || price <= 0;
+
   return (
     <Card className='bg-white/5 border-white/10 p-6'>
       <div className='flex items-start gap-4 mb-6'>
@@ -330,12 +332,16 @@ function PlanSummary({
         )}
         <div className='flex justify-between text-lg font-bold pt-2 border-t border-white/10'>
           <span>Total</span>
-          <span className='text-emerald-400'>
-            ${displayPrice.toFixed(2)}
-            <span className='text-sm font-normal text-white/60'>
-              /{isYearly ? "year" : "mo"}
+          {isContactSales ? (
+            <span className='text-white/60'>Contact Sales</span>
+          ) : (
+            <span className='text-emerald-400'>
+              ${displayPrice.toFixed(2)}
+              <span className='text-sm font-normal text-white/60'>
+                /{isYearly ? "year" : "mo"}
+              </span>
             </span>
-          </span>
+          )}
         </div>
       </div>
     </Card>
@@ -387,6 +393,9 @@ function CheckoutContent() {
   const cardBrand = getCardBrand(cardNumber);
   const formattedCardNumber = formatCardNumber(cardNumber);
 
+  const planPrice = plan ? parseFloat(plan.price) : NaN;
+  const planIsContactSales = Number.isNaN(planPrice) || planPrice <= 0;
+
   // Load plan details
   useEffect(() => {
     type LocalPlan = {
@@ -416,11 +425,8 @@ function CheckoutContent() {
             name: local.name,
             slug: local.slug,
             description: local.description,
-            price: String(
-              isYearly
-                ? local.yearlyPrice ?? local.monthlyPrice ?? 0
-                : local.monthlyPrice ?? 0
-            ),
+            // Always store the base monthly price here; billing cycle is handled by UI
+            price: String(local.monthlyPrice ?? 0),
             currency: "USD",
             interval: isYearly ? "yearly" : "monthly",
             trial_days: 0,
@@ -518,6 +524,13 @@ function CheckoutContent() {
   // Handle payment submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (planIsContactSales) {
+      setPaymentError(
+        "This plan requires contacting sales. Please use the Contact Sales button."
+      );
+      return;
+    }
 
     // Mark all fields as touched
     setTouched({
@@ -853,26 +866,37 @@ function CheckoutContent() {
                   </AnimatePresence>
 
                   {/* Submit button */}
-                  <Button
-                    type='submit'
-                    disabled={isProcessing || !isFormValid()}
-                    className='w-full h-12 bg-linear-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 font-semibold'
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-                        Processing Payment...
-                      </>
-                    ) : (
-                      <>
-                        <Lock className='w-4 h-4 mr-2' />
-                        Pay $
-                        {isYearly
-                          ? (parseFloat(plan.price) * 12 * 0.8).toFixed(2)
-                          : parseFloat(plan.price).toFixed(2)}
-                      </>
-                    )}
-                  </Button>
+                  {!planIsContactSales ? (
+                    <Button
+                      type='submit'
+                      disabled={isProcessing || !isFormValid()}
+                      className='w-full h-12 bg-linear-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 font-semibold'
+                    >
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                          Processing Payment...
+                        </>
+                      ) : (
+                        <>
+                          <Lock className='w-4 h-4 mr-2' />
+                          Pay $
+                          {isYearly
+                            ? (planPrice * 12 * 0.8).toFixed(2)
+                            : planPrice.toFixed(2)}
+                        </>
+                      )}
+                    </Button>
+                  ) : (
+                    <Link href='/contact' className='w-full block'>
+                      <Button
+                        type='button'
+                        className='w-full h-12 bg-amber-500 text-black font-semibold'
+                      >
+                        Contact Sales
+                      </Button>
+                    </Link>
+                  )}
 
                   {/* Security badges */}
                   <div className='flex items-center justify-center gap-4 pt-4 text-xs text-white/40'>
