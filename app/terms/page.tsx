@@ -61,17 +61,7 @@ export default function TermsPage() {
             <li>
               <strong>Terms and Conditions</strong> (also referred as "Terms")
               mean these Terms and Conditions that form the entire agreement
-              between You and the Company regarding the use of the Service. This
-              Terms and Conditions agreement has been created with the help of
-              the{" "}
-              <a
-                href='https://www.freeprivacypolicy.com/free-terms-and-conditions-generator/'
-                target='_blank'
-                rel='noreferrer'
-              >
-                Free Terms and Conditions Generator
-              </a>
-              .
+              between You and the Company regarding the use of the Service.
             </li>
             <li>
               <strong>Third-party Social Media Service</strong> means any
