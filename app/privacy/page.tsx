@@ -503,7 +503,12 @@ export default function PrivacyPage() {
             us:
           </p>
           <ul>
-            <li>By email: hello@pavitinfotech.com</li>
+            <li>
+              By email:{" "}
+              <a href='mailto:hello@pavitinfotech.com'>
+                hello@pavitinfotech.com
+              </a>
+            </li>
             <li>
               By visiting this page on our website:{" "}
               <a
