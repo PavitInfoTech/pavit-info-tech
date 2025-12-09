@@ -442,6 +442,27 @@ function CheckoutContent() {
         setIsLoadingPlan(false);
       }
     }
+    // Immediately show a local fallback (so users see plan details even if the API is down)
+    const local = (pricingData as { plans: LocalPlan[] }).plans.find(
+      (p) => p.slug === planSlug
+    );
+    if (local) {
+      // populate a reasonable fallback plan right away so plan details show on first render
+      setPlan({
+        id: 0,
+        name: local.name,
+        slug: local.slug,
+        description: local.description,
+        price: String(local.monthlyPrice ?? 0),
+        currency: "USD",
+        interval: isYearly ? "yearly" : "monthly",
+        trial_days: 0,
+        features: local.features,
+        is_active: true,
+      });
+      setIsLoadingPlan(false);
+    }
+
     loadPlan();
   }, [planSlug, isYearly]);
 
