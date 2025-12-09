@@ -416,7 +416,7 @@ function CheckoutContent() {
       } catch {
         // Fallback to local pricing data if API plan isn't available
         const local = (pricingData as { plans: LocalPlan[] }).plans.find(
-          (p) => p.slug === planSlug
+          (p) => p.slug.toLocaleLowerCase() === planSlug.toLocaleLowerCase()
         );
         if (local) {
           // Map the local pricing entry into SubscriptionPlan shape expected by UI
