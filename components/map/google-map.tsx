@@ -14,7 +14,7 @@ interface GoogleMapProps {
 
 // PavitInfoTech headquarters
 const DEFAULT_LOCATION = {
-  address: "122 Galle Road, Colombo 03, Colombo, Sri Lanka",
+  address: "986 Van Ness Ave, San Francisco, CA 94102, United States",
 };
 
 export function GoogleMap({

@@ -158,8 +158,7 @@ export default function CookiesPage() {
                 <strong>Phone:</strong> 0768924153
               </p>
               <p>
-                <strong>Address:</strong> 122 Galle Road, Colombo 03, Colombo,
-                00300
+                <strong>Address:</strong> 986 Van Ness Ave, San Francisco, CA 94102, United States
               </p>
               <p>
                 <strong>Website:</strong> https://pavitinfotech.com

@@ -44,12 +44,12 @@ export default function TermsPage() {
               directors or other managing authority.
             </li>
             <li>
-              <strong>Country</strong> refers to: Sri Lanka
+              <strong>Country</strong> refers to: United States
             </li>
             <li>
               <strong>Company</strong> (referred to as either "the Company",
               "We", "Us" or "Our" in this Agreement) refers to PavitInfoTech,
-              122 Galle Road, Colombo 03, Colombo.
+              986 Van Ness Ave, San Francisco, CA 94102, United States.
             </li>
             <li>
               <strong>Device</strong> means any device that can access the
